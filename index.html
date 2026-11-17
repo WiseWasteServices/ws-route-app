@@ -1,1 +1,2548 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wise Scoopers">
+<title>Wise Scoopers — Cloud Billing, Route &amp; Client CRM</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+  :root {
+    --g: #263A2D;
+    --gm: #467353;
+    --gl: #5B8C69;
+    --gt: #E5EEE5;
+    --cr: #F4F7F4;
+    --b: #C8D6C0;
+    --ink: #18241C;
+    --m: #536559;
+    --w: #ffffff;
+    --warn-bg: #FFF6E5;
+    --warn-b: #E6A83A;
+    --warn-ink: #7A4B00;
+    --due-bg: #FDECEC;
+    --due-b: #D9534F;
+    --due-ink: #8A1F1C;
+    --ok-bg: #E7F5EC;
+    --ok-b: #3B8754;
+    --ok-ink: #1B5430;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: var(--ink);
+    background-color: #eef3ee;
+    background-image: linear-gradient(rgba(244, 247, 244, 0.88), rgba(244, 247, 244, 0.88)), url('https://i.imgur.com/XDF1rOS.jpeg');
+    background-size: 520px auto;
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  /* LOGIN GATE OVERLAY */
+  .auth-gate {
+    position: fixed;
+    inset: 0;
+    background: rgba(24, 36, 28, 0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 3000;
+  }
+  .auth-gate.hidden { display: none; }
+  .auth-card {
+    background: var(--w);
+    border: 2px solid var(--gm);
+    border-radius: 18px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 390px;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  }
+  .auth-card img {
+    height: 64px;
+    width: auto;
+    margin-bottom: 10px;
+  }
+  .auth-card h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--g);
+  }
+  .auth-card p {
+    margin: 0 0 18px;
+    font-size: 12.5px;
+    color: var(--m);
+    font-weight: 600;
+  }
+  .auth-field {
+    text-align: left;
+    margin-bottom: 12px;
+  }
+  .auth-field label {
+    display: block;
+    font-size: 11.5px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    color: var(--ink);
+  }
+  .auth-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--b);
+    border-radius: 9px;
+    font-size: 14px;
+    background: #FAFDFB;
+  }
+  .auth-error {
+    color: var(--due-ink);
+    background: var(--due-bg);
+    border: 1px solid var(--due-b);
+    padding: 7px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  /* TOP NAVBAR */
+  .topbar {
+    background: var(--g);
+    color: var(--w);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    box-shadow: 0 4px 16px rgba(24, 36, 28, 0.18);
+    position: sticky;
+    top: 0;
+    z-index: 500;
+  }
+
+  .brand-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-logo-wrap {
+    background: var(--w);
+    border-radius: 10px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+  }
+  .brand-logo-wrap img {
+    height: 38px;
+    width: auto;
+    display: block;
+  }
+  .brand-title h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+  }
+  .brand-title span {
+    display: block;
+    font-size: 11.5px;
+    color: var(--gt);
+    font-weight: 600;
+  }
+
+  .backup-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .backup-status {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(229, 238, 229, 0.3);
+    padding: 6px 11px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    color: var(--gt);
+    font-weight: 600;
+  }
+  .btn {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    transition: transform 0.08s ease, background 0.15s ease;
+  }
+  .btn:active:not(:disabled) { transform: scale(0.98); }
+  .btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  .btn-sage { background: var(--gt); color: var(--g); }
+  .btn-sage:hover:not(:disabled) { background: #ffffff; }
+  .btn-green { background: var(--gm); color: var(--w); }
+  .btn-green:hover:not(:disabled) { background: var(--g); }
+  .btn-dark { background: var(--g); color: var(--w); }
+  .btn-dark:hover:not(:disabled) { background: #18261d; }
+  .btn-done { background: var(--ok-bg); color: var(--ok-ink); border: 1.5px solid var(--ok-b); }
+  .btn-outline { background: var(--w); color: var(--g); border: 1.5px solid var(--b); }
+  .btn-outline:hover:not(:disabled) { background: var(--cr); }
+  .btn-danger { background: var(--due-bg); color: var(--due-ink); border: 1px solid var(--due-b); }
+  .btn-danger:hover:not(:disabled) { background: #fbd5d5; }
+  .btn-sm { padding: 5px 10px; font-size: 11.5px; border-radius: 6px; }
+
+  .undo-link {
+    background: none;
+    border: none;
+    color: var(--m);
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+  .undo-link:hover { color: var(--due-ink); }
+
+  /* MAIN LAYOUT */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px 20px 50px;
+  }
+
+  /* KPI SUMMARY CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-bottom: 4px solid var(--gm);
+    border-radius: 14px;
+    padding: 14px 18px;
+    box-shadow: 0 4px 14px rgba(38, 58, 45, 0.05);
+  }
+  .kpi-card.alert { border-bottom-color: var(--due-b); }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--m);
+    margin-bottom: 4px;
+  }
+  .kpi-val {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--g);
+    line-height: 1.1;
+  }
+  .kpi-card.alert .kpi-val { color: var(--due-ink); }
+  .kpi-sub {
+    font-size: 11.5px;
+    color: var(--m);
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* NAVIGATION TABS & ACTION BAR */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    background: var(--w);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1.5px solid var(--b);
+  }
+  .tab-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--m);
+    cursor: pointer;
+  }
+  .tab-btn.active {
+    background: var(--g);
+    color: var(--w);
+  }
+
+  .search-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .search-input, .filter-select {
+    padding: 9px 13px;
+    border: 1.5px solid var(--b);
+    border-radius: 9px;
+    font-size: 13px;
+    background: var(--w);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .search-input { min-width: 220px; }
+
+  /* SECTIONS */
+  .view-panel { display: none; }
+  .view-panel.active { display: block; }
+
+  .panel-card {
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(38, 58, 45, 0.06);
+    margin-bottom: 18px;
+  }
+  .panel-hd {
+    background: var(--cr);
+    border-bottom: 1.5px solid var(--b);
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .panel-hd h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--g);
+  }
+
+  /* MAP TOGGLE PILLS & CONTAINER */
+  .map-toggle-group {
+    display: inline-flex;
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-radius: 9px;
+    padding: 3px;
+    gap: 4px;
+  }
+  .map-toggle-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--m);
+    cursor: pointer;
+  }
+  .map-toggle-btn.active {
+    background: var(--g);
+    color: var(--w);
+  }
+
+  .map-tip-bar {
+    background: #F8FBF8;
+    border-bottom: 1px solid var(--b);
+    padding: 7px 18px;
+    font-size: 11.5px;
+    color: var(--m);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .map-layout {
+    display: grid;
+    grid-template-columns: 1fr 330px;
+    min-height: 550px;
+  }
+  #customerMap {
+    width: 100%;
+    height: 550px;
+    z-index: 1;
+  }
+  .map-sidebar {
+    border-left: 1.5px solid var(--b);
+    background: #FAFDFB;
+    display: flex;
+    flex-direction: column;
+    max-height: 550px;
+  }
+  .map-legend {
+    padding: 10px 14px;
+    background: var(--cr);
+    border-bottom: 1px solid var(--b);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(0,0,0,0.25);
+  }
+  .dot-due { background: #D9534F; }
+  .dot-active { background: #263A2D; }
+
+  .map-list {
+    overflow-y: auto;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+  .map-stop-item {
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-radius: 9px;
+    padding: 9px 11px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .map-stop-item:hover {
+    border-color: var(--gm);
+    background: var(--cr);
+  }
+  .map-stop-item.is-due {
+    border-left: 4px solid #D9534F;
+  }
+  .stop-num-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--g);
+    color: var(--w);
+    font-size: 11px;
+    font-weight: 900;
+    margin-right: 6px;
+    flex-shrink: 0;
+  }
+  .stop-num-badge.due {
+    background: #D9534F;
+  }
+
+  .ws-pin {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2.5px solid #ffffff;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+    cursor: grab;
+  }
+  .ws-pin span {
+    transform: rotate(45deg);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .ws-pin-order {
+    position: absolute;
+    top: -9px;
+    right: -9px;
+    transform: rotate(45deg);
+    background: #ffffff;
+    color: #18241C;
+    border: 1.5px solid #263A2D;
+    border-radius: 999px;
+    min-width: 17px;
+    height: 17px;
+    padding: 0 3px;
+    font-size: 10px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  }
+  .ws-pin.pin-active { background: #263A2D; }
+  .ws-pin.pin-due { background: #D9534F; }
+  .ws-pin.pin-paused { background: #7D8A82; }
+
+  @media (max-width: 860px) {
+    .map-layout { grid-template-columns: 1fr; }
+    .map-sidebar { border-left: none; border-top: 1.5px solid var(--b); max-height: 280px; }
+    #customerMap { height: 400px; }
+  }
+
+  /* TABLES */
+  .table-wrap {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    background: #F8FBF8;
+    text-align: left;
+    padding: 11px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--m);
+    border-bottom: 1.5px solid var(--b);
+    white-space: nowrap;
+  }
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #E6EDE7;
+    vertical-align: middle;
+  }
+  tr:hover td {
+    background: #FAFDFB;
+  }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 10.5px;
+    font-weight: 800;
+    white-space: nowrap;
+    margin: 1px 2px 1px 0;
+  }
+  .badge-due { background: var(--due-bg); color: var(--due-ink); border: 1px solid var(--due-b); }
+  .badge-soon { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-b); }
+  .badge-ok { background: var(--ok-bg); color: var(--ok-ink); border: 1px solid var(--ok-b); }
+  .badge-sage { background: var(--gt); color: var(--g); border: 1px solid var(--b); }
+
+  /* ROUTE CARDS */
+  .route-grid {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 14px;
+  }
+  .route-card {
+    border: 1.5px solid var(--b);
+    border-left: 6px solid var(--gm);
+    border-radius: 12px;
+    padding: 14px;
+    background: var(--w);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .route-card.due-today {
+    border-left-color: #D9534F;
+    background: linear-gradient(180deg, #FFF9F9 0%, #FFFFFF 100%);
+  }
+  .route-card.scooped-done {
+    border-left-color: #3B8754;
+    background: #F6FBF7;
+  }
+  .rc-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .rc-name {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--g);
+  }
+  .rc-addr {
+    font-size: 12px;
+    color: var(--m);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+  .rc-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    background: var(--cr);
+    padding: 9px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+  }
+  .rc-meta div strong { color: var(--g); }
+  .rc-addons-bar {
+    background: var(--gt);
+    border: 1px solid var(--b);
+    color: var(--g);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+  .rc-notes {
+    font-size: 11.5px;
+    background: #FFFDF7;
+    border: 1px dashed #D8C79E;
+    padding: 6px 9px;
+    border-radius: 7px;
+    color: #4D3E18;
+  }
+  .rc-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 32, 24, 0.58);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+    z-index: 1000;
+    overflow-y: auto;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--w);
+    border: 2px solid var(--g);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 780px;
+    max-height: 93vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  }
+  .modal-hd {
+    background: var(--g);
+    color: var(--w);
+    padding: 13px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  .modal-hd h3 { margin: 0; font-size: 17px; font-weight: 900; }
+  .modal-close {
+    background: transparent;
+    border: none;
+    color: var(--w);
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .modal-body {
+    padding: 16px 20px;
+  }
+  .form-section-title {
+    font-size: 11.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--gm);
+    border-bottom: 1.5px solid var(--b);
+    padding-bottom: 4px;
+    margin: 16px 0 10px;
+  }
+  .form-section-title:first-child { margin-top: 0; }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+    gap: 11px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .field.span-2 { grid-column: span 2; }
+  .field label {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .field input, .field select, .field textarea {
+    padding: 8px 10px;
+    border: 1.5px solid var(--b);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    background: #FAFDFB;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--gm);
+    background: var(--w);
+  }
+
+  /* SIMPLE ADD-ON TOGGLES */
+  .addon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 9px;
+    margin-top: 8px;
+  }
+  .addon-card {
+    background: var(--cr);
+    border: 1.5px solid var(--b);
+    border-radius: 10px;
+    padding: 9px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .addon-card.checked {
+    background: #EDF6EE;
+    border-color: var(--gm);
+  }
+  .addon-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 800;
+  }
+  .addon-top label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    flex: 1;
+  }
+  .addon-sub-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--m);
+    padding-top: 5px;
+    border-top: 1px dashed var(--b);
+  }
+  .addon-sub-row input {
+    width: 56px;
+    padding: 3px 5px;
+    border: 1.5px solid var(--b);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  /* ANNIVERSARY SUMMARY STRIP IN MODAL */
+  .anniv-preview {
+    margin-top: 12px;
+    background: var(--gt);
+    border: 1.5px solid var(--gm);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--ink);
+  }
+  .anniv-preview strong { color: var(--g); }
+
+  .modal-ft {
+    padding: 12px 20px;
+    background: var(--cr);
+    border-top: 1.5px solid var(--b);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+  }
+
+  /* TOAST NOTIFICATION */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--g);
+    color: var(--w);
+    padding: 11px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: all 0.2s ease;
+    z-index: 2000;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 680px) {
+    .field.span-2 { grid-column: span 1; }
+    .topbar { padding: 12px 14px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- FIREBASE AUTH LOGIN GATE -->
+  <div class="auth-gate" id="authGate">
+    <div class="auth-card">
+      <img src="https://i.imgur.com/JpwvJtk.png" alt="Wise Scoopers">
+      <h2>Wise Scoopers Cloud CRM</h2>
+      <p>Sign in with your Firebase Owner Account to sync routes &amp; billing across your PC, phone, and iPad.</p>
+      <div class="auth-error" id="authErrorBox"></div>
+      <form onsubmit="handleFirebaseLogin(event)">
+        <div class="auth-field">
+          <label>Owner Email</label>
+          <input type="email" id="loginEmail" required placeholder="austin@wisescoopers.com">
+        </div>
+        <div class="auth-field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="btn btn-dark" style="width:100%; justify-content:center; padding:11px; font-size:14px;">🔓 Unlock Cloud CRM</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOP HEADER & CLOUD / BACKUP CONTROLS -->
+  <header class="topbar">
+    <div class="brand-left">
+      <div class="brand-logo-wrap">
+        <img src="https://i.imgur.com/JpwvJtk.png" alt="Wise Scoopers">
+      </div>
+      <div class="brand-title">
+        <h1>Wise Scoopers CRM</h1>
+        <span>Live Cloud Sync — PC, Phone &amp; iPad</span>
+      </div>
+    </div>
+
+    <div class="backup-bar">
+      <div class="backup-status" id="cloudSyncStatus">☁️ Connecting to Cloud...</div>
+      <button class="btn btn-sage" onclick="downloadBackup(true)" title="Download a JSON backup file to your PC/device">💾 Download Backup</button>
+      <label class="btn btn-outline" style="cursor:pointer;" title="Upload a saved JSON backup file into your cloud database">
+        📂 Import Backup
+        <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="restoreBackup(event)">
+      </label>
+      <button class="btn btn-outline btn-sm" onclick="handleLogout()" title="Sign out">Sign Out</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- KPI DASHBOARD -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Active Clients</div>
+        <div class="kpi-val" id="kpiActiveClients">0</div>
+        <div class="kpi-sub" id="kpiTotalPets">0 dogs • 0 litter boxes</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Monthly Recurring Base</div>
+        <div class="kpi-val" id="kpiMonthlyRev">$0</div>
+        <div class="kpi-sub">Active monthly plans</div>
+      </div>
+
+      <div class="kpi-card alert">
+        <div class="kpi-label">Anniversary Billing Due</div>
+        <div class="kpi-val" id="kpiBillingDue">0</div>
+        <div class="kpi-sub" id="kpiBillingDueAmt">$0.00 ready to charge</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Scoops Due Today / Overdue</div>
+        <div class="kpi-val" id="kpiScoopsDue">0</div>
+        <div class="kpi-sub" id="kpiTodayDate">—</div>
+      </div>
+    </section>
+
+    <!-- TABS & SEARCH -->
+    <div class="nav-bar">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="billing" onclick="switchTab('billing')">💳 Anniversary Billing</button>
+        <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">🗓️ Scoop Schedule</button>
+        <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Customer Map</button>
+        <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 All Clients</button>
+        <button class="tab-btn" data-tab="referrals" onclick="switchTab('referrals')">🤝 Partner Referrals ($20)</button>
+      </div>
+
+      <div class="search-controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search name, city, dog, phone..." oninput="renderAll()">
+        <select id="cityFilter" class="filter-select" onchange="renderAll()">
+          <option value="">All Cities</option>
+          <option>Decatur</option>
+          <option>Alvord</option>
+          <option>Bridgeport</option>
+          <option>Bowie</option>
+          <option>Sunset</option>
+          <option>Rhome</option>
+          <option>Newark</option>
+          <option>Boyd</option>
+          <option>Chico</option>
+          <option>Aurora</option>
+          <option>New Fairview</option>
+          <option>Paradise</option>
+          <option>Runaway Bay</option>
+          <option>Lake Bridgeport</option>
+        </select>
+        <button class="btn btn-dark" onclick="openClientModal()">+ Add New Client</button>
+      </div>
+    </div>
+
+    <!-- TAB 1: ANNIVERSARY BILLING -->
+    <section id="tab-billing" class="view-panel active">
+      <div class="panel-card">
+        <div class="panel-hd">
+          <h2>💳 Monthly Anniversary Billing Tracker</h2>
+          <div style="font-size:12px; color:var(--m); font-weight:700;">
+            One-click protection enabled on <strong>"Mark Paid"</strong> so accidental double-clicks won't skip a month
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Billing Status</th>
+                <th>Start Date / Anniversary</th>
+                <th>Next Charge Date</th>
+                <th>Last Paid Date</th>
+                <th>Customer &amp; City</th>
+                <th>Service &amp; Add-Ons</th>
+                <th>Monthly Charge</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="billingTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: SCOOP SCHEDULE & ROUTE -->
+    <section id="tab-schedule" class="view-panel">
+      <div class="panel-card">
+        <div class="panel-hd">
+          <h2>🗓️ Yard Scoop Schedule &amp; Route Sheet</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <select id="routeFilter" class="filter-select" onchange="renderAll()">
+              <option value="all">All Active Yards</option>
+              <option value="due">Due Today or Overdue</option>
+              <option value="Weekly">Weekly Plans Only</option>
+              <option value="Twice Weekly">Twice Weekly Plans Only</option>
+              <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
+            </select>
+            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route Sheet</button>
+          </div>
+        </div>
+        <div class="route-grid" id="routeCardsContainer"></div>
+      </div>
+    </section>
+
+    <!-- TAB 3: INTERACTIVE CUSTOMER MAP & REAL ROAD ROUTE PLANNER -->
+    <section id="tab-map" class="view-panel">
+      <div class="panel-card">
+        <div class="panel-hd">
+          <h2>🗺️ Wise &amp; South Montague County Customer Map</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span id="mapGeocodeStatus" style="font-size:11.5px; color:var(--m); font-weight:700;"></span>
+            <div class="map-toggle-group">
+              <button type="button" class="map-toggle-btn active" id="mapBtnAll" onclick="setMapMode('active')">All Active Customers</button>
+              <button type="button" class="map-toggle-btn" id="mapBtnToday" onclick="setMapMode('due')">Today's Scoop Route</button>
+            </div>
+            <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Road Route: ON</button>
+            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print Route Sheet</button>
+            <button class="btn btn-green btn-sm" onclick="openFullGoogleMapsRoute()">🧭 Open in Google Maps</button>
+            <button class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh Pins</button>
+          </div>
+        </div>
+
+        <div class="map-tip-bar">
+          <span><strong>Live Road Routing:</strong> Stops are numbered <strong>#1, #2, #3...</strong> along actual roads. Switch to <em>Satellite View</em> (top-right of map) and <strong>drag any 💩 pin</strong> onto the exact house or gate—the updated GPS saves straight to the cloud!</span>
+        </div>
+
+        <div class="map-layout">
+          <div id="customerMap"></div>
+          <div class="map-sidebar">
+            <div class="map-legend">
+              <span class="legend-item"><span class="dot dot-due"></span> Due Today/Overdue</span>
+              <span class="legend-item"><span class="dot dot-active"></span> Active Yard</span>
+            </div>
+            <div class="map-list" id="mapSidebarList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: ALL CLIENTS DIRECTORY -->
+    <section id="tab-clients" class="view-panel">
+      <div class="panel-card">
+        <div class="panel-hd">
+          <h2>🐾 Complete Client Directory &amp; Yard Instructions</h2>
+          <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Address / City</th>
+                <th>Pets &amp; Treat Location</th>
+                <th>Gate &amp; Yard Notes</th>
+                <th>Start Date &amp; Next Scoop</th>
+                <th>Service &amp; Monthly Rate</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="clientsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: PARTNER REFERRALS -->
+    <section id="tab-referrals" class="view-panel">
+      <div class="panel-card">
+        <div class="panel-hd">
+          <h2>🤝 Partner Business &amp; Employee Referral Tracker ($20 Rewards)</h2>
+          <div style="font-size:12px; color:var(--m); font-weight:700;">
+            Tracks customers referred by local pet businesses &amp; $20 payout status
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Referred Customer</th>
+                <th>Referring Business / Employee</th>
+                <th>Partner Town</th>
+                <th>Start Date</th>
+                <th>$20 Reward Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="referralsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD / EDIT CLIENT MODAL -->
+  <div class="modal-backdrop" id="clientModalBackdrop">
+    <div class="modal">
+      <div class="modal-hd">
+        <h3 id="modalTitle">Add New Client</h3>
+        <button class="modal-close" onclick="closeClientModal()">&times;</button>
+      </div>
+      <form id="clientForm" onsubmit="saveClient(event)">
+        <input type="hidden" id="clientId">
+        <div class="modal-body">
+
+          <!-- 1. CONTACT & PROPERTY -->
+          <div class="form-section-title">1. Contact &amp; Property Details</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Customer Full Name *</label>
+              <input type="text" id="fName" required placeholder="e.g., Sarah Jenkins">
+            </div>
+            <div class="field">
+              <label>Phone Number *</label>
+              <input type="tel" id="fPhone" required placeholder="(940) 555-0192">
+            </div>
+            <div class="field">
+              <label>City *</label>
+              <select id="fCity">
+                <option>Decatur</option>
+                <option>Alvord</option>
+                <option>Bridgeport</option>
+                <option>Bowie</option>
+                <option>Sunset</option>
+                <option>Rhome</option>
+                <option>Newark</option>
+                <option>Boyd</option>
+                <option>Chico</option>
+                <option>Aurora</option>
+                <option>New Fairview</option>
+                <option>Paradise</option>
+                <option>Runaway Bay</option>
+                <option>Lake Bridgeport</option>
+              </select>
+            </div>
+            <div class="field span-2">
+              <label>Street Address *</label>
+              <input type="text" id="fAddress" required placeholder="e.g., 412 W Walnut St">
+            </div>
+            <div class="field">
+              <label>Account Status</label>
+              <select id="fStatus">
+                <option value="Active">Active</option>
+                <option value="One-Time">One-Time Job</option>
+                <option value="Paused">Paused</option>
+              </select>
+            </div>
+            <div class="field span-2">
+              <label>Exact GPS Coordinates (Optional — paste from Google Maps if rural)</label>
+              <input type="text" id="fGpsCoords" placeholder="e.g., 33.3587, -97.6939 (or drag 💩 pin on Map tab)">
+            </div>
+          </div>
+
+          <!-- 2. PETS, GATE & TREATS -->
+          <div class="form-section-title">2. Pets, Gate Safety &amp; Bagged Treat Protocol</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Number of Dogs</label>
+              <input type="number" id="fDogs" min="0" value="1">
+            </div>
+            <div class="field">
+              <label>Number of Litter Boxes</label>
+              <input type="number" id="fCats" min="0" value="0">
+            </div>
+            <div class="field">
+              <label>Bagged Treat Drop Location</label>
+              <select id="fTreatLoc">
+                <option value="Front Door">Front Door</option>
+                <option value="Back Door">Back Door</option>
+                <option value="By Gate">By Gate</option>
+                <option value="No Treats">No Treats</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Dog Names &amp; Temperament</label>
+              <input type="text" id="fDogNames" placeholder="e.g., Max & Bella (friendly)">
+            </div>
+            <div class="field span-2">
+              <label>Gate Code / Latch / Yard Instructions</label>
+              <input type="text" id="fGateNotes" placeholder="e.g., Left side wooden gate, code 4412, double-check bottom latch">
+            </div>
+          </div>
+
+          <!-- 3. START DATE (ANNIVERSARY), FREQUENCY & BILLING -->
+          <div class="form-section-title">3. Start Date (Anniversary), Schedule &amp; Billing</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Start Date (First Service / Anniversary) *</label>
+              <input type="date" id="fStartDate" required onchange="onStartDateOrFreqChange(true)">
+            </div>
+            <div class="field">
+              <label>Scoop Frequency *</label>
+              <select id="fFreq" onchange="onStartDateOrFreqChange(true)">
+                <option value="Weekly">Weekly (Every 7 Days)</option>
+                <option value="Twice Weekly">Twice Weekly (Tue / Sat)</option>
+                <option value="Bi-Weekly">Bi-Weekly (Every 14 Days)</option>
+                <option value="One-Time">One-Time Cleanup</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Primary Service Type</label>
+              <select id="fServiceType">
+                <option value="Dog Waste Removal">Dog Waste Removal</option>
+                <option value="Dog + Cat Bundle">Dog + Cat Bundle</option>
+                <option value="Cat Litter Box Cleaning">Cat Litter Box Cleaning</option>
+                <option value="Yard Fresh Only">Yard Fresh Only</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Next Scheduled Scoop Date *</label>
+              <input type="date" id="fNextScoop" required>
+            </div>
+            <div class="field">
+              <label>Next Anniversary Charge Date *</label>
+              <input type="date" id="fNextCharge" required>
+            </div>
+            <div class="field">
+              <label>Last Paid Date (Editable)</label>
+              <input type="date" id="fLastPaid">
+            </div>
+            <div class="field">
+              <label>Monthly Charge Amount ($)</label>
+              <input type="number" id="fNetPrice" step="0.01" value="78.00" required>
+            </div>
+            <div class="field">
+              <label>Payment Method</label>
+              <select id="fPayMethod">
+                <option>Card on File</option>
+                <option>Venmo / CashApp / Zelle</option>
+                <option>Cash / Check</option>
+                <option>Invoice Link</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="anniv-preview" id="annivPreviewText">
+            Select a Start Date to automatically calculate the monthly anniversary charge date and next scoop date.
+          </div>
+
+          <!-- 4. SIMPLE ADD-ON SERVICES -->
+          <div class="form-section-title">4. Add-On Services (Active on Account / Per-Visit)</div>
+          <div class="addon-grid">
+            <div class="addon-card" id="cardYardFresh">
+              <div class="addon-top">
+                <label><input type="checkbox" id="addYardFresh" onchange="refreshAddonStyles()"> 🌿 Yard Fresh Treatment</label>
+              </div>
+              <div class="addon-sub-row">
+                <span>Yard sections (Front=1, Back=1, Sides=1):</span>
+                <input type="number" id="yfSections" min="1" max="6" value="1">
+              </div>
+            </div>
+
+            <div class="addon-card" id="cardHaulAway">
+              <div class="addon-top">
+                <label><input type="checkbox" id="addHaulAway" onchange="refreshAddonStyles()"> 🚛 Waste Haul-Away</label>
+              </div>
+              <div class="addon-sub-row">
+                <span>Take waste off-site every visit</span>
+              </div>
+            </div>
+
+            <div class="addon-card" id="cardLitterSupply">
+              <div class="addon-top">
+                <label><input type="checkbox" id="addLitterSupply" onchange="refreshAddonStyles()"> 🪣 Clumping Litter Supply</label>
+              </div>
+              <div class="addon-sub-row">
+                <span>Boxes supplied:</span>
+                <input type="number" id="litterSupplyBoxes" min="1" max="10" value="1">
+              </div>
+            </div>
+
+            <div class="addon-card" id="cardDeepClean">
+              <div class="addon-top">
+                <label><input type="checkbox" id="addDeepClean" onchange="refreshAddonStyles()"> 🧼 Litter Box Deep Clean</label>
+              </div>
+              <div class="addon-sub-row">
+                <span>Boxes washed &amp; sanitized:</span>
+                <input type="number" id="deepCleanBoxes" min="1" max="10" value="1">
+              </div>
+            </div>
+
+            <div class="addon-card" id="cardExtraTime">
+              <div class="addon-top">
+                <label><input type="checkbox" id="addExtraTime" onchange="refreshAddonStyles()"> ⏱️ Extra Yard Time</label>
+              </div>
+              <div class="addon-sub-row">
+                <span>15-min blocks:</span>
+                <input type="number" id="extraTimeBlocks" min="1" max="16" value="1">
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. PARTNER REFERRAL TRACKING -->
+          <div class="form-section-title">5. Local Business Partner Referral ($20 Reward)</div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Referred By (Business / Employee)</label>
+              <input type="text" id="fRefBy" placeholder="e.g., Decatur Bark & Bath — Kayla">
+            </div>
+            <div class="field">
+              <label>Partner Town</label>
+              <input type="text" id="fRefLoc" placeholder="e.g., Decatur">
+            </div>
+            <div class="field">
+              <label>$20 Referral Payout Status</label>
+              <select id="fRefStatus">
+                <option value="N/A">Not a Partner Referral</option>
+                <option value="Pending">Pending ($20 Owed)</option>
+                <option value="Paid">Paid ($20 Sent)</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-ft">
+          <button type="button" class="btn btn-outline" onclick="closeClientModal()">Cancel</button>
+          <button type="submit" class="btn btn-dark">Save Client Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDMcXblxk_Yty4KqBVLcaLCfCWdJAZa804",
+    authDomain: "wise-scoopers-crm.firebaseapp.com",
+    projectId: "wise-scoopers-crm",
+    storageBucket: "wise-scoopers-crm.firebasestorage.app",
+    messagingSenderId: "932036851635",
+    appId: "1:932036851635:web:aec2d21d345cd6d5e37dc6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const CLIENTS_COL = collection(db, "wise_scoopers_clients");
+
+  let clients = [];
+  let unsubscribeSnapshot = null;
+
+  // AUTHENTICATION HANDLERS
+  window.handleFirebaseLogin = async function(event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    const errBox = document.getElementById('authErrorBox');
+    errBox.style.display = 'none';
+
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+    } catch (err) {
+      errBox.textContent = err.message || 'Login failed. Check your email and password.';
+      errBox.style.display = 'block';
+    }
+  };
+
+  window.handleLogout = async function() {
+    if (unsubscribeSnapshot) unsubscribeSnapshot();
+    await signOut(auth);
+  };
+
+  onAuthStateChanged(auth, (user) => {
+    const gate = document.getElementById('authGate');
+    const syncEl = document.getElementById('cloudSyncStatus');
+
+    if (user) {
+      gate.classList.add('hidden');
+      syncEl.textContent = '☁️ Live Cloud Sync Active';
+
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+      unsubscribeSnapshot = onSnapshot(CLIENTS_COL, (snapshot) => {
+        clients = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients)`;
+        renderAll();
+      }, (error) => {
+        syncEl.textContent = '⚠️ Cloud Sync Error';
+        console.error(error);
+      });
+    } else {
+      gate.classList.remove('hidden');
+      syncEl.textContent = '🔒 Locked';
+    }
+  });
+
+  // CLOUD SAVE / DELETE HELPERS
+  async function saveClientDoc(record) {
+    const cleanRecord = JSON.parse(JSON.stringify(record));
+    await setDoc(doc(db, "wise_scoopers_clients", cleanRecord.id), cleanRecord);
+  }
+
+  async function removeClientDoc(id) {
+    await deleteDoc(doc(db, "wise_scoopers_clients", id));
+  }
+
+  // DATE & SCHEDULE UTILITIES
+  const CITY_COORDS = {
+    'Decatur': [33.2343, -97.5861],
+    'Alvord': [33.3587, -97.6939],
+    'Bridgeport': [33.2101, -97.7548],
+    'Bowie': [33.5582, -97.8495],
+    'Sunset': [33.4526, -97.7675],
+    'Rhome': [33.0535, -97.4720],
+    'Newark': [32.9998, -97.4842],
+    'Boyd': [33.0793, -97.5653],
+    'Chico': [33.2954, -97.7984],
+    'Aurora': [33.0593, -97.5036],
+    'New Fairview': [33.0998, -97.4481],
+    'Paradise': [33.1501, -97.6867],
+    'Runaway Bay': [33.1737, -97.8756],
+    'Lake Bridgeport': [33.2040, -97.8400]
+  };
+
+  function todayStr(offsetDays = 0) {
+    const d = new Date();
+    d.setDate(d.getDate() + offsetDays);
+    return toISODate(d);
+  }
+
+  function toISODate(dt) {
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth() + 1).padStart(2, '0');
+    const dd = String(dt.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+
+  function parseISODate(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function formatDisplayDate(dateStr) {
+    if (!dateStr) return '—';
+    const dt = parseISODate(dateStr);
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function getOrdinal(n) {
+    const s = ['th', 'st', 'nd', 'rd'];
+    const v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
+  function diffDaysFromToday(dateStr) {
+    if (!dateStr) return 999;
+    const target = parseISODate(dateStr);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((target - today) / (1000 * 60 * 60 * 24));
+  }
+
+  function addOneAnniversaryMonth(fromDateStr, anchorDay) {
+    const dt = parseISODate(fromDateStr);
+    const targetYear = dt.getFullYear() + (dt.getMonth() === 11 ? 1 : 0);
+    const targetMonth = (dt.getMonth() + 1) % 12;
+    const daysInTargetMonth = new Date(targetYear, targetMonth + 1, 0).getDate();
+    const clampedDay = Math.min(anchorDay, daysInTargetMonth);
+    return toISODate(new Date(targetYear, targetMonth, clampedDay));
+  }
+
+  function computeNextScoopFromDate(baseDateStr, freq) {
+    if (!baseDateStr) return todayStr(0);
+    const dt = parseISODate(baseDateStr);
+    if (freq === 'Bi-Weekly') {
+      dt.setDate(dt.getDate() + 14);
+    } else if (freq === 'Twice Weekly') {
+      const dow = dt.getDay();
+      if (dow === 2) dt.setDate(dt.getDate() + 4);
+      else if (dow === 6) dt.setDate(dt.getDate() + 3);
+      else dt.setDate(dt.getDate() + 3);
+    } else {
+      dt.setDate(dt.getDate() + 7);
+    }
+    return toISODate(dt);
+  }
+
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  let leafletMap = null;
+  let markersLayer = null;
+  let routePolyline = null;
+  let routeOutlinePolyline = null;
+  let markerById = {};
+  let currentMapMode = 'active';
+  let bestRouteEnabled = true;
+  let lastOrderedRouteStops = [];
+
+  // BACKUP EXPORT & CLOUD IMPORT
+  window.downloadBackup = function(isManual) {
+    const today = todayStr(0);
+    const payload = {
+      business: 'Wise Scoopers',
+      exportedAt: new Date().toISOString(),
+      clientCount: clients.length,
+      clients: clients
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `wise-scoopers-backup-${today}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    if (isManual) showToast(`Downloaded backup: wise-scoopers-backup-${today}.json`);
+  };
+
+  window.restoreBackup = function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+      try {
+        const parsed = JSON.parse(e.target.result);
+        const restoredList = Array.isArray(parsed) ? parsed : parsed.clients;
+        if (!Array.isArray(restoredList)) throw new Error('Invalid format');
+        for (const item of restoredList) {
+          if (!item.id) item.id = 'ws-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+          await saveClientDoc(item);
+        }
+        showToast(`Imported ${restoredList.length} client profiles to Cloud!`);
+      } catch (err) {
+        alert('Could not read that backup file. Please select a valid Wise Scoopers JSON backup.');
+      }
+      event.target.value = '';
+    };
+    reader.readAsText(file);
+  };
+
+  window.switchTab = function(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tabName);
+    });
+    document.querySelectorAll('.view-panel').forEach(p => {
+      p.classList.toggle('active', p.id === `tab-${tabName}`);
+    });
+    if (tabName === 'map') {
+      setTimeout(() => {
+        initMapIfNeeded();
+        leafletMap.invalidateSize();
+        renderCustomerMap(false);
+      }, 60);
+    }
+  };
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3300);
+  }
+
+  function getFilteredClients() {
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const city = document.getElementById('cityFilter').value;
+    return clients.filter(c => {
+      if (city && c.city !== city) return false;
+      if (!q) return true;
+      const hay = `${c.name} ${c.city} ${c.address} ${c.phone} ${c.dogNames} ${c.refBy} ${c.serviceType} ${c.addonsSummary}`.toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  window.renderAll = function() {
+    renderKPIs();
+    renderBillingTable();
+    renderRouteCards();
+    renderClientsTable();
+    renderReferralsTable();
+    if (document.getElementById('tab-map').classList.contains('active')) {
+      renderCustomerMap(false);
+    }
+  };
+
+  // NEAREST-NEIGHBOR ROUTE OPTIMIZER + REAL OSRM DRIVING ROAD GEOMETRY
+  function haversineMiles(lat1, lon1, lat2, lon2) {
+    const R = 3958.8;
+    const toRad = deg => deg * (Math.PI / 180);
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a = Math.sin(dLat / 2) ** 2 +
+              Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 2 * R * Math.asin(Math.sqrt(a));
+  }
+
+  function optimizeStopSequence(stopsWithCoords) {
+    if (stopsWithCoords.length <= 2) return stopsWithCoords;
+    const remaining = [...stopsWithCoords];
+    remaining.sort((a, b) => b.lat - a.lat);
+
+    const ordered = [remaining.shift()];
+    while (remaining.length > 0) {
+      const last = ordered[ordered.length - 1];
+      let bestIdx = 0;
+      let bestDist = Infinity;
+      for (let i = 0; i < remaining.length; i++) {
+        const d = haversineMiles(last.lat, last.lng, remaining[i].lat, remaining[i].lng);
+        if (d < bestDist) {
+          bestDist = d;
+          bestIdx = i;
+        }
+      }
+      ordered.push(remaining.splice(bestIdx, 1)[0]);
+    }
+    return ordered;
+  }
+
+  async function fetchRealRoadRoute(orderedStops) {
+    if (orderedStops.length < 2) return null;
+    try {
+      const coordsParam = orderedStops.map(s => `${s.lng},${s.lat}`).join(';');
+      const url = `https://router.project-osrm.org/route/v1/driving/${coordsParam}?overview=full&geometries=geojson`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const res = await fetch(url, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data && data.routes && data.routes.length > 0) {
+        const route = data.routes[0];
+        const latLngs = route.geometry.coordinates.map(pt => [pt[1], pt[0]]);
+        const miles = route.distance / 1609.344;
+        const minutes = Math.round(route.duration / 60);
+        return { latLngs, miles, minutes };
+      }
+    } catch (e) {}
+    return null;
+  }
+
+  // PRINTABLE CLIPBOARD ROUTE SHEET
+  window.printRouteSheet = async function(source) {
+    let list = getFilteredClients().filter(c => c.status !== 'Paused');
+    let sheetSubtitle = 'All Active Yards — Optimized Route Order';
+
+    if (source === 'map') {
+      if (currentMapMode === 'due') {
+        list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
+        sheetSubtitle = "Today's Scoop Route (Due Today / Overdue) — Optimized Order";
+      }
+    } else {
+      const filter = document.getElementById('routeFilter').value;
+      if (filter === 'due') {
+        list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
+        sheetSubtitle = "Today's Scoop Route (Due Today / Overdue) — Optimized Order";
+      } else if (filter !== 'all') {
+        list = list.filter(c => c.freq === filter);
+        sheetSubtitle = `${filter} Yards — Optimized Route Order`;
+      }
+    }
+
+    if (!list.length) {
+      showToast('No yards match the current filter to print.');
+      return;
+    }
+
+    showToast('Preparing printable route sheet...');
+    const resolvedStops = [];
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i];
+      const [lat, lng, isApprox, isManual] = await geocodeAddress(c, false);
+      resolvedStops.push({ client: c, lat, lng, isApprox, isManual });
+    }
+
+    const orderedStops = optimizeStopSequence(resolvedStops);
+
+    let routeStatsText = `${orderedStops.length} Stop${orderedStops.length === 1 ? '' : 's'}`;
+    if (orderedStops.length >= 2) {
+      const roadData = await fetchRealRoadRoute(orderedStops);
+      if (roadData) {
+        routeStatsText += ` • ~${roadData.miles.toFixed(1)} miles (~${roadData.minutes} min drive)`;
+      }
+    }
+
+    const todayLabel = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
+    });
+
+    const stopsHtml = orderedStops.map((item, idx) => {
+      const c = item.client;
+      const stopNum = idx + 1;
+      const dogCount = Number(c.dogs || 0);
+      const catCount = Number(c.cats || 0);
+      const petLine = `${dogCount} Dog${dogCount === 1 ? '' : 's'}${catCount > 0 ? ` + ${catCount} Litter Box${catCount === 1 ? '' : 'es'}` : ''}${c.dogNames ? ` (${escapeHtml(c.dogNames)})` : ''}`;
+
+      return `
+        <div class="stop-card">
+          <div class="stop-left">
+            <div class="stop-num">#${stopNum}</div>
+            <div class="check-box"></div>
+          </div>
+          <div class="stop-main">
+            <div class="stop-header">
+              <div>
+                <div class="client-name">${escapeHtml(c.name)}</div>
+                <div class="client-addr">${escapeHtml(c.address)}, ${escapeHtml(c.city)}, TX</div>
+              </div>
+              <div class="client-phone">📞 ${escapeHtml(c.phone || 'No phone')}</div>
+            </div>
+            <div class="meta-grid">
+              <div><strong>Pets:</strong> ${petLine}</div>
+              <div><strong>Plan:</strong> ${escapeHtml(c.freq)} (${escapeHtml(c.serviceType || 'Dog Waste')})</div>
+              <div><strong>Bagged Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div>
+              <div><strong>Next Scoop Date:</strong> ${formatDisplayDate(c.nextScoop)}</div>
+            </div>
+            ${c.addonsSummary ? `<div class="addon-bar">Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}
+            ${c.gateNotes ? `<div class="gate-bar">Gate / Yard Notes: ${escapeHtml(c.gateNotes)}</div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const printWin = window.open('', '_blank', 'width=920,height=980');
+    if (!printWin) {
+      alert('Please allow pop-ups in your browser to open the printable route sheet.');
+      return;
+    }
+
+    printWin.document.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>Wise Scoopers — Printable Route Sheet (${todayStr(0)})</title>
+        <style>
+          @page { size: letter portrait; margin: 0.4in; }
+          * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          body { margin: 0; padding: 16px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; color: #18241C; background: #eef2ee; }
+          .no-print-bar { max-width: 8in; margin: 0 auto 14px; background: #263A2D; color: #ffffff; padding: 10px 16px; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; }
+          .no-print-bar button { background: #E5EEE5; color: #18241C; border: none; padding: 7px 14px; border-radius: 7px; font-weight: 800; cursor: pointer; }
+          .sheet { max-width: 8in; margin: 0 auto; background: #ffffff; border: 1.5px solid #263A2D; border-radius: 10px; padding: 18px 22px; }
+          .sheet-hd { display: flex; align-items: center; justify-content: space-between; border-bottom: 2.5px solid #263A2D; padding-bottom: 10px; margin-bottom: 14px; gap: 14px; }
+          .sheet-hd img { height: 52px; width: auto; }
+          .sheet-title h1 { margin: 0; font-size: 20px; font-weight: 900; color: #263A2D; }
+          .sheet-title p { margin: 3px 0 0; font-size: 12px; font-weight: 700; color: #467353; }
+          .sheet-stats { text-align: right; font-size: 12px; font-weight: 700; color: #18241C; }
+          .sheet-stats strong { display: block; font-size: 14px; color: #263A2D; }
+          .stop-card { display: flex; gap: 12px; border: 1.5px solid #C8D6C0; border-left: 6px solid #263A2D; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; page-break-inside: avoid; break-inside: avoid; }
+          .stop-left { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; min-width: 44px; padding-top: 2px; }
+          .stop-num { background: #263A2D; color: #ffffff; font-size: 15px; font-weight: 900; padding: 4px 8px; border-radius: 7px; text-align: center; width: 100%; }
+          .check-box { width: 22px; height: 22px; border: 2px solid #263A2D; border-radius: 4px; }
+          .stop-main { flex: 1; }
+          .stop-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+          .client-name { font-size: 15.5px; font-weight: 900; color: #18241C; }
+          .client-addr { font-size: 14px; font-weight: 800; color: #263A2D; margin-top: 1px; }
+          .client-phone { font-size: 12.5px; font-weight: 800; color: #467353; white-space: nowrap; }
+          .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; background: #F4F7F4; padding: 6px 9px; border-radius: 6px; font-size: 11.5px; }
+          .addon-bar { margin-top: 5px; background: #E5EEE5; padding: 4px 8px; border-radius: 5px; font-size: 11.5px; font-weight: 800; color: #263A2D; }
+          .gate-bar { margin-top: 5px; background: #FFF9EB; border: 1px solid #E6A83A; padding: 5px 8px; border-radius: 5px; font-size: 11.5px; font-weight: 700; color: #5C3800; }
+          @media print { body { background: #ffffff; padding: 0; } .no-print-bar { display: none !important; } .sheet { border: none; padding: 0; max-width: 100%; } }
+        </style>
+      </head>
+      <body>
+        <div class="no-print-bar">
+          <span><strong>Wise Scoopers Route Sheet:</strong> Ordered #1 to #${orderedStops.length} for shortest driving path.</span>
+          <button onclick="window.print()">🖨️ Print Route Sheet</button>
+        </div>
+        <div class="sheet">
+          <div class="sheet-hd">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img src="https://i.imgur.com/JpwvJtk.png" alt="Wise Scoopers">
+              <div class="sheet-title">
+                <h1>Wise Scoopers — Daily Route Sheet</h1>
+                <p>${escapeHtml(sheetSubtitle)}</p>
+              </div>
+            </div>
+            <div class="sheet-stats">
+              <strong>${todayLabel}</strong>
+              <span>${routeStatsText}</span>
+            </div>
+          </div>
+          ${stopsHtml}
+        </div>
+      </body>
+      </html>
+    `);
+    printWin.document.close();
+  };
+
+  // INTERACTIVE MAP
+  function initMapIfNeeded() {
+    if (leafletMap) return;
+    if (typeof L === 'undefined') {
+      document.getElementById('mapGeocodeStatus').textContent = 'Map library requires an internet connection.';
+      return;
+    }
+
+    leafletMap = L.map('customerMap').setView([33.275, -97.665], 10);
+
+    const streetLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: 'Tiles &copy; Esri' }
+    );
+
+    const satelliteLayer = L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: 'Tiles &copy; Esri' }
+    );
+
+    streetLayer.addTo(leafletMap);
+    L.control.layers({ 'Street Map': streetLayer, 'Satellite View': satelliteLayer }, null, { position: 'topright' }).addTo(leafletMap);
+
+    markersLayer = L.layerGroup().addTo(leafletMap);
+  }
+
+  window.setMapMode = function(mode) {
+    currentMapMode = mode;
+    document.getElementById('mapBtnAll').classList.toggle('active', mode === 'active');
+    document.getElementById('mapBtnToday').classList.toggle('active', mode === 'due');
+    renderCustomerMap(false);
+  };
+
+  window.toggleBestRouteLine = function() {
+    bestRouteEnabled = !bestRouteEnabled;
+    const btn = document.getElementById('btnBestRoute');
+    btn.textContent = bestRouteEnabled ? '⚡ Road Route: ON' : '⚡ Road Route: OFF';
+    btn.classList.toggle('btn-sage', bestRouteEnabled);
+    btn.classList.toggle('btn-outline', !bestRouteEnabled);
+    renderCustomerMap(false);
+  };
+
+  window.openFullGoogleMapsRoute = function() {
+    if (!lastOrderedRouteStops.length) {
+      showToast('No stops currently shown on the map to route.');
+      return;
+    }
+    const stops = lastOrderedRouteStops.map(item => {
+      if (item.isManual) return `${item.lat},${item.lng}`;
+      return `${item.client.address}, ${item.client.city}, TX`;
+    });
+    const destination = encodeURIComponent(stops[stops.length - 1]);
+    const waypoints = stops.slice(0, -1).map(s => encodeURIComponent(s)).join('|');
+    const url = waypoints
+      ? `https://www.google.com/maps/dir/?api=1&destination=${destination}&waypoints=${waypoints}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+    window.open(url, '_blank', 'noopener');
+  };
+
+  function geocodeViaCensus(street, city) {
+    return new Promise((resolve) => {
+      const callbackName = 'wsGeoCb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+      const script = document.createElement('script');
+      const timer = setTimeout(() => { cleanup(); resolve(null); }, 4500);
+
+      function cleanup() {
+        clearTimeout(timer);
+        delete window[callbackName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+      }
+
+      window[callbackName] = function(data) {
+        cleanup();
+        try {
+          const matches = data && data.result && data.result.addressMatches;
+          if (matches && matches.length > 0) {
+            const coords = matches[0].coordinates;
+            resolve([parseFloat(coords.y), parseFloat(coords.x)]);
+            return;
+          }
+        } catch (e) {}
+        resolve(null);
+      };
+
+      const url = `https://geocoding.geo.census.gov/geocoder/locations/address?street=${encodeURIComponent(street)}&city=${encodeURIComponent(city)}&state=TX&benchmark=Public_AR_Current&format=jsonp&callback=${callbackName}`;
+      script.src = url;
+      script.onerror = () => { cleanup(); resolve(null); };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function geocodeAddress(client, forceRefresh) {
+    if (!forceRefresh && client.geo && client.geo.manual && client.geo.lat && client.geo.lng) {
+      return [client.geo.lat, client.geo.lng, false, true];
+    }
+
+    const fullQuery = `${client.address}, ${client.city}, TX`;
+    if (!forceRefresh && client.geo && client.geo.query === fullQuery && client.geo.lat && client.geo.lng) {
+      return [client.geo.lat, client.geo.lng, !!client.geo.approx, false];
+    }
+
+    const exactCoords = await geocodeViaCensus(client.address, client.city);
+    if (exactCoords) {
+      client.geo = { lat: exactCoords[0], lng: exactCoords[1], query: fullQuery, approx: false, manual: false };
+      await saveClientDoc(client);
+      return [exactCoords[0], exactCoords[1], false, false];
+    }
+
+    const base = CITY_COORDS[client.city] || [33.2343, -97.5861];
+    const hash = [...client.id].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+    const lat = base[0] + ((hash % 15) - 7) * 0.0012;
+    const lng = base[1] + (((hash * 7) % 15) - 7) * 0.0012;
+    client.geo = { lat, lng, query: fullQuery, approx: true, manual: false };
+    await saveClientDoc(client);
+    return [lat, lng, true, false];
+  }
+
+  window.renderCustomerMap = async function(forceRefresh) {
+    initMapIfNeeded();
+    if (!leafletMap || !markersLayer) return;
+
+    markersLayer.clearLayers();
+    if (routePolyline) { leafletMap.removeLayer(routePolyline); routePolyline = null; }
+    if (routeOutlinePolyline) { leafletMap.removeLayer(routeOutlinePolyline); routeOutlinePolyline = null; }
+    markerById = {};
+    lastOrderedRouteStops = [];
+
+    const sidebar = document.getElementById('mapSidebarList');
+    const statusEl = document.getElementById('mapGeocodeStatus');
+
+    let list = getFilteredClients().filter(c => c.status !== 'Paused');
+    if (currentMapMode === 'due') {
+      list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
+    }
+
+    if (!list.length) {
+      sidebar.innerHTML = `<div style="padding:14px; font-size:12px; color:var(--m); font-weight:600;">${currentMapMode === 'due' ? 'No yards due for scooping today!' : 'No active yards to display.'}</div>`;
+      statusEl.textContent = '0 yards shown';
+      return;
+    }
+
+    statusEl.textContent = `Pinning ${list.length} yard${list.length === 1 ? '' : 's'}...`;
+    const resolvedStops = [];
+
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i];
+      const [lat, lng, isApprox, isManual] = await geocodeAddress(c, forceRefresh);
+      resolvedStops.push({ client: c, lat, lng, isApprox, isManual });
+    }
+
+    const orderedStops = bestRouteEnabled ? optimizeStopSequence(resolvedStops) : resolvedStops;
+    lastOrderedRouteStops = orderedStops;
+
+    const bounds = [];
+    const fallbackLatLngs = [];
+    const sidebarHtml = [];
+    let straightMiles = 0;
+
+    for (let i = 0; i < orderedStops.length; i++) {
+      const item = orderedStops[i];
+      const c = item.client;
+      const stopNumber = i + 1;
+
+      if (i > 0) {
+        straightMiles += haversineMiles(orderedStops[i - 1].lat, orderedStops[i - 1].lng, item.lat, item.lng);
+      }
+
+      const days = diffDaysFromToday(c.nextScoop);
+      const isDue = days <= 0;
+      const pinClass = isDue ? 'pin-due' : 'pin-active';
+
+      const orderBadgeHtml = bestRouteEnabled ? `<div class="ws-pin-order">${stopNumber}</div>` : '';
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="ws-pin ${pinClass}"><span>💩</span>${orderBadgeHtml}</div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -30]
+      });
+
+      const destParam = item.isManual ? `${item.lat},${item.lng}` : `${c.address}, ${c.city}, TX`;
+      const mapsDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destParam)}`;
+      const pinTag = item.isManual ? '<em>(Exact custom pin)</em>' : item.isApprox ? '<em>(Town pin — drag to exact house)</em>' : '';
+
+      const popupHtml = `
+        <div style="min-width:215px; font-family:inherit;">
+          <div style="font-weight:900; font-size:14px; color:#263A2D;">${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</div>
+          <div style="font-size:12px; color:#536559; margin-bottom:5px;">${escapeHtml(c.address)}, ${escapeHtml(c.city)} ${pinTag}</div>
+          <div style="font-size:11.5px; background:#F4F7F4; padding:6px 8px; border-radius:6px; margin-bottom:6px; line-height:1.4;">
+            <strong>Schedule:</strong> ${escapeHtml(c.freq)}<br>
+            <strong>Next Scoop:</strong> ${formatDisplayDate(c.nextScoop)}<br>
+            <strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}<br>
+            ${c.addonsSummary ? `<strong>Add-Ons:</strong> ${escapeHtml(c.addonsSummary)}` : ''}
+          </div>
+          ${c.gateNotes ? `<div style="font-size:11px; color:#7A4B00; margin-bottom:6px;"><strong>Gate:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
+          <a href="${mapsDirUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#263A2D; color:#fff; text-decoration:none; font-size:11.5px; font-weight:800; padding:5px 10px; border-radius:6px;">🧭 Open in Google Maps</a>
+        </div>
+      `;
+
+      const marker = L.marker([item.lat, item.lng], { icon, draggable: true }).addTo(markersLayer).bindPopup(popupHtml);
+
+      marker.on('dragend', async function(e) {
+        const pos = e.target.getLatLng();
+        c.geo = {
+          lat: Number(pos.lat.toFixed(6)),
+          lng: Number(pos.lng.toFixed(6)),
+          query: `${c.address}, ${c.city}, TX`,
+          approx: false,
+          manual: true
+        };
+        await saveClientDoc(c);
+        showToast(`Saved exact GPS pin to Cloud for ${c.name}!`);
+      });
+
+      markerById[c.id] = marker;
+      bounds.push([item.lat, item.lng]);
+      fallbackLatLngs.push([item.lat, item.lng]);
+
+      sidebarHtml.push(`
+        <div class="map-stop-item ${isDue ? 'is-due' : ''}" onclick="focusClientPin('${c.id}')">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+            <div style="display:flex; align-items:center;">
+              ${bestRouteEnabled ? `<span class="stop-num-badge ${isDue ? 'due' : ''}">${stopNumber}</span>` : ''}
+              <strong style="font-size:13px; color:var(--g);">${escapeHtml(c.name)}</strong>
+            </div>
+            <span class="badge ${isDue ? 'badge-due' : 'badge-sage'}">${isDue ? 'Due' : escapeHtml(c.city)}</span>
+          </div>
+          <div style="font-size:11.5px; color:var(--m); margin-top:2px;">${escapeHtml(c.address)}, ${escapeHtml(c.city)}</div>
+          <div style="font-size:11px; color:var(--ink); margin-top:3px; font-weight:600;">
+            ${escapeHtml(c.freq)} • Next: ${formatDisplayDate(c.nextScoop)}
+          </div>
+        </div>
+      `);
+    }
+
+    sidebar.innerHTML = sidebarHtml.join('');
+
+    if (bounds.length === 1) {
+      leafletMap.setView(bounds[0], 15);
+    } else if (bounds.length > 1) {
+      leafletMap.fitBounds(bounds, { padding: [36, 36] });
+    }
+
+    if (bestRouteEnabled && orderedStops.length >= 2) {
+      statusEl.textContent = `Calculating road route for ${orderedStops.length} stops...`;
+      const roadData = await fetchRealRoadRoute(orderedStops);
+
+      if (roadData && roadData.latLngs.length > 1) {
+        routeOutlinePolyline = L.polyline(roadData.latLngs, { color: '#ffffff', weight: 7, opacity: 0.9 }).addTo(leafletMap);
+        routePolyline = L.polyline(roadData.latLngs, { color: '#263A2D', weight: 4.5, opacity: 0.92 }).addTo(leafletMap);
+        statusEl.textContent = `${orderedStops.length} stops • ${roadData.miles.toFixed(1)} mi (~${roadData.minutes} min drive)`;
+      } else {
+        routePolyline = L.polyline(fallbackLatLngs, { color: '#263A2D', weight: 3.5, opacity: 0.78, dashArray: '8, 7' }).addTo(leafletMap);
+        statusEl.textContent = `${orderedStops.length} yards • ~${straightMiles.toFixed(1)} mi`;
+      }
+    } else {
+      statusEl.textContent = `${orderedStops.length} yard${orderedStops.length === 1 ? '' : 's'} shown`;
+    }
+  };
+
+  window.focusClientPin = function(id) {
+    const marker = markerById[id];
+    if (!marker || !leafletMap) return;
+    leafletMap.setView(marker.getLatLng(), 17, { animate: true });
+    marker.openPopup();
+  };
+
+  function renderKPIs() {
+    const active = clients.filter(c => c.status === 'Active');
+    const totalDogs = active.reduce((sum, c) => sum + Number(c.dogs || 0), 0);
+    const totalCats = active.reduce((sum, c) => sum + Number(c.cats || 0), 0);
+    const estMonthly = active.reduce((sum, c) => sum + Number(c.netPrice || 0), 0);
+
+    const billingDueList = active.filter(c => diffDaysFromToday(c.nextCharge) <= 0);
+    const billingDueAmt = billingDueList.reduce((sum, c) => sum + Number(c.netPrice || 0), 0);
+    const scoopsDueCount = active.filter(c => diffDaysFromToday(c.nextScoop) <= 0).length;
+
+    document.getElementById('kpiActiveClients').textContent = active.length;
+    document.getElementById('kpiTotalPets').textContent = `${totalDogs} dog${totalDogs === 1 ? '' : 's'} • ${totalCats} litter box${totalCats === 1 ? '' : 'es'}`;
+    document.getElementById('kpiMonthlyRev').textContent = `$${estMonthly.toFixed(2)}`;
+    document.getElementById('kpiBillingDue').textContent = billingDueList.length;
+    document.getElementById('kpiBillingDueAmt').textContent = `$${billingDueAmt.toFixed(2)} ready to charge`;
+    document.getElementById('kpiScoopsDue').textContent = scoopsDueCount;
+    document.getElementById('kpiTodayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+  }
+
+  function renderBillingTable() {
+    const tbody = document.getElementById('billingTableBody');
+    const list = getFilteredClients().sort((a, b) => (a.nextCharge || '9999').localeCompare(b.nextCharge || '9999'));
+    const today = todayStr(0);
+
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:28px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add New Client"</strong> or <strong>"📂 Import Backup"</strong>!</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(c => {
+      const days = diffDaysFromToday(c.nextCharge);
+      let badge = `<span class="badge badge-ok">In ${days} days</span>`;
+      if (c.status === 'Paused') badge = `<span class="badge badge-sage">Paused</span>`;
+      else if (c.status === 'One-Time') badge = `<span class="badge badge-soon">One-Time</span>`;
+      else if (days < 0) badge = `<span class="badge badge-due">Overdue (${Math.abs(days)}d)</span>`;
+      else if (days === 0) badge = `<span class="badge badge-due">Due Today</span>`;
+      else if (days <= 4) badge = `<span class="badge badge-soon">Due in ${days}d</span>`;
+
+      const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
+      const annivLabel = startDay ? `Bills on the <strong>${getOrdinal(startDay)}</strong>` : 'Monthly';
+      const paidToday = c.paidActionDate === today;
+
+      const payBtnHtml = paidToday
+        ? `<button class="btn btn-done btn-sm" disabled>✓ Paid Today</button>
+           <button class="undo-link" onclick="undoMarkPaid('${c.id}')" title="Undo accidental Mark Paid">Undo</button>`
+        : `<button class="btn btn-green btn-sm" onclick="markPaid('${c.id}')">✓ Mark Paid</button>`;
+
+      return `
+        <tr>
+          <td>${badge}</td>
+          <td><strong>${formatDisplayDate(c.startDate)}</strong><br><span style="font-size:11px; color:var(--gm);">${annivLabel}</span></td>
+          <td><strong>${formatDisplayDate(c.nextCharge)}</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.payMethod)}</span></td>
+          <td>
+            <input type="date" value="${c.lastPaid || ''}" onchange="updateLastPaidInline('${c.id}', this.value)"
+              style="padding:4px 7px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; font-family:inherit; background:#FAFDFB;">
+          </td>
+          <td><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span></td>
+          <td><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
+          <td><strong style="font-size:15.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}</strong></td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+              ${payBtnHtml}
+              <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderRouteCards() {
+    const container = document.getElementById('routeCardsContainer');
+    const filter = document.getElementById('routeFilter').value;
+    const today = todayStr(0);
+    let list = getFilteredClients().filter(c => c.status !== 'Paused');
+
+    if (filter === 'due') {
+      list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
+    } else if (filter !== 'all') {
+      list = list.filter(c => c.freq === filter);
+    }
+
+    list.sort((a, b) => (a.nextScoop || '9999').localeCompare(b.nextScoop || '9999'));
+
+    if (!list.length) {
+      container.innerHTML = `<div style="padding:24px; color:var(--m); font-weight:600;">No scheduled scoops match this filter.</div>`;
+      return;
+    }
+
+    container.innerHTML = list.map(c => {
+      const days = diffDaysFromToday(c.nextScoop);
+      const isDue = days <= 0;
+      const isFirstDay = c.startDate && c.startDate === c.nextScoop;
+      const scoopedToday = c.scoopedActionDate === today;
+
+      let statusBadge = `<span class="badge badge-ok">Next: ${formatDisplayDate(c.nextScoop)}</span>`;
+      if (scoopedToday) statusBadge = `<span class="badge badge-ok">✓ Scooped • Next: ${formatDisplayDate(c.nextScoop)}</span>`;
+      else if (isFirstDay && isDue) statusBadge = `<span class="badge badge-due">⭐ First Scoop Today!</span>`;
+      else if (days < 0) statusBadge = `<span class="badge badge-due">Overdue (${formatDisplayDate(c.nextScoop)})</span>`;
+      else if (days === 0) statusBadge = `<span class="badge badge-due">Due Today</span>`;
+      else if (days === 1) statusBadge = `<span class="badge badge-soon">Tomorrow (${formatDisplayDate(c.nextScoop)})</span>`;
+
+      const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
+      const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : `${c.address}, ${c.city}, TX`;
+      const mapsDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destParam)}`;
+
+      const scoopBtnHtml = scoopedToday
+        ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button>
+           <button class="undo-link" onclick="undoCompleteScoop('${c.id}')" title="Undo accidental Complete Scoop">Undo</button>`
+        : `<button class="btn btn-dark btn-sm" onclick="completeScoop('${c.id}')">✓ Complete Scoop</button>`;
+
+      return `
+        <div class="route-card ${scoopedToday ? 'scooped-done' : isDue ? 'due-today' : ''}">
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <div class="rc-top">
+              <div>
+                <div class="rc-name">${escapeHtml(c.name)}</div>
+                <div class="rc-addr">${escapeHtml(c.address)}, ${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</div>
+              </div>
+              ${statusBadge}
+            </div>
+            <div class="rc-meta">
+              <div><strong>Plan:</strong> ${escapeHtml(c.freq)}</div>
+              <div><strong>Start / Anniv:</strong> ${formatDisplayDate(c.startDate)}${startDay ? ` (${getOrdinal(startDay)})` : ''}</div>
+              <div><strong>Pets:</strong> ${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div>
+              <div><strong>Treats At:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div>
+            </div>
+            ${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}
+            ${c.gateNotes ? `<div class="rc-notes"><strong>Gate / Yard:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
+          </div>
+
+          <div class="rc-actions">
+            ${scoopBtnHtml}
+            <button class="btn btn-sage btn-sm" onclick="copyGateText('${c.id}')">📋 Copy Gate Text</button>
+            <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">🧭 Google Maps</a>
+            <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderClientsTable() {
+    const tbody = document.getElementById('clientsTableBody');
+    const list = getFilteredClients().sort((a, b) => a.name.localeCompare(b.name));
+
+    if (!list.length) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:28px; color:var(--m); font-weight:600;">No clients added yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = list.map(c => {
+      return `
+        <tr>
+          <td><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}</span></td>
+          <td>${escapeHtml(c.address)}<br><strong>${escapeHtml(c.city)}</strong></td>
+          <td>${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
+          <td style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
+          <td><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
+          <td><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
+          <td>
+            <div style="display:flex; gap:6px;">
+              <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  function renderReferralsTable() {
+    const tbody = document.getElementById('referralsTableBody');
+    const refs = getFilteredClients().filter(c => (c.refBy && c.refBy.trim() !== '') || c.refStatus !== 'N/A');
+
+    if (!refs.length) {
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No partner referrals logged yet.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = refs.map(c => {
+      const statusBadge = c.refStatus === 'Paid'
+        ? `<span class="badge badge-ok">✓ Paid ($20)</span>`
+        : `<span class="badge badge-soon">Pending ($20 Owed)</span>`;
+
+      return `
+        <tr>
+          <td><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.freq)}</span></td>
+          <td><strong>${escapeHtml(c.refBy || '—')}</strong></td>
+          <td>${escapeHtml(c.refLoc || c.city)}</td>
+          <td>${formatDisplayDate(c.startDate)}</td>
+          <td>${statusBadge}</td>
+          <td>
+            ${c.refStatus !== 'Paid'
+              ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${c.id}')">💵 Mark $20 Paid</button>`
+              : `<button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">View</button>`}
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // CLOUD WORKFLOW ACTIONS WITH ONCE-PER-DAY LOCK + UNDO
+  window.updateLastPaidInline = async function(id, newDate) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    c.lastPaid = newDate;
+    await saveClientDoc(c);
+    showToast(`Updated Last Paid date for ${c.name} to ${formatDisplayDate(newDate)}`);
+  };
+
+  window.markPaid = async function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    const today = todayStr(0);
+    if (c.paidActionDate === today) return;
+
+    c.prevBillingSnapshot = { nextCharge: c.nextCharge, lastPaid: c.lastPaid, status: c.status };
+    c.lastPaid = today;
+    c.paidActionDate = today;
+
+    if (c.freq === 'One-Time') {
+      c.status = 'Paused';
+    } else {
+      const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate();
+      c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay);
+    }
+
+    await saveClientDoc(c);
+    showToast(`Marked ${c.name} PAID ($${Number(c.netPrice).toFixed(2)}). Next charge: ${formatDisplayDate(c.nextCharge)}`);
+  };
+
+  window.undoMarkPaid = async function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c || !c.prevBillingSnapshot) return;
+
+    c.nextCharge = c.prevBillingSnapshot.nextCharge;
+    c.lastPaid = c.prevBillingSnapshot.lastPaid;
+    c.status = c.prevBillingSnapshot.status;
+    delete c.paidActionDate;
+    delete c.prevBillingSnapshot;
+
+    await saveClientDoc(c);
+    showToast(`Undid Mark Paid for ${c.name}.`);
+  };
+
+  window.completeScoop = async function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    const today = todayStr(0);
+    if (c.scoopedActionDate === today) return;
+
+    c.prevScoopSnapshot = { nextScoop: c.nextScoop, status: c.status };
+    c.scoopedActionDate = today;
+
+    if (c.freq === 'One-Time') {
+      c.status = 'Paused';
+      await saveClientDoc(c);
+      showToast(`One-time job completed for ${c.name}!`);
+      return;
+    }
+
+    c.nextScoop = computeNextScoopFromDate(c.nextScoop || today, c.freq);
+    await saveClientDoc(c);
+    showToast(`Scoop logged for ${c.name}! Next scoop: ${formatDisplayDate(c.nextScoop)}`);
+  };
+
+  window.undoCompleteScoop = async function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c || !c.prevScoopSnapshot) return;
+
+    c.nextScoop = c.prevScoopSnapshot.nextScoop;
+    c.status = c.prevScoopSnapshot.status;
+    delete c.scoopedActionDate;
+    delete c.prevScoopSnapshot;
+
+    await saveClientDoc(c);
+    showToast(`Undid Complete Scoop for ${c.name}.`);
+  };
+
+  window.copyGateText = function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    const firstName = c.name.split(' ')[0];
+    const treatSentence = c.treatLoc && c.treatLoc !== 'No Treats'
+      ? ` Bagged treats were left at your ${c.treatLoc.toLowerCase()}.`
+      : '';
+    const msg = `Hi ${firstName}! Austin with Wise Scoopers just finished servicing your yard. Your gate is closed & locked securely behind me.${treatSentence} Have a great rest of your day!`;
+
+    navigator.clipboard.writeText(msg).then(() => {
+      showToast(`Gate & treat confirmation text copied for ${c.name}!`);
+    }).catch(() => {
+      prompt('Copy this text update:', msg);
+    });
+  };
+
+  window.markReferralPaid = async function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    c.refStatus = 'Paid';
+    await saveClientDoc(c);
+    showToast(`Marked $20 referral payout PAID for ${c.refBy}!`);
+  };
+
+  window.deleteClient = async function(id) {
+    const c = clients.find(x => x.id === id);
+    if (!c) return;
+    if (!confirm(`Remove ${c.name} from your Cloud CRM?`)) return;
+    await removeClientDoc(id);
+    showToast(`Removed ${c.name}.`);
+  };
+
+  // MODAL HANDLERS
+  window.onStartDateOrFreqChange = function(autoSetDates) {
+    const startVal = document.getElementById('fStartDate').value;
+    const freq = document.getElementById('fFreq').value;
+    if (!startVal) return;
+
+    const startDt = parseISODate(startVal);
+    const annivDay = startDt.getDate();
+
+    if (autoSetDates) {
+      document.getElementById('fNextScoop').value = startVal;
+      if (freq === 'One-Time') {
+        document.getElementById('fNextCharge').value = startVal;
+        document.getElementById('fStatus').value = 'One-Time';
+      } else {
+        document.getElementById('fNextCharge').value = addOneAnniversaryMonth(startVal, annivDay);
+        if (document.getElementById('fStatus').value === 'One-Time') {
+          document.getElementById('fStatus').value = 'Active';
+        }
+      }
+    }
+
+    const followingScoop = computeNextScoopFromDate(startVal, freq);
+    const nextChargeVal = document.getElementById('fNextCharge').value;
+    document.getElementById('annivPreviewText').innerHTML = freq === 'One-Time'
+      ? `<strong>One-Time Service:</strong> Scheduled for <strong>${formatDisplayDate(startVal)}</strong>.`
+      : `<strong>Anniversary Schedule:</strong> First scoop on <strong>${formatDisplayDate(startVal)}</strong> → following scoop on <strong>${formatDisplayDate(followingScoop)}</strong> (${freq}). Monthly anniversary billing falls on the <strong>${getOrdinal(annivDay)}</strong> of every month (Next charge: <strong>${formatDisplayDate(nextChargeVal)}</strong>).`;
+  };
+
+  window.refreshAddonStyles = function() {
+    document.getElementById('cardYardFresh').classList.toggle('checked', document.getElementById('addYardFresh').checked);
+    document.getElementById('cardHaulAway').classList.toggle('checked', document.getElementById('addHaulAway').checked);
+    document.getElementById('cardLitterSupply').classList.toggle('checked', document.getElementById('addLitterSupply').checked);
+    document.getElementById('cardDeepClean').classList.toggle('checked', document.getElementById('addDeepClean').checked);
+    document.getElementById('cardExtraTime').classList.toggle('checked', document.getElementById('addExtraTime').checked);
+  };
+
+  function parseManualCoords(rawStr) {
+    if (!rawStr) return null;
+    const parts = rawStr.split(',').map(s => parseFloat(s.trim()));
+    if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+      return { lat: parts[0], lng: parts[1] };
+    }
+    return null;
+  }
+
+  window.openClientModal = function(id = null) {
+    const form = document.getElementById('clientForm');
+    form.reset();
+    document.getElementById('clientId').value = id || '';
+
+    if (id) {
+      const c = clients.find(x => x.id === id);
+      if (!c) return;
+      document.getElementById('modalTitle').textContent = `Edit Client — ${c.name}`;
+      document.getElementById('fName').value = c.name;
+      document.getElementById('fPhone').value = c.phone;
+      document.getElementById('fCity').value = c.city;
+      document.getElementById('fAddress').value = c.address;
+      document.getElementById('fStatus').value = c.status;
+      document.getElementById('fGpsCoords').value = (c.geo && c.geo.manual) ? `${c.geo.lat}, ${c.geo.lng}` : '';
+      document.getElementById('fDogs').value = c.dogs;
+      document.getElementById('fCats').value = c.cats;
+      document.getElementById('fTreatLoc').value = c.treatLoc || 'Front Door';
+      document.getElementById('fDogNames').value = c.dogNames || '';
+      document.getElementById('fGateNotes').value = c.gateNotes || '';
+
+      document.getElementById('fStartDate').value = c.startDate || todayStr(0);
+      document.getElementById('fFreq').value = c.freq || 'Weekly';
+      document.getElementById('fServiceType').value = c.serviceType || 'Dog Waste Removal';
+      document.getElementById('fNextScoop').value = c.nextScoop || c.startDate || todayStr(0);
+      document.getElementById('fNextCharge').value = c.nextCharge || todayStr(0);
+      document.getElementById('fLastPaid').value = c.lastPaid || '';
+      document.getElementById('fNetPrice').value = Number(c.netPrice || 0).toFixed(2);
+      document.getElementById('fPayMethod').value = c.payMethod || 'Card on File';
+
+      const a = c.addons || {};
+      document.getElementById('addYardFresh').checked = !!a.yardFresh;
+      document.getElementById('yfSections').value = a.yfSections || 1;
+      document.getElementById('addHaulAway').checked = !!a.haulAway;
+      document.getElementById('addLitterSupply').checked = !!a.litterSupply;
+      document.getElementById('litterSupplyBoxes').value = a.litterSupplyBoxes || 1;
+      document.getElementById('addDeepClean').checked = !!a.deepClean;
+      document.getElementById('deepCleanBoxes').value = a.deepCleanBoxes || 1;
+      document.getElementById('addExtraTime').checked = !!a.extraTime;
+      document.getElementById('extraTimeBlocks').value = a.extraTimeBlocks || 1;
+
+      document.getElementById('fRefBy').value = c.refBy || '';
+      document.getElementById('fRefLoc').value = c.refLoc || '';
+      document.getElementById('fRefStatus').value = c.refStatus || 'N/A';
+
+      onStartDateOrFreqChange(false);
+    } else {
+      document.getElementById('modalTitle').textContent = 'Add New Client';
+      const today = todayStr(0);
+      document.getElementById('fStartDate').value = today;
+      document.getElementById('fLastPaid').value = today;
+      onStartDateOrFreqChange(true);
+    }
+
+    refreshAddonStyles();
+    document.getElementById('clientModalBackdrop').classList.add('open');
+  };
+
+  window.closeClientModal = function() {
+    document.getElementById('clientModalBackdrop').classList.remove('open');
+  };
+
+  window.saveClient = async function(event) {
+    event.preventDefault();
+    const existingId = document.getElementById('clientId').value;
+    const existingObj = existingId ? clients.find(x => x.id === existingId) : null;
+
+    const addYF = document.getElementById('addYardFresh').checked;
+    const yfSec = Number(document.getElementById('yfSections').value) || 1;
+    const addHaul = document.getElementById('addHaulAway').checked;
+    const addSupply = document.getElementById('addLitterSupply').checked;
+    const supBoxes = Number(document.getElementById('litterSupplyBoxes').value) || 1;
+    const addDeep = document.getElementById('addDeepClean').checked;
+    const deepBoxes = Number(document.getElementById('deepCleanBoxes').value) || 1;
+    const addTime = document.getElementById('addExtraTime').checked;
+    const timeBlocks = Number(document.getElementById('extraTimeBlocks').value) || 1;
+
+    const addonParts = [];
+    if (addYF) addonParts.push(`Yard Fresh (${yfSec} sec)`);
+    if (addHaul) addonParts.push('Haul-Away');
+    if (addSupply) addonParts.push(`Litter Supply (${supBoxes})`);
+    if (addDeep) addonParts.push(`Deep Clean (${deepBoxes})`);
+    if (addTime) addonParts.push(`+${timeBlocks * 15}m Extra Time`);
+
+    const addrVal = document.getElementById('fAddress').value.trim();
+    const cityVal = document.getElementById('fCity').value;
+    const manualParsed = parseManualCoords(document.getElementById('fGpsCoords').value);
+
+    let geoData = existingObj ? existingObj.geo : null;
+    if (manualParsed) {
+      geoData = {
+        lat: manualParsed.lat,
+        lng: manualParsed.lng,
+        query: `${addrVal}, ${cityVal}, TX`,
+        approx: false,
+        manual: true
+      };
+    }
+
+    const record = {
+      id: existingId || 'ws-' + Date.now(),
+      name: document.getElementById('fName').value.trim(),
+      phone: document.getElementById('fPhone').value.trim(),
+      city: cityVal,
+      address: addrVal,
+      status: document.getElementById('fStatus').value,
+      dogs: Number(document.getElementById('fDogs').value) || 0,
+      cats: Number(document.getElementById('fCats').value) || 0,
+      treatLoc: document.getElementById('fTreatLoc').value,
+      dogNames: document.getElementById('fDogNames').value.trim(),
+      gateNotes: document.getElementById('fGateNotes').value.trim(),
+      startDate: document.getElementById('fStartDate').value,
+      freq: document.getElementById('fFreq').value,
+      serviceType: document.getElementById('fServiceType').value,
+      nextScoop: document.getElementById('fNextScoop').value,
+      nextCharge: document.getElementById('fNextCharge').value,
+      lastPaid: document.getElementById('fLastPaid').value,
+      netPrice: parseFloat(document.getElementById('fNetPrice').value) || 0,
+      payMethod: document.getElementById('fPayMethod').value,
+      addons: {
+        yardFresh: addYF, yfSections: yfSec,
+        haulAway: addHaul,
+        litterSupply: addSupply, litterSupplyBoxes: supBoxes,
+        deepClean: addDeep, deepCleanBoxes: deepBoxes,
+        extraTime: addTime, extraTimeBlocks: timeBlocks
+      },
+      addonsSummary: addonParts.join(' + '),
+      refBy: document.getElementById('fRefBy').value.trim(),
+      refLoc: document.getElementById('fRefLoc').value.trim(),
+      refStatus: document.getElementById('fRefStatus').value,
+      geo: geoData
+    };
+
+    if (existingObj) {
+      if (existingObj.scoopedActionDate) record.scoopedActionDate = existingObj.scoopedActionDate;
+      if (existingObj.paidActionDate) record.paidActionDate = existingObj.paidActionDate;
+      if (existingObj.prevScoopSnapshot) record.prevScoopSnapshot = existingObj.prevScoopSnapshot;
+      if (existingObj.prevBillingSnapshot) record.prevBillingSnapshot = existingObj.prevBillingSnapshot;
+    }
+
+    await saveClientDoc(record);
+    closeClientModal();
+    showToast(`Saved ${record.name} to Cloud!`);
+  };
+</script>
+</body>
+</html>
