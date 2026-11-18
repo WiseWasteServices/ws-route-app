@@ -520,6 +520,7 @@
   }
   .dot-due { background: #D9534F; }
   .dot-active { background: #263A2D; }
+  .dot-gps { background: #1A73E8; }
 
   .map-list {
     overflow-y: auto;
@@ -602,6 +603,15 @@
   .ws-pin.pin-active { background: #263A2D; }
   .ws-pin.pin-due { background: #D9534F; }
   .ws-pin.pin-paused { background: #7D8A82; }
+
+  .ws-user-pin {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #1A73E8;
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.35), 0 3px 8px rgba(0, 0, 0, 0.4);
+  }
 
   @media (max-width: 860px) {
     .map-layout { grid-template-columns: 1fr; }
@@ -1111,6 +1121,7 @@
               <button type="button" class="map-toggle-btn" id="mapBtnToday" onclick="setMapMode('due')">Today's Scoop Route</button>
             </div>
             <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Road Route: ON</button>
+            <button type="button" class="btn btn-sage btn-sm" id="btnUseGps" onclick="toggleGpsStart()">📍 Start at My GPS: ON</button>
             <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print Route Sheet</button>
             <button type="button" class="btn btn-green btn-sm" onclick="openAppleMapsRoute()">🍎 Apple Maps</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="openGoogleMapsRoute()">🧭 Google Maps</button>
@@ -1119,13 +1130,14 @@
         </div>
 
         <div class="map-tip-bar">
-          <span><strong>Live Road Routing:</strong> Stops are numbered <strong>#1, #2, #3...</strong> along actual roads. Switch to <em>Satellite View</em> (top-right of map) and <strong>drag any 💩 pin</strong> onto the exact house or gate—the updated GPS saves straight to the cloud!</span>
+          <span><strong>Live GPS Road Routing:</strong> Stops are numbered <strong>#1, #2, #3...</strong> starting from your live GPS location. Switch to <em>Satellite View</em> (top-right of map) and <strong>drag any 💩 pin</strong> onto the exact house or gate—the updated GPS saves straight to the cloud!</span>
         </div>
 
         <div class="map-layout">
           <div id="customerMap"></div>
           <div class="map-sidebar">
             <div class="map-legend">
+              <span class="legend-item"><span class="dot dot-gps"></span> Your GPS</span>
               <span class="legend-item"><span class="dot dot-due"></span> Due Today/Overdue</span>
               <span class="legend-item"><span class="dot dot-active"></span> Active Yard</span>
             </div>
@@ -1746,7 +1758,37 @@
   let markerById = {};
   let currentMapMode = 'active';
   let bestRouteEnabled = true;
+  let useGpsStart = true;
   let lastOrderedRouteStops = [];
+  let lastUserCoords = null;
+
+  // LIVE GPS GEOLOCATION HELPER
+  function getUserLocationAsync() {
+    return new Promise((resolve) => {
+      if (!useGpsStart || !navigator.geolocation) {
+        resolve(null);
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+          lastUserCoords = coords;
+          resolve(coords);
+        },
+        () => resolve(lastUserCoords),
+        { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
+      );
+    });
+  }
+
+  window.toggleGpsStart = function() {
+    useGpsStart = !useGpsStart;
+    const btn = document.getElementById('btnUseGps');
+    btn.textContent = useGpsStart ? '📍 Start at My GPS: ON' : '📍 Start at My GPS: OFF';
+    btn.classList.toggle('btn-sage', useGpsStart);
+    btn.classList.toggle('btn-outline', !useGpsStart);
+    renderCustomerMap(false);
+  };
 
   // BACKUP EXPORT & CLOUD IMPORT
   window.downloadBackup = function(isManual) {
@@ -1869,7 +1911,6 @@
 
       return `
         <div class="lead-card">
-          <!-- TOP HEADER: NAME, PHONE, QUOTE ESTIMATE -->
           <div class="lead-hd">
             <div>
               <div class="lead-name">${escapeHtml(l.name)}</div>
@@ -1884,7 +1925,6 @@
             </div>
           </div>
 
-          <!-- 2-COLUMN STRUCTURED INFO BOXES -->
           <div class="lead-info-grid">
             <div class="lead-box">
               <div class="lead-box-lbl">📍 Service Address</div>
@@ -1911,7 +1951,6 @@
             </div>
           </div>
 
-          <!-- CLEAN CUSTOMER / YARD NOTES -->
           ${parsed.cleanNote ? `
             <div class="lead-notes-box">
               <div class="lead-box-lbl" style="color:#7A4B00;">📝 Customer / Yard Notes</div>
@@ -1919,7 +1958,6 @@
             </div>
           ` : ''}
 
-          <!-- ACTION BUTTONS -->
           <div class="lead-actions">
             <button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button>
             <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a>
@@ -1941,12 +1979,27 @@
     return 2 * R * Math.asin(Math.sqrt(a));
   }
 
-  function optimizeStopSequence(stopsWithCoords) {
-    if (stopsWithCoords.length <= 2) return stopsWithCoords;
+  function optimizeStopSequence(stopsWithCoords, startCoords = null) {
+    if (!stopsWithCoords.length) return [];
     const remaining = [...stopsWithCoords];
-    remaining.sort((a, b) => b.lat - a.lat);
+    const ordered = [];
 
-    const ordered = [remaining.shift()];
+    if (startCoords) {
+      let firstIdx = 0;
+      let bestStartDist = Infinity;
+      for (let i = 0; i < remaining.length; i++) {
+        const d = haversineMiles(startCoords.lat, startCoords.lng, remaining[i].lat, remaining[i].lng);
+        if (d < bestStartDist) {
+          bestStartDist = d;
+          firstIdx = i;
+        }
+      }
+      ordered.push(remaining.splice(firstIdx, 1)[0]);
+    } else {
+      remaining.sort((a, b) => b.lat - a.lat);
+      ordered.push(remaining.shift());
+    }
+
     while (remaining.length > 0) {
       const last = ordered[ordered.length - 1];
       let bestIdx = 0;
@@ -1963,11 +2016,14 @@
     return ordered;
   }
 
-  async function fetchRealRoadRoute(orderedStops) {
-    if (orderedStops.length < 2) return null;
+  async function fetchRealRoadRoute(orderedStops, startCoords = null) {
+    const waypoints = [];
+    if (startCoords) waypoints.push(`${startCoords.lng},${startCoords.lat}`);
+    orderedStops.forEach(s => waypoints.push(`${s.lng},${s.lat}`));
+
+    if (waypoints.length < 2) return null;
     try {
-      const coordsParam = orderedStops.map(s => `${s.lng},${s.lat}`).join(';');
-      const url = `https://router.project-osrm.org/route/v1/driving/${coordsParam}?overview=full&geometries=geojson`;
+      const url = `https://router.project-osrm.org/route/v1/driving/${waypoints.join(';')}?overview=full&geometries=geojson`;
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       const res = await fetch(url, { signal: controller.signal });
@@ -2012,6 +2068,7 @@
     }
 
     showToast('Preparing printable route sheet...');
+    const userCoords = await getUserLocationAsync();
     const resolvedStops = [];
     for (let i = 0; i < list.length; i++) {
       const c = list[i];
@@ -2019,11 +2076,11 @@
       resolvedStops.push({ client: c, lat, lng, isApprox, isManual });
     }
 
-    const orderedStops = optimizeStopSequence(resolvedStops);
+    const orderedStops = optimizeStopSequence(resolvedStops, userCoords);
 
     let routeStatsText = `${orderedStops.length} Stop${orderedStops.length === 1 ? '' : 's'}`;
-    if (orderedStops.length >= 2) {
-      const roadData = await fetchRealRoadRoute(orderedStops);
+    if (orderedStops.length >= 2 || (userCoords && orderedStops.length >= 1)) {
+      const roadData = await fetchRealRoadRoute(orderedStops, userCoords);
       if (roadData) {
         routeStatsText += ` • ~${roadData.miles.toFixed(1)} miles (~${roadData.minutes} min drive)`;
       }
@@ -2290,16 +2347,24 @@
       return;
     }
 
-    statusEl.textContent = `Pinning ${list.length} yard${list.length === 1 ? '' : 's'}...`;
-    const resolvedStops = [];
+    statusEl.textContent = useGpsStart ? 'Locating your GPS & pinning yards...' : `Pinning ${list.length} yard${list.length === 1 ? '' : 's'}...`;
 
-    for (let i = 0; i < list.length; i++) {
-      const c = list[i];
-      const [lat, lng, isApprox, isManual] = await geocodeAddress(c, forceRefresh);
-      resolvedStops.push({ client: c, lat, lng, isApprox, isManual });
-    }
+    const [userCoords, resolvedStops] = await Promise.all([
+      getUserLocationAsync(),
+      (async () => {
+        const arr = [];
+        for (let i = 0; i < list.length; i++) {
+          const c = list[i];
+          const [lat, lng, isApprox, isManual] = await geocodeAddress(c, forceRefresh);
+          arr.push({ client: c, lat, lng, isApprox, isManual });
+        }
+        return arr;
+      })()
+    ]);
 
-    const orderedStops = bestRouteEnabled ? optimizeStopSequence(resolvedStops) : resolvedStops;
+    const orderedStops = bestRouteEnabled
+      ? optimizeStopSequence(resolvedStops, userCoords)
+      : resolvedStops;
     lastOrderedRouteStops = orderedStops;
 
     const bounds = [];
@@ -2307,12 +2372,29 @@
     const sidebarHtml = [];
     let straightMiles = 0;
 
+    if (userCoords) {
+      const userIcon = L.divIcon({
+        className: '',
+        html: `<div class="ws-user-pin" title="Your Current GPS Location"></div>`,
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
+      });
+      L.marker([userCoords.lat, userCoords.lng], { icon: userIcon, zIndexOffset: 1000 })
+        .addTo(markersLayer)
+        .bindPopup('<strong>📍 Your Current Location</strong><br><span style="font-size:11.5px; color:#536559;">Route optimized starting from here</span>');
+
+      bounds.push([userCoords.lat, userCoords.lng]);
+      fallbackLatLngs.push([userCoords.lat, userCoords.lng]);
+    }
+
     for (let i = 0; i < orderedStops.length; i++) {
       const item = orderedStops[i];
       const c = item.client;
       const stopNumber = i + 1;
 
-      if (i > 0) {
+      if (i === 0 && userCoords) {
+        straightMiles += haversineMiles(userCoords.lat, userCoords.lng, item.lat, item.lng);
+      } else if (i > 0) {
         straightMiles += haversineMiles(orderedStops[i - 1].lat, orderedStops[i - 1].lng, item.lat, item.lng);
       }
 
@@ -2396,14 +2478,14 @@
       leafletMap.fitBounds(bounds, { padding: [36, 36] });
     }
 
-    if (bestRouteEnabled && orderedStops.length >= 2) {
-      statusEl.textContent = `Calculating road route for ${orderedStops.length} stops...`;
-      const roadData = await fetchRealRoadRoute(orderedStops);
+    if (bestRouteEnabled && (orderedStops.length >= 2 || (userCoords && orderedStops.length >= 1))) {
+      statusEl.textContent = `Calculating road route from ${userCoords ? 'your GPS' : 'start'}...`;
+      const roadData = await fetchRealRoadRoute(orderedStops, userCoords);
 
       if (roadData && roadData.latLngs.length > 1) {
         routeOutlinePolyline = L.polyline(roadData.latLngs, { color: '#ffffff', weight: 7, opacity: 0.9 }).addTo(leafletMap);
         routePolyline = L.polyline(roadData.latLngs, { color: '#263A2D', weight: 4.5, opacity: 0.92 }).addTo(leafletMap);
-        statusEl.textContent = `${orderedStops.length} stops • ${roadData.miles.toFixed(1)} mi (~${roadData.minutes} min drive)`;
+        statusEl.textContent = `${orderedStops.length} stops${userCoords ? ' from GPS' : ''} • ${roadData.miles.toFixed(1)} mi (~${roadData.minutes} min)`;
       } else {
         routePolyline = L.polyline(fallbackLatLngs, { color: '#263A2D', weight: 3.5, opacity: 0.78, dashArray: '8, 7' }).addTo(leafletMap);
         statusEl.textContent = `${orderedStops.length} yards • ~${straightMiles.toFixed(1)} mi`;
