@@ -344,7 +344,7 @@
     color: var(--g);
   }
 
-  /* COMPACT STRUCTURED LEADS GRID (NO TEXT JUMBLES) */
+  /* COMPACT STRUCTURED LEADS GRID */
   .leads-grid {
     padding: 14px;
     display: grid;
@@ -908,6 +908,47 @@
     bottom: 0;
   }
 
+  /* BUSINESS APPS LAUNCHER GRID */
+  .app-launcher-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 10px;
+  }
+  .app-tile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-left: 5px solid var(--gm);
+    border-radius: 11px;
+    padding: 11px 13px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: transform 0.08s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .app-tile:hover {
+    border-color: var(--g);
+    background: var(--cr);
+    transform: translateY(-1px);
+  }
+  .app-tile-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .app-tile-name {
+    font-size: 13.5px;
+    font-weight: 900;
+    color: var(--g);
+  }
+  .app-tile-desc {
+    font-size: 11.5px;
+    color: var(--m);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
   /* TOAST NOTIFICATION */
   .toast {
     position: fixed;
@@ -961,7 +1002,7 @@
     </div>
   </div>
 
-  <!-- TOP HEADER & CLOUD / BACKUP CONTROLS -->
+  <!-- TOP HEADER & CLOUD / BACKUP / APPS CONTROLS -->
   <header class="topbar">
     <div class="brand-left">
       <div class="brand-logo-wrap">
@@ -975,6 +1016,7 @@
 
     <div class="backup-bar">
       <div class="backup-status" id="cloudSyncStatus">☁️ Connecting to Cloud...</div>
+      <button class="btn btn-sage" onclick="openAppLauncher()" title="Quick access to all Wise Scoopers websites and tools">🧰 Business Apps</button>
       <button class="btn btn-sage" onclick="downloadBackup(true)" title="Download a JSON backup file to your PC/device">💾 Download Backup</button>
       <label class="btn btn-outline" style="cursor:pointer;" title="Upload a saved JSON backup file into your cloud database">
         📂 Import Backup
@@ -1430,6 +1472,26 @@
     </div>
   </div>
 
+  <!-- BUSINESS APPS & WEBSITES LAUNCHER MODAL -->
+  <div class="modal-backdrop" id="appLauncherBackdrop" onclick="if(event.target===this) closeAppLauncher()">
+    <div class="modal" style="max-width: 650px;">
+      <div class="modal-hd">
+        <h3>🧰 Wise Scoopers — Business Apps &amp; Websites</h3>
+        <button class="modal-close" onclick="closeAppLauncher()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; background:var(--cr); padding:10px 14px; border-radius:10px; border:1px solid var(--b);">
+          <span style="font-size:12px; font-weight:700; color:var(--m);">Tap any app below to open in a fresh tab, or launch your daily desktop workspace:</span>
+          <button type="button" class="btn btn-dark btn-sm" onclick="launchAllBusinessApps()">🚀 Open All Core Tabs</button>
+        </div>
+        <div class="app-launcher-grid" id="businessAppsGrid"></div>
+      </div>
+      <div class="modal-ft">
+        <button type="button" class="btn btn-outline" onclick="closeAppLauncher()">Close</button>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1456,6 +1518,76 @@
   let leads = [];
   let unsubscribeClients = null;
   let unsubscribeLeads = null;
+
+  // BUSINESS APPS & WEBSITES LAUNCHER
+  const BUSINESS_APPS = [
+    {
+      name: "Wise Scoopers Website",
+      desc: "Live customer site (WiseScoopers.com)",
+      icon: "🌐",
+      url: "https://wisescoopers.com",
+      launchAll: true
+    },
+    {
+      name: "Live Quote Calculator",
+      desc: "Customer quote form & pricing tool",
+      icon: "🧮",
+      url: "https://wisewasteservices.github.io/wise-waste-wuote/",
+      launchAll: true
+    },
+    {
+      name: "Quote Requests Sheet",
+      desc: "Google Sheet backup log of all quotes",
+      icon: "📊",
+      url: "https://docs.google.com/spreadsheets/d/1OztWe9yGs5HdFnfualdmTtVwNzLgY7EZNzR5CTe2W90/edit",
+      launchAll: true
+    },
+    {
+      name: "Google Apps Script",
+      desc: "Pushover alerts & quote webhook",
+      icon: "⚙️",
+      url: "https://script.google.com/home",
+      launchAll: false
+    },
+    {
+      name: "Firebase Cloud Console",
+      desc: "Database, logins & security rules",
+      icon: "🔥",
+      url: "https://console.firebase.google.com/project/wise-scoopers-crm",
+      launchAll: false
+    },
+    {
+      name: "GitHub Repositories",
+      desc: "Edit & deploy your live CRM & site code",
+      icon: "💻",
+      url: "https://github.com",
+      launchAll: false
+    }
+  ];
+
+  window.openAppLauncher = function() {
+    const grid = document.getElementById('businessAppsGrid');
+    grid.innerHTML = BUSINESS_APPS.map(appItem => `
+      <a href="${appItem.url}" target="_blank" rel="noopener" class="app-tile">
+        <div class="app-tile-icon">${appItem.icon}</div>
+        <div>
+          <div class="app-tile-name">${escapeHtml(appItem.name)}</div>
+          <div class="app-tile-desc">${escapeHtml(appItem.desc)}</div>
+        </div>
+      </a>
+    `).join('');
+    document.getElementById('appLauncherBackdrop').classList.add('open');
+  };
+
+  window.closeAppLauncher = function() {
+    document.getElementById('appLauncherBackdrop').classList.remove('open');
+  };
+
+  window.launchAllBusinessApps = function() {
+    const coreApps = BUSINESS_APPS.filter(a => a.launchAll);
+    coreApps.forEach(a => window.open(a.url, '_blank', 'noopener'));
+    showToast(`Opened ${coreApps.length} core business tabs!`);
+  };
 
   // SMART DEVICE DETECTION FOR APPLE MAPS (IPHONE/IPAD/MOBILE) VS GOOGLE MAPS (DESKTOP)
   function isMobileDevice() {
