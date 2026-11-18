@@ -113,6 +113,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     box-sizing: border-box;
   }
 
+  html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -168,17 +173,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 14px;
+    gap: 12px;
     box-shadow: 0 4px 16px rgba(24, 36, 28, 0.18);
     position: sticky;
     top: 0;
     z-index: 500;
   }
-  .brand-left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .brand-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .brand-logo-wrap { background: var(--w); border-radius: 10px; padding: 4px 8px; display: flex; align-items: center; }
-  .brand-logo-wrap img { height: 38px; width: auto; display: block; }
-  .brand-title h1 { margin: 0; font-size: 18px; font-weight: 900; letter-spacing: -0.3px; }
-  .brand-title span { display: block; font-size: 11.5px; color: var(--gt); font-weight: 600; }
+  .brand-logo-wrap img { height: 36px; width: auto; display: block; }
+  .brand-title h1 { margin: 0; font-size: 17px; font-weight: 900; letter-spacing: -0.3px; }
+  .brand-title span { display: block; font-size: 11px; color: var(--gt); font-weight: 600; }
 
   .workspace-switcher {
     display: inline-flex;
@@ -192,13 +197,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     border: none;
     background: transparent;
     color: var(--gt);
-    padding: 7px 14px;
+    padding: 7px 13px;
     border-radius: 8px;
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 800;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     transition: all 0.15s ease;
   }
@@ -209,13 +215,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
 
-  .backup-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .backup-bar { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
   .backup-status {
     background: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(229, 238, 229, 0.3);
-    padding: 6px 11px;
+    padding: 5px 10px;
     border-radius: 8px;
-    font-size: 11.5px;
+    font-size: 11px;
     color: var(--gt);
     font-weight: 600;
   }
@@ -223,14 +229,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .btn {
     border: none;
     border-radius: 8px;
-    padding: 8px 14px;
+    padding: 8px 13px;
     font-size: 12.5px;
     font-weight: 800;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
     text-decoration: none;
     transition: transform 0.08s ease, background 0.15s ease;
   }
@@ -256,62 +262,62 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .undo-link:hover { color: var(--due-ink); }
 
   /* MAIN LAYOUT */
-  .container { max-width: 1280px; margin: 0 auto; padding: 20px 20px 50px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 18px 18px 50px; }
 
   /* KPI SUMMARY CARDS */
-  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin-bottom: 20px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
   .kpi-card {
     background: var(--w); border: 1.5px solid var(--b); border-bottom: 4px solid var(--gm);
-    border-radius: 14px; padding: 14px 18px; box-shadow: 0 4px 14px rgba(38, 58, 45, 0.05);
+    border-radius: 14px; padding: 12px 16px; box-shadow: 0 4px 14px rgba(38, 58, 45, 0.05);
   }
   .kpi-card.alert { border-bottom-color: var(--due-b); }
-  .kpi-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.7px; color: var(--m); margin-bottom: 4px; }
-  .kpi-val { font-size: 26px; font-weight: 900; color: var(--g); line-height: 1.1; }
+  .kpi-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--m); margin-bottom: 4px; }
+  .kpi-val { font-size: 24px; font-weight: 900; color: var(--g); line-height: 1.1; }
   .kpi-card.alert .kpi-val { color: var(--due-ink); }
-  .kpi-sub { font-size: 11.5px; color: var(--m); margin-top: 4px; font-weight: 600; }
+  .kpi-sub { font-size: 11px; color: var(--m); margin-top: 4px; font-weight: 600; }
 
   /* NAVIGATION TABS & ACTION BAR */
-  .nav-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+  .nav-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; background: var(--w); padding: 6px; border-radius: 12px; border: 1.5px solid var(--b); }
-  .tab-btn { border: none; background: transparent; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 800; color: var(--m); cursor: pointer; }
+  .tab-btn { border: none; background: transparent; padding: 8px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 800; color: var(--m); cursor: pointer; }
   .tab-btn.active { background: var(--g); color: var(--w); }
 
-  .search-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .search-input, .filter-select { padding: 9px 13px; border: 1.5px solid var(--b); border-radius: 9px; font-size: 13px; background: var(--w); color: var(--ink); font-weight: 600; }
-  .search-input { min-width: 220px; }
+  .search-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .search-input, .filter-select { padding: 8px 12px; border: 1.5px solid var(--b); border-radius: 9px; font-size: 13px; background: var(--w); color: var(--ink); font-weight: 600; }
+  .search-input { min-width: 210px; }
 
   .view-panel { display: none; }
   .view-panel.active { display: block; }
 
   .panel-card { background: var(--w); border: 1.5px solid var(--b); border-radius: 16px; overflow: hidden; box-shadow: 0 6px 20px rgba(38, 58, 45, 0.06); margin-bottom: 18px; }
-  .panel-hd { background: var(--cr); border-bottom: 1.5px solid var(--b); padding: 13px 18px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-  .panel-hd h2 { margin: 0; font-size: 16px; font-weight: 900; color: var(--g); }
+  .panel-hd { background: var(--cr); border-bottom: 1.5px solid var(--b); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .panel-hd h2 { margin: 0; font-size: 15.5px; font-weight: 900; color: var(--g); }
 
   /* COMPACT STRUCTURED LEADS GRID */
-  .leads-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 12px; }
+  .leads-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
   .lead-card {
     background: var(--w); border: 1.5px solid var(--b); border-left: 5px solid var(--gm);
-    border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 9px;
+    border-radius: 12px; padding: 12px 13px; display: flex; flex-direction: column; gap: 8px;
     box-shadow: 0 2px 8px rgba(38, 58, 45, 0.04);
   }
   .lead-hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; border-bottom: 1px solid #E6EDE7; padding-bottom: 7px; }
-  .lead-name { font-size: 15.5px; font-weight: 900; color: var(--g); line-height: 1.2; }
-  .lead-contact-line { font-size: 12px; color: var(--m); font-weight: 700; margin-top: 2px; }
+  .lead-name { font-size: 15px; font-weight: 900; color: var(--g); line-height: 1.2; }
+  .lead-contact-line { font-size: 11.5px; color: var(--m); font-weight: 700; margin-top: 2px; word-break: break-word; }
   .lead-contact-line a { color: var(--gm); text-decoration: none; }
   .lead-price-box { text-align: right; flex-shrink: 0; }
-  .lead-price-main { font-size: 15px; font-weight: 900; color: var(--g); }
-  .lead-price-sub { font-size: 10.5px; font-weight: 700; color: var(--m); }
+  .lead-price-main { font-size: 14.5px; font-weight: 900; color: var(--g); }
+  .lead-price-sub { font-size: 10px; font-weight: 700; color: var(--m); }
   .lead-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .lead-box { background: var(--cr); border: 1px solid #DCE6DA; border-radius: 8px; padding: 6px 9px; font-size: 11.5px; line-height: 1.35; }
-  .lead-box-lbl { font-size: 9.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.6px; color: var(--gm); margin-bottom: 2px; }
-  .lead-notes-box { background: #FFFDF7; border: 1px dashed #D8C79E; border-radius: 8px; padding: 6px 9px; font-size: 11.5px; color: #4D3E18; line-height: 1.35; }
+  .lead-box { background: var(--cr); border: 1px solid #DCE6DA; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; line-height: 1.35; word-break: break-word; }
+  .lead-box-lbl { font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gm); margin-bottom: 2px; }
+  .lead-notes-box { background: #FFFDF7; border: 1px dashed #D8C79E; border-radius: 8px; padding: 6px 8px; font-size: 11.5px; color: #4D3E18; line-height: 1.35; word-break: break-word; }
   .lead-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding-top: 2px; }
 
   /* ON MY WAY TEMPLATE EDITOR DRAWER IN SCHEDULE TAB */
   .omw-drawer {
     background: var(--gt);
     border-bottom: 1.5px solid var(--b);
-    padding: 14px 18px;
+    padding: 12px 16px;
     display: none;
     flex-direction: column;
     gap: 8px;
@@ -331,9 +337,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   /* MAP TOGGLE PILLS & CONTAINER */
   .map-toggle-group { display: inline-flex; background: var(--w); border: 1.5px solid var(--b); border-radius: 9px; padding: 3px; gap: 4px; }
-  .map-toggle-btn { border: none; background: transparent; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; color: var(--m); cursor: pointer; }
+  .map-toggle-btn { border: none; background: transparent; padding: 6px 11px; border-radius: 6px; font-size: 12px; font-weight: 800; color: var(--m); cursor: pointer; }
   .map-toggle-btn.active { background: var(--g); color: var(--w); }
-  .map-tip-bar { background: #F8FBF8; border-bottom: 1px solid var(--b); padding: 7px 18px; font-size: 11.5px; color: var(--m); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .map-tip-bar { background: #F8FBF8; border-bottom: 1px solid var(--b); padding: 7px 16px; font-size: 11.5px; color: var(--m); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
   .map-layout { display: grid; grid-template-columns: 1fr 330px; min-height: 550px; }
   #customerMap { width: 100%; height: 550px; z-index: 1; }
   .map-sidebar { border-left: 1.5px solid var(--b); background: #FAFDFB; display: flex; flex-direction: column; max-height: 550px; }
@@ -372,15 +378,78 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   @media (max-width: 860px) {
     .map-layout { grid-template-columns: 1fr; }
     .map-sidebar { border-left: none; border-top: 1.5px solid var(--b); max-height: 280px; }
-    #customerMap { height: 400px; }
+    #customerMap { height: 360px; }
   }
 
-  /* TABLES */
+  /* TABLES (DESKTOP) + AUTO-STACKED COMPACT CARDS ON MOBILE (NO HORIZONTAL SCROLLING) */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { background: #F8FBF8; text-align: left; padding: 11px 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--m); border-bottom: 1.5px solid var(--b); white-space: nowrap; }
   td { padding: 12px 14px; border-bottom: 1px solid #E6EDE7; vertical-align: middle; }
   tr:hover td { background: #FAFDFB; }
+
+  @media (max-width: 768px) {
+    .table-wrap { overflow-x: visible; padding: 10px; }
+    table, thead, tbody, th, td, tr { display: block; width: 100%; }
+    thead { display: none; }
+    tr.mobile-card-row {
+      background: var(--w);
+      border: 1.5px solid var(--b);
+      border-left: 5px solid var(--gm);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(38, 58, 45, 0.04);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px 10px;
+    }
+    tr.mobile-card-row.is-due { border-left-color: #D9534F; }
+    tr.mobile-card-row td {
+      padding: 4px 6px;
+      border-bottom: none;
+      background: var(--cr);
+      border-radius: 7px;
+      font-size: 11.5px;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    tr.mobile-card-row td::before {
+      content: attr(data-label);
+      display: block;
+      font-size: 9px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--gm);
+      margin-bottom: 2px;
+    }
+    tr.mobile-card-row td.m-full {
+      grid-column: 1 / -1;
+    }
+    tr.mobile-card-row td.m-header {
+      grid-column: 1 / -1;
+      background: transparent;
+      padding: 0 0 6px;
+      border-bottom: 1px solid #E6EDE7;
+      border-radius: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    tr.mobile-card-row td.m-header::before { display: none; }
+    tr.mobile-card-row td.m-actions {
+      grid-column: 1 / -1;
+      background: transparent;
+      padding: 4px 0 0;
+    }
+    tr.mobile-card-row td.m-actions::before { display: none; }
+    tr.empty-table-row td {
+      background: transparent;
+      padding: 20px 10px;
+    }
+  }
 
   /* BADGES */
   .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; margin: 1px 2px 1px 0; }
@@ -391,23 +460,23 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .badge-blue { background: var(--badge-blue-bg); color: var(--badge-blue-text); border: 1px solid #B6D4F2; }
 
   /* ROUTE CARDS */
-  .route-grid { padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 14px; }
-  .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 12px; padding: 14px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 10px; }
+  .route-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 12px; padding: 13px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 9px; }
   .route-card.due-today { border-left-color: #D9534F; background: linear-gradient(180deg, #FFF9F9 0%, #FFFFFF 100%); }
   .route-card.scooped-done { border-left-color: #3B8754; background: #F6FBF7; }
   .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .rc-name { font-size: 16px; font-weight: 900; color: var(--g); }
-  .rc-addr { font-size: 12px; color: var(--m); font-weight: 600; margin-top: 2px; }
-  .rc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--cr); padding: 9px 10px; border-radius: 8px; font-size: 11.5px; }
+  .rc-name { font-size: 15.5px; font-weight: 900; color: var(--g); }
+  .rc-addr { font-size: 11.5px; color: var(--m); font-weight: 600; margin-top: 2px; word-break: break-word; }
+  .rc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--cr); padding: 8px 9px; border-radius: 8px; font-size: 11.5px; }
   .rc-meta div strong { color: var(--g); }
-  .rc-addons-bar { background: var(--gt); border: 1px solid var(--b); color: var(--g); padding: 6px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 800; }
-  .rc-notes { font-size: 11.5px; background: #FFFDF7; border: 1px dashed #D8C79E; padding: 6px 9px; border-radius: 7px; color: #4D3E18; }
+  .rc-addons-bar { background: var(--gt); border: 1px solid var(--b); color: var(--g); padding: 6px 9px; border-radius: 8px; font-size: 11.5px; font-weight: 800; }
+  .rc-notes { font-size: 11.5px; background: #FFFDF7; border: 1px dashed #D8C79E; padding: 6px 9px; border-radius: 7px; color: #4D3E18; word-break: break-word; }
   .rc-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
   /* MODALS */
   .modal-backdrop, .modal-overlay {
     position: fixed; inset: 0; background: rgba(20, 32, 24, 0.58); display: none;
-    align-items: center; justify-content: center; padding: 14px; z-index: 1000; overflow-y: auto;
+    align-items: center; justify-content: center; padding: 12px; z-index: 1000; overflow-y: auto;
   }
   .modal-backdrop.open, .modal-overlay.open { display: flex; }
   .modal, .modal-box {
@@ -416,15 +485,15 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   }
   .modal-box.modal-wide { max-width: 880px; }
   .modal-hd, .modal-top {
-    background: var(--g); color: var(--w); padding: 13px 20px; display: flex;
+    background: var(--g); color: var(--w); padding: 12px 16px; display: flex;
     align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5;
   }
-  .modal-hd h3, .modal-top h2 { margin: 0; font-size: 17px; font-weight: 900; }
+  .modal-hd h3, .modal-top h2 { margin: 0; font-size: 16px; font-weight: 900; }
   .modal-close, .close-x { background: transparent; border: none; color: var(--w); font-size: 22px; cursor: pointer; line-height: 1; }
-  .modal-body, .modal-content { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
-  .form-section-title { font-size: 11.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gm); border-bottom: 1.5px solid var(--b); padding-bottom: 4px; margin: 12px 0 6px; }
+  .modal-body, .modal-content { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .form-section-title { font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--gm); border-bottom: 1.5px solid var(--b); padding-bottom: 4px; margin: 12px 0 6px; }
   .form-section-title:first-child { margin-top: 0; }
-  .form-grid, .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 11px; }
+  .form-grid, .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
   .field { display: flex; flex-direction: column; gap: 4px; }
   .field.span-2 { grid-column: span 2; }
   .field label { font-size: 11.5px; font-weight: 800; color: var(--ink); }
@@ -436,7 +505,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     outline: none; border-color: var(--gm); background: var(--w);
   }
 
-  .addon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 9px; margin-top: 4px; }
+  .addon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 9px; margin-top: 4px; }
   .addon-card { background: var(--cr); border: 1.5px solid var(--b); border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 6px; }
   .addon-card.checked { background: #EDF6EE; border-color: var(--gm); }
   .addon-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; font-weight: 800; }
@@ -448,12 +517,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .anniv-preview strong { color: var(--g); }
 
   .modal-ft, .modal-bottom {
-    padding: 12px 20px; background: var(--cr); border-top: 1.5px solid var(--b);
+    padding: 12px 16px; background: var(--cr); border-top: 1.5px solid var(--b);
     display: flex; justify-content: flex-end; gap: 10px; position: sticky; bottom: 0;
   }
 
   /* BUSINESS APPS LAUNCHER GRID */
-  .app-launcher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; }
+  .app-launcher-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
   .app-tile {
     display: flex; align-items: center; gap: 12px; background: var(--w); border: 1.5px solid var(--b);
     border-left: 5px solid var(--gm); border-radius: 11px; padding: 11px 13px; text-decoration: none;
@@ -471,53 +540,31 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     background-color: var(--ws-white);
     border: 1.5px solid var(--b);
     border-radius: 14px;
-    padding: 12px 16px;
-    margin-bottom: 16px;
+    padding: 12px 15px;
+    margin-bottom: 14px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
     box-shadow: var(--shadow-sm);
   }
-  #fbWorkspace .fb-subbar-title h2 {
-    margin: 0;
-    font-size: 17px;
-    font-weight: 900;
-    color: var(--g);
-  }
-  #fbWorkspace .fb-subbar-title p {
-    margin: 2px 0 0;
-    font-size: 12px;
-    color: var(--m);
-    font-weight: 600;
-  }
+  #fbWorkspace .fb-subbar-title h2 { margin: 0; font-size: 16.5px; font-weight: 900; color: var(--g); }
+  #fbWorkspace .fb-subbar-title p { margin: 2px 0 0; font-size: 11.5px; color: var(--m); font-weight: 600; }
   #fbWorkspace .btn-open-fb {
-    background-color: var(--ws-forest);
-    color: var(--ws-white);
-    font-weight: 700;
-    padding: 0.65rem 1.15rem;
-    font-size: 0.92rem;
-    border-radius: var(--radius-sm);
+    background-color: var(--ws-forest); color: var(--ws-white); font-weight: 700;
+    padding: 0.6rem 1rem; font-size: 0.88rem; border-radius: var(--radius-sm);
     box-shadow: 0 2px 6px rgba(38, 58, 45, 0.22);
   }
   #fbWorkspace .btn-open-fb:hover { background-color: var(--ws-forest-hover); }
 
   #fbWorkspace .status-bar {
-    background-color: var(--ws-white);
-    border: 1.5px solid var(--b);
-    border-radius: var(--radius-md);
-    padding: 0.95rem 1.15rem;
-    margin-bottom: 1rem;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    background-color: var(--ws-white); border: 1.5px solid var(--b); border-radius: var(--radius-md);
+    padding: 0.9rem 1rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm);
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.9rem;
   }
-  #fbWorkspace .progress-summary { display: flex; flex-direction: column; gap: 0.45rem; flex: 1; min-width: 240px; }
-  #fbWorkspace .progress-numbers { display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem; font-size: 0.94rem; }
+  #fbWorkspace .progress-summary { display: flex; flex-direction: column; gap: 0.45rem; flex: 1; min-width: 220px; }
+  #fbWorkspace .progress-numbers { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; font-size: 0.92rem; }
   #fbWorkspace .progress-numbers strong { color: var(--ws-forest); }
   #fbWorkspace .progress-track { width: 100%; max-width: 380px; height: 10px; background-color: var(--ws-sage-tint); border-radius: 999px; overflow: hidden; border: 1px solid var(--ws-border); }
   #fbWorkspace .progress-fill { height: 100%; background-color: var(--ws-forest); width: 0%; transition: width 0.25s ease; }
@@ -525,7 +572,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   @media (max-width: 680px) { #fbWorkspace .reminder-box { align-items: flex-start; } }
   #fbWorkspace .reminder-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
   #fbWorkspace .time-input { padding: 0.35rem 0.55rem; border: 1.5px solid var(--ws-border); border-radius: var(--radius-sm); font-size: 0.9rem; font-family: inherit; min-height: 34px; }
-  #fbWorkspace .reminder-hint { font-size: 0.75rem; color: var(--ws-muted); }
+  #fbWorkspace .reminder-hint { font-size: 0.74rem; color: var(--ws-muted); }
 
   #fbWorkspace .reminder-alert {
     display: none; background-color: var(--badge-amber-bg); border: 1px solid #F2D29B;
@@ -536,120 +583,123 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   #fbWorkspace .timing-guide {
     background-color: var(--ws-white); border: 1.5px solid var(--b); border-left: 5px solid var(--ws-forest);
-    border-radius: var(--radius-md); padding: 0.9rem 1.1rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm);
-    display: flex; flex-direction: column; gap: 0.65rem;
+    border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; gap: 0.6rem;
   }
   #fbWorkspace .timing-guide-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
-  #fbWorkspace .timing-guide-title { font-size: 0.96rem; font-weight: 800; color: var(--ws-forest); display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
-  #fbWorkspace .timing-windows-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.55rem; }
+  #fbWorkspace .timing-guide-title { font-size: 0.92rem; font-weight: 800; color: var(--ws-forest); display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+  #fbWorkspace .timing-windows-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
   @media (max-width: 780px) { #fbWorkspace .timing-windows-grid { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 460px) { #fbWorkspace .timing-windows-grid { grid-template-columns: 1fr; } }
   #fbWorkspace .timing-slot {
     background-color: var(--ws-cream); border: 1px solid var(--ws-border); border-radius: var(--radius-sm);
-    padding: 0.55rem 0.7rem; display: flex; flex-direction: column; gap: 0.22rem; cursor: pointer;
+    padding: 0.55rem 0.65rem; display: flex; flex-direction: column; gap: 0.22rem; cursor: pointer;
     text-align: left; transition: background-color 0.15s ease, border-color 0.15s ease;
   }
   #fbWorkspace .timing-slot:hover, #fbWorkspace .timing-slot.best-slot { background-color: var(--ws-sage-tint); border-color: var(--ws-forest); }
-  #fbWorkspace .timing-slot-time { font-size: 0.92rem; font-weight: 800; color: var(--ws-forest); }
-  #fbWorkspace .timing-slot-label { font-size: 0.78rem; font-weight: 700; color: var(--ws-text); }
-  #fbWorkspace .timing-slot-desc { font-size: 0.74rem; color: var(--ws-muted); line-height: 1.3; }
-  #fbWorkspace .timing-footer-tips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem 1.1rem; font-size: 0.81rem; color: var(--ws-text); padding-top: 0.45rem; border-top: 1px dashed var(--ws-border); }
+  #fbWorkspace .timing-slot-time { font-size: 0.9rem; font-weight: 800; color: var(--ws-forest); }
+  #fbWorkspace .timing-slot-label { font-size: 0.76rem; font-weight: 700; color: var(--ws-text); }
+  #fbWorkspace .timing-slot-desc { font-size: 0.72rem; color: var(--ws-muted); line-height: 1.3; }
+  #fbWorkspace .timing-footer-tips { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem 1rem; font-size: 0.79rem; color: var(--ws-text); padding-top: 0.45rem; border-top: 1px dashed var(--ws-border); }
 
-  #fbWorkspace .day-tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.45rem; margin-bottom: 1.15rem; }
+  #fbWorkspace .day-tabs { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.4rem; margin-bottom: 1.1rem; }
   @media (max-width: 760px) { #fbWorkspace .day-tabs { grid-template-columns: repeat(4, 1fr); } }
   @media (max-width: 440px) { #fbWorkspace .day-tabs { grid-template-columns: repeat(2, 1fr); } }
   #fbWorkspace .day-tab {
     background-color: var(--ws-white); border: 1.5px solid var(--b); border-radius: var(--radius-md);
-    padding: 0.6rem 0.4rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;
-    justify-content: center; gap: 0.2rem; min-height: 66px; text-align: center;
+    padding: 0.55rem 0.35rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 0.2rem; min-height: 62px; text-align: center;
   }
   #fbWorkspace .day-tab:hover { background-color: var(--ws-sage-tint); border-color: var(--ws-forest); }
   #fbWorkspace .day-tab.active { background-color: var(--ws-forest); color: var(--ws-white); border-color: var(--ws-forest); }
-  #fbWorkspace .day-tab-title { font-weight: 800; font-size: 0.92rem; }
-  #fbWorkspace .today-pill { font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; background-color: var(--ws-sage); color: var(--ws-forest); padding: 0.08rem 0.42rem; border-radius: 999px; }
+  #fbWorkspace .day-tab-title { font-weight: 800; font-size: 0.9rem; }
+  #fbWorkspace .today-pill { font-size: 0.64rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; background-color: var(--ws-sage); color: var(--ws-forest); padding: 0.08rem 0.4rem; border-radius: 999px; }
   #fbWorkspace .day-tab.active .today-pill { background-color: var(--ws-white); }
-  #fbWorkspace .day-tab-meta { font-size: 0.78rem; color: var(--ws-muted); font-weight: 600; }
+  #fbWorkspace .day-tab-meta { font-size: 0.75rem; color: var(--ws-muted); font-weight: 600; }
   #fbWorkspace .day-tab.active .day-tab-meta { color: var(--ws-sage); }
 
   #fbWorkspace .idea-panel {
     background-color: var(--ws-white); border: 1.5px solid var(--b); border-top: 4px solid var(--ws-forest);
-    border-radius: var(--radius-md); margin-bottom: 1.15rem; box-shadow: var(--shadow-sm); overflow: hidden;
+    border-radius: var(--radius-md); margin-bottom: 1.1rem; box-shadow: var(--shadow-sm); overflow: hidden;
   }
-  #fbWorkspace .idea-header { padding: 0.85rem 1.15rem; background-color: var(--ws-sage-tint); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.65rem; border-bottom: 1px solid var(--ws-border); }
-  #fbWorkspace .idea-header-left { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
-  #fbWorkspace .idea-header-title { font-size: 1rem; font-weight: 800; color: var(--ws-forest); }
-  #fbWorkspace .idea-header-actions { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
-  #fbWorkspace .idea-body { padding: 1rem 1.15rem; display: flex; flex-direction: column; gap: 0.85rem; }
+  #fbWorkspace .idea-header { padding: 0.8rem 1rem; background-color: var(--ws-sage-tint); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; border-bottom: 1px solid var(--ws-border); }
+  #fbWorkspace .idea-header-left { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+  #fbWorkspace .idea-header-title { font-size: 0.98rem; font-weight: 800; color: var(--ws-forest); }
+  #fbWorkspace .idea-header-actions { display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; }
+  #fbWorkspace .idea-body { padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
   #fbWorkspace .idea-body.collapsed { display: none; }
-  #fbWorkspace .idea-filters { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .filter-pill { padding: 0.32rem 0.72rem; border-radius: 999px; border: 1px solid var(--ws-border); background-color: var(--ws-cream); color: var(--ws-text); font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+  #fbWorkspace .idea-filters { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .filter-pill { padding: 0.3rem 0.68rem; border-radius: 999px; border: 1px solid var(--ws-border); background-color: var(--ws-cream); color: var(--ws-text); font-size: 0.78rem; font-weight: 600; cursor: pointer; }
   .filter-pill:hover { border-color: var(--ws-forest); background-color: var(--ws-sage-tint); }
   .filter-pill.active { background-color: var(--ws-forest); color: var(--ws-white); border-color: var(--ws-forest); }
-  #fbWorkspace .idea-hook-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
-  #fbWorkspace .idea-hook-title { font-size: 1.05rem; font-weight: 800; color: var(--ws-text); margin: 0; }
-  #fbWorkspace .idea-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; }
+  #fbWorkspace .idea-hook-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
+  #fbWorkspace .idea-hook-title { font-size: 1rem; font-weight: 800; color: var(--ws-text); margin: 0; }
+  #fbWorkspace .idea-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
   @media (max-width: 720px) { #fbWorkspace .idea-columns { grid-template-columns: 1fr; } }
-  #fbWorkspace .prompt-box { background-color: var(--ws-cream); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); padding: 0.75rem 0.85rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.65rem; }
-  #fbWorkspace .prompt-box-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; }
-  #fbWorkspace .prompt-label { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ws-forest); }
-  #fbWorkspace .prompt-content { font-size: 0.88rem; color: var(--ws-text); white-space: pre-line; line-height: 1.48; flex: 1; }
+  #fbWorkspace .prompt-box { background-color: var(--ws-cream); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); padding: 0.75rem 0.85rem; display: flex; flex-direction: column; justify-content: space-between; gap: 0.6rem; }
+  #fbWorkspace .prompt-box-top { display: flex; align-items: center; justify-content: space-between; gap: 0.45rem; flex-wrap: wrap; }
+  #fbWorkspace .prompt-label { font-size: 0.76rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ws-forest); }
+  #fbWorkspace .prompt-content { font-size: 0.86rem; color: var(--ws-text); white-space: pre-line; line-height: 1.45; flex: 1; word-break: break-word; }
   .btn-copy-done { background-color: #2E7D4F !important; border-color: #2E7D4F !important; color: var(--ws-white) !important; }
-  #fbWorkspace .ai-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; background-color: var(--ws-cream); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); padding: 0.65rem 0.75rem; }
-  #fbWorkspace .ai-topic-input { flex: 1; min-width: 210px; padding: 0.48rem 0.7rem; border: 1px solid var(--ws-border); border-radius: var(--radius-sm); font-size: 0.88rem; font-family: inherit; color: var(--ws-text); background-color: var(--ws-white); min-height: 38px; }
+  #fbWorkspace .ai-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; background-color: var(--ws-cream); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); padding: 0.6rem 0.7rem; }
+  #fbWorkspace .ai-topic-input { flex: 1; min-width: 190px; padding: 0.48rem 0.7rem; border: 1px solid var(--ws-border); border-radius: var(--radius-sm); font-size: 0.88rem; font-family: inherit; color: var(--ws-text); background-color: var(--ws-white); min-height: 38px; }
   #fbWorkspace .api-key-drawer { background-color: var(--ws-sage-tint); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); padding: 0.75rem 0.85rem; display: flex; flex-direction: column; gap: 0.5rem; }
   #fbWorkspace .api-key-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
-  #fbWorkspace .api-key-input { flex: 1; min-width: 220px; padding: 0.45rem 0.65rem; border: 1px solid var(--ws-border); border-radius: var(--radius-sm); font-size: 0.86rem; font-family: monospace; background-color: var(--ws-white); min-height: 36px; }
-  #fbWorkspace .brand-ref-strip { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.65rem 0.75rem; background-color: var(--ws-white); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); }
-  #fbWorkspace .brand-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 0.55rem; }
-  #fbWorkspace .brand-asset-card { border: 1px solid var(--ws-border); border-radius: var(--radius-sm); background-color: var(--ws-cream); padding: 0.45rem; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; text-align: center; }
-  #fbWorkspace .brand-ref-thumb { width: 68px; height: 68px; object-fit: contain; border-radius: var(--radius-sm); border: 1px solid var(--ws-border); background-color: var(--ws-white); cursor: grab; flex-shrink: 0; }
-  #fbWorkspace .brand-asset-label { font-size: 0.74rem; font-weight: 700; color: var(--ws-forest); line-height: 1.2; word-break: break-word; }
-  #fbWorkspace .brand-asset-btns { display: flex; gap: 0.28rem; width: 100%; justify-content: center; }
-  #fbWorkspace .brand-asset-btns .btn { padding: 0.25rem 0.48rem; font-size: 0.72rem; min-height: 28px; }
+  #fbWorkspace .api-key-input { flex: 1; min-width: 180px; padding: 0.45rem 0.65rem; border: 1px solid var(--ws-border); border-radius: var(--radius-sm); font-size: 0.86rem; font-family: monospace; background-color: var(--ws-white); min-height: 36px; }
+  #fbWorkspace .brand-ref-strip { display: flex; flex-direction: column; gap: 0.55rem; padding: 0.6rem 0.7rem; background-color: var(--ws-white); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); }
+  #fbWorkspace .brand-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 0.5rem; }
+  #fbWorkspace .brand-asset-card { border: 1px solid var(--ws-border); border-radius: var(--radius-sm); background-color: var(--ws-cream); padding: 0.4rem; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; text-align: center; }
+  #fbWorkspace .brand-ref-thumb { width: 62px; height: 62px; object-fit: contain; border-radius: var(--radius-sm); border: 1px solid var(--ws-border); background-color: var(--ws-white); cursor: grab; flex-shrink: 0; }
+  #fbWorkspace .brand-asset-label { font-size: 0.72rem; font-weight: 700; color: var(--ws-forest); line-height: 1.2; word-break: break-word; }
+  #fbWorkspace .brand-asset-btns { display: flex; gap: 0.25rem; width: 100%; justify-content: center; }
+  #fbWorkspace .brand-asset-btns .btn { padding: 0.24rem 0.45rem; font-size: 0.7rem; min-height: 26px; }
 
-  #fbWorkspace .queue-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.85rem; }
-  #fbWorkspace .queue-heading h2 { margin: 0; font-size: 1.15rem; color: var(--ws-forest); font-weight: 900; }
-  #fbWorkspace .queue-heading span { font-size: 0.85rem; color: var(--ws-muted); font-weight: 600; }
-  #fbWorkspace .card-stack, #manageGroupsList { display: flex; flex-direction: column; gap: 0.9rem; }
+  #fbWorkspace .queue-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
+  #fbWorkspace .queue-heading h2 { margin: 0; font-size: 1.1rem; color: var(--ws-forest); font-weight: 900; }
+  #fbWorkspace .queue-heading span { font-size: 0.84rem; color: var(--ws-muted); font-weight: 600; }
+  #fbWorkspace .card-stack, #manageGroupsList { display: flex; flex-direction: column; gap: 0.85rem; }
   #fbWorkspace .group-card {
     background-color: var(--ws-white); border: 1.5px solid var(--b); border-left: 5px solid var(--ws-forest);
-    border-radius: var(--radius-md); padding: 1.15rem 1.25rem; box-shadow: var(--shadow-sm);
-    display: flex; flex-direction: column; gap: 0.75rem;
+    border-radius: var(--radius-md); padding: 1rem 1.1rem; box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; gap: 0.7rem;
   }
   #fbWorkspace .group-card.posted { background-color: #F8FBF9; border-left-color: #2E7D4F; opacity: 0.88; }
   #fbWorkspace .group-card.conditional { border-left-color: #D97706; }
-  #fbWorkspace .card-header-row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.85rem; }
-  #fbWorkspace .card-title-group { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-width: 220px; }
-  #fbWorkspace .group-name { font-size: 1.15rem; font-weight: 800; color: var(--ws-text); }
-  #fbWorkspace .badges { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  #fbWorkspace .card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.55rem; }
+  #fbWorkspace .card-header-row { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+  #fbWorkspace .card-title-group { display: flex; flex-direction: column; gap: 0.35rem; flex: 1; min-width: 200px; }
+  #fbWorkspace .group-name { font-size: 1.1rem; font-weight: 800; color: var(--ws-text); word-break: break-word; }
+  #fbWorkspace .badges { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  #fbWorkspace .card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
   #fbWorkspace .check-toggle {
-    display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.6rem 1rem; border-radius: var(--radius-sm);
+    display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 0.9rem; border-radius: var(--radius-sm);
     border: 2px solid var(--ws-forest); background-color: var(--ws-white); color: var(--ws-forest);
-    font-weight: 800; font-size: 0.88rem; cursor: pointer; min-height: 40px;
+    font-weight: 800; font-size: 0.85rem; cursor: pointer; min-height: 38px;
   }
   #fbWorkspace .check-toggle.checked { background-color: #2E7D4F; border-color: #2E7D4F; color: var(--ws-white); }
-  #fbWorkspace .rule-summary-text { font-size: 0.9rem; color: var(--ws-text); background-color: var(--ws-cream); padding: 0.65rem 0.85rem; border-radius: var(--radius-sm); border: 1px solid var(--ws-border); }
-  #fbWorkspace .card-footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; font-size: 0.82rem; color: var(--ws-muted); }
-  #fbWorkspace .why-details { margin-top: 0.25rem; font-size: 0.82rem; color: var(--ws-muted); }
+  #fbWorkspace .rule-summary-text { font-size: 0.88rem; color: var(--ws-text); background-color: var(--ws-cream); padding: 0.6rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--ws-border); word-break: break-word; }
+  #fbWorkspace .card-footer-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; font-size: 0.8rem; color: var(--ws-muted); word-break: break-all; }
+  #fbWorkspace .why-details { margin-top: 0.2rem; font-size: 0.82rem; color: var(--ws-muted); }
   #fbWorkspace .why-details summary { cursor: pointer; font-weight: 700; color: var(--ws-forest); user-select: none; }
   #fbWorkspace .why-details p { margin-top: 0.35rem; padding: 0.45rem 0.65rem; background-color: var(--ws-sage-tint); border-radius: var(--radius-sm); color: var(--ws-text); }
   .days-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; }
   @media (max-width: 500px) { .days-grid { grid-template-columns: repeat(2, 1fr); } }
   .day-chk { display: flex; align-items: center; gap: 0.4rem; padding: 0.42rem 0.55rem; background-color: var(--ws-cream); border: 1px solid var(--ws-border); border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; cursor: pointer; }
   .db-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.6rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--ws-border); }
-  .db-item { border: 1px solid var(--ws-border); border-radius: var(--radius-md); padding: 0.9rem 1rem; background-color: var(--ws-cream); display: flex; flex-direction: column; gap: 0.5rem; }
+  .db-item { border: 1px solid var(--ws-border); border-radius: var(--radius-md); padding: 0.85rem 0.95rem; background-color: var(--ws-cream); display: flex; flex-direction: column; gap: 0.45rem; }
   .db-item-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 0.6rem; }
   .empty-box { background-color: var(--ws-white); border: 1px dashed var(--ws-border); border-radius: var(--radius-md); padding: 2rem 1rem; text-align: center; color: var(--ws-muted); }
 
   /* TOAST NOTIFICATION */
   .toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: 420px;
+    margin-left: auto;
     background: var(--g);
     color: var(--w);
-    padding: 11px 18px;
+    padding: 11px 16px;
     border-radius: 10px;
     font-size: 13px;
     font-weight: 700;
@@ -664,25 +714,58 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   .fb-toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: 420px;
+    margin-left: auto;
     background-color: var(--ws-forest);
     color: var(--ws-white);
-    padding: 0.8rem 1.1rem;
+    padding: 0.8rem 1rem;
     border-radius: var(--radius-md);
     border-left: 5px solid var(--ws-sage);
     box-shadow: var(--shadow-md);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 600;
     z-index: 2600;
-    max-width: 360px;
   }
   .fb-toast.error { background-color: #7F1D1D; border-left-color: #FCA5A5; }
 
+  /* ULTRA-COMPACT IPHONE / MOBILE VIEWPORT OPTIMIZATIONS */
   @media (max-width: 680px) {
+    .topbar { padding: 10px 12px; gap: 8px; }
+    .brand-left { width: 100%; justify-content: space-between; gap: 8px; }
+    .brand-title { display: none; }
+    .workspace-switcher { flex: 1; justify-content: center; }
+    .ws-mode-btn { flex: 1; padding: 7px 8px; font-size: 12px; }
+    .backup-bar { width: 100%; justify-content: space-between; gap: 5px; }
+    .backup-status { display: none; }
+    .backup-bar .btn { padding: 6px 9px; font-size: 11px; flex: 1; }
+
+    .container { padding: 12px 10px 44px; }
+
+    /* Compact 2x2 KPI Grid on iPhone */
+    .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .kpi-card { padding: 10px 12px; border-radius: 11px; }
+    .kpi-label { font-size: 9.5px; letter-spacing: 0.4px; }
+    .kpi-val { font-size: 20px; }
+    .kpi-sub { font-size: 10px; }
+
+    /* Compact Tabs & Search Bar on iPhone */
+    .nav-bar { gap: 8px; margin-bottom: 12px; }
+    .tabs { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px; }
+    .tab-btn { padding: 7px 6px; font-size: 11.5px; text-align: center; }
+    .search-controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .search-input { grid-column: 1 / -1; min-width: 0; width: 100%; font-size: 13px; padding: 8px 10px; }
+    .filter-select { width: 100%; font-size: 12px; padding: 8px 8px; }
+    .search-controls .btn-dark { width: 100%; padding: 8px 8px; font-size: 12px; }
+
+    .panel-hd { padding: 10px 12px; }
+    .panel-hd h2 { font-size: 14.5px; }
+
+    .leads-grid { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
+    .route-grid { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
     .field.span-2 { grid-column: span 1; }
-    .topbar { padding: 12px 14px; }
-    .leads-grid { grid-template-columns: 1fr; padding: 10px; }
   }
 </style>
 </head>
@@ -733,10 +816,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     <div class="backup-bar">
       <div class="backup-status" id="cloudSyncStatus">☁️ Connecting to Cloud...</div>
-      <button class="btn btn-sage" onclick="openAppLauncher()" title="Quick access to all Wise Scoopers websites and tools">🧰 Business Apps</button>
-      <button class="btn btn-sage" onclick="downloadBackup(true)" title="Download a JSON backup file to your PC/device">💾 CRM Backup</button>
+      <button class="btn btn-sage" onclick="openAppLauncher()" title="Quick access to all Wise Scoopers websites and tools">🧰 Apps</button>
+      <button class="btn btn-sage" onclick="downloadBackup(true)" title="Download a JSON backup file to your PC/device">💾 Backup</button>
       <label class="btn btn-outline" style="cursor:pointer;" title="Upload a saved JSON backup file into your cloud database">
-        📂 Import CRM
+        📂 Import
         <input type="file" id="restoreFileInput" accept=".json" style="display:none;" onchange="restoreBackup(event)">
       </label>
       <button class="btn btn-outline btn-sm" onclick="handleLogout()" title="Sign out">Sign Out</button>
@@ -757,19 +840,19 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-label">Monthly Recurring Base</div>
+        <div class="kpi-label">Monthly Recurring</div>
         <div class="kpi-val" id="kpiMonthlyRev">$0</div>
         <div class="kpi-sub">Active monthly plans</div>
       </div>
 
       <div class="kpi-card alert">
-        <div class="kpi-label">Anniversary Billing Due</div>
+        <div class="kpi-label">Billing Due</div>
         <div class="kpi-val" id="kpiBillingDue">0</div>
         <div class="kpi-sub" id="kpiBillingDueAmt">$0.00 ready to charge</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-label">Scoops Due Today / Overdue</div>
+        <div class="kpi-label">Scoops Due</div>
         <div class="kpi-val" id="kpiScoopsDue">0</div>
         <div class="kpi-sub" id="kpiTodayDate">—</div>
       </div>
@@ -778,12 +861,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <!-- TABS & SEARCH -->
     <div class="nav-bar">
       <div class="tabs">
-        <button class="tab-btn active" data-tab="leads" onclick="switchTab('leads')">🚀 Website Leads (<span id="leadCountBadge">0</span>)</button>
-        <button class="tab-btn" data-tab="billing" onclick="switchTab('billing')">💳 Anniversary Billing</button>
-        <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">🗓️ Scoop Schedule</button>
-        <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Customer Map</button>
-        <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 All Clients</button>
-        <button class="tab-btn" data-tab="referrals" onclick="switchTab('referrals')">🤝 Partner Referrals ($20)</button>
+        <button class="tab-btn active" data-tab="leads" onclick="switchTab('leads')">🚀 Leads (<span id="leadCountBadge">0</span>)</button>
+        <button class="tab-btn" data-tab="billing" onclick="switchTab('billing')">💳 Billing</button>
+        <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">🗓️ Schedule</button>
+        <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Map</button>
+        <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 Clients</button>
+        <button class="tab-btn" data-tab="referrals" onclick="switchTab('referrals')">🤝 Referrals ($20)</button>
       </div>
 
       <div class="search-controls">
@@ -805,7 +888,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <option>Runaway Bay</option>
           <option>Lake Bridgeport</option>
         </select>
-        <button class="btn btn-dark" onclick="openClientModal()">+ Add New Client</button>
+        <button class="btn btn-dark" onclick="openClientModal()">+ Add Client</button>
       </div>
     </div>
 
@@ -814,8 +897,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="panel-card">
         <div class="panel-hd">
           <h2>🚀 Website Quote Leads Inbox</h2>
-          <div style="font-size:12px; color:var(--m); font-weight:700;">
-            Incoming quotes stay separated from active routes until you click <strong>"✓ Convert to Client"</strong>
+          <div style="font-size:11.5px; color:var(--m); font-weight:700;">
+            Tap <strong>"✓ Convert to Client"</strong> to add to your route
           </div>
         </div>
         <div class="leads-grid" id="leadsCardsContainer"></div>
@@ -827,8 +910,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="panel-card">
         <div class="panel-hd">
           <h2>💳 Monthly Anniversary Billing Tracker</h2>
-          <div style="font-size:12px; color:var(--m); font-weight:700;">
-            One-click protection enabled on <strong>"Mark Paid"</strong> so accidental double-clicks won't skip a month
+          <div style="font-size:11.5px; color:var(--m); font-weight:700;">
+            One-click lock prevents double-charging a month
           </div>
         </div>
         <div class="table-wrap">
@@ -856,7 +939,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="panel-card">
         <div class="panel-hd">
           <h2>🗓️ Yard Scoop Schedule &amp; Route Sheet</h2>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
             <select id="routeFilter" class="filter-select" onchange="renderAll()">
               <option value="all">All Active Yards</option>
               <option value="due">Due Today or Overdue</option>
@@ -865,7 +948,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
             </select>
             <button type="button" class="btn btn-sage btn-sm" onclick="toggleOmwEditor()">✏️ Edit "On My Way" Text</button>
-            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route Sheet</button>
+            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route</button>
           </div>
         </div>
 
@@ -873,14 +956,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="omw-drawer" id="omwTemplateDrawer">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
             <strong style="font-size:12.5px; color:var(--g);">🚗 Customize Your "On My Way" Text Message</strong>
-            <span style="font-size:11.5px; color:var(--m); font-weight:700;">Use <code>{firstName}</code> to automatically insert the customer's first name</span>
+            <span style="font-size:11px; color:var(--m); font-weight:700;">Use <code>{firstName}</code> to insert customer's first name</span>
           </div>
           <textarea id="inputOmwTemplate" rows="2"></textarea>
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset to Default Message</button>
+            <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset to Default</button>
             <div style="display:flex; gap:8px;">
               <button type="button" class="btn btn-outline btn-sm" onclick="toggleOmwEditor()">Cancel</button>
-              <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Text Template</button>
+              <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Template</button>
             </div>
           </div>
         </div>
@@ -893,24 +976,24 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <section id="tab-map" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>🗺️ Wise &amp; South Montague County Customer Map</h2>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <span id="mapGeocodeStatus" style="font-size:11.5px; color:var(--m); font-weight:700;"></span>
+          <h2>🗺️ Customer Route Map</h2>
+          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+            <span id="mapGeocodeStatus" style="font-size:11px; color:var(--m); font-weight:700;"></span>
             <div class="map-toggle-group">
-              <button type="button" class="map-toggle-btn active" id="mapBtnAll" onclick="setMapMode('active')">All Active Customers</button>
-              <button type="button" class="map-toggle-btn" id="mapBtnToday" onclick="setMapMode('due')">Today's Scoop Route</button>
+              <button type="button" class="map-toggle-btn active" id="mapBtnAll" onclick="setMapMode('active')">All Active</button>
+              <button type="button" class="map-toggle-btn" id="mapBtnToday" onclick="setMapMode('due')">Today's Route</button>
             </div>
-            <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Road Route: ON</button>
-            <button type="button" class="btn btn-sage btn-sm" id="btnUseGps" onclick="toggleGpsStart()">📍 Start at My GPS: ON</button>
-            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print Route Sheet</button>
+            <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Route: ON</button>
+            <button type="button" class="btn btn-sage btn-sm" id="btnUseGps" onclick="toggleGpsStart()">📍 My GPS: ON</button>
+            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print</button>
             <button type="button" class="btn btn-green btn-sm" onclick="openAppleMapsRoute()">🍎 Apple Maps</button>
             <button type="button" class="btn btn-outline btn-sm" onclick="openGoogleMapsRoute()">🧭 Google Maps</button>
-            <button type="button" class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh Pins</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh</button>
           </div>
         </div>
 
         <div class="map-tip-bar">
-          <span><strong>Live GPS Road Routing:</strong> Stops are numbered <strong>#1, #2, #3...</strong> starting from your live GPS location. Switch to <em>Satellite View</em> (top-right of map) and <strong>drag any 💩 pin</strong> onto the exact house or gate—the updated GPS saves straight to the cloud!</span>
+          <span><strong>Live GPS Routing:</strong> Numbered <strong>#1, #2, #3...</strong> from your current GPS. Switch to <em>Satellite View</em> and drag any 💩 pin onto the exact gate—it saves straight to the cloud!</span>
         </div>
 
         <div class="map-layout">
@@ -918,7 +1001,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <div class="map-sidebar">
             <div class="map-legend">
               <span class="legend-item"><span class="dot dot-gps"></span> Your GPS</span>
-              <span class="legend-item"><span class="dot dot-due"></span> Due Today/Overdue</span>
+              <span class="legend-item"><span class="dot dot-due"></span> Due Today</span>
               <span class="legend-item"><span class="dot dot-active"></span> Active Yard</span>
             </div>
             <div class="map-list" id="mapSidebarList"></div>
@@ -931,7 +1014,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <section id="tab-clients" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>🐾 Complete Client Directory &amp; Yard Instructions</h2>
+          <h2>🐾 Complete Client Directory</h2>
           <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
         </div>
         <div class="table-wrap">
@@ -957,9 +1040,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <section id="tab-referrals" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>🤝 Partner Business &amp; Employee Referral Tracker ($20 Rewards)</h2>
-          <div style="font-size:12px; color:var(--m); font-weight:700;">
-            Tracks customers referred by local pet businesses &amp; $20 payout status
+          <h2>🤝 Partner Referrals ($20 Rewards)</h2>
+          <div style="font-size:11.5px; color:var(--m); font-weight:700;">
+            Tracks local pet business referrals &amp; $20 payouts
           </div>
         </div>
         <div class="table-wrap">
@@ -989,14 +1072,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     <div class="fb-subbar">
       <div class="fb-subbar-title">
-        <h2>📣 Wise Scoopers Facebook Group Posting Manager</h2>
-        <p>Cloud-Synced Wise County Schedule &amp; AI Ad / Image Prompt Generator</p>
+        <h2>📣 Facebook Group Posting Manager</h2>
+        <p>Cloud-Synced Wise County Schedule &amp; AI Ad Generator</p>
       </div>
-      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.55rem;">
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.5rem;">
         <span id="fbCloudBadge" class="badge badge-green">☁️ Cloud Synced</span>
-        <button type="button" class="btn btn-sage" id="btnAddGroup">+ Add Group</button>
-        <button type="button" class="btn btn-outline" id="btnManageAll">
-          Manage All Groups / Backup (<span id="headerGroupCount">2</span>)
+        <button type="button" class="btn btn-sage btn-sm" id="btnAddGroup">+ Add Group</button>
+        <button type="button" class="btn btn-outline btn-sm" id="btnManageAll">
+          Manage / Backup (<span id="headerGroupCount">2</span>)
         </button>
       </div>
     </div>
@@ -1013,7 +1096,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="progress-numbers">
           <span>Completed Today: <strong id="completedTodayText">0 / 0</strong></span>
           <span>Remaining: <strong id="remainingTodayText">0</strong></span>
-          <span id="todayDateDisplay" style="color: var(--ws-muted); font-size: 0.85rem;"></span>
+          <span id="todayDateDisplay" style="color: var(--ws-muted); font-size: 0.82rem;"></span>
         </div>
         <div class="progress-track">
           <div class="progress-fill" id="progressBarFill"></div>
@@ -1022,10 +1105,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
       <div class="reminder-box">
         <div class="reminder-row">
-          <label for="reminderTimeInput" style="font-size:0.85rem; font-weight:700;">Daily Reminder:</label>
+          <label for="reminderTimeInput" style="font-size:0.82rem; font-weight:700;">Daily Reminder:</label>
           <input type="time" id="reminderTimeInput" class="time-input" value="09:00" />
           <button type="button" class="btn btn-sm btn-outline" id="btnEnableReminders">
-            Enable Browser Reminders
+            Enable Alerts
           </button>
         </div>
         <span class="reminder-hint" id="reminderStatusHint">
@@ -1038,11 +1121,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <section class="timing-guide" aria-label="Best Times and Days to Post">
       <div class="timing-guide-top">
         <div class="timing-guide-title">
-          <span>⏰ BEST TIMES TO POST IN WISE COUNTY (CENTRAL TIME)</span>
-          <span class="badge badge-green">Click any window to set your Daily Reminder</span>
+          <span>⏰ BEST TIMES TO POST IN WISE COUNTY (CT)</span>
+          <span class="badge badge-green">Tap any window to set reminder</span>
         </div>
-        <span style="font-size:0.78rem; font-weight:700; color:var(--ws-muted);">
-          🔥 Top Days: <strong style="color:var(--ws-forest);">Tue – Thu</strong> &amp; <strong style="color:var(--ws-forest);">Fri Morning</strong>
+        <span style="font-size:0.76rem; font-weight:700; color:var(--ws-muted);">
+          🔥 Top Days: <strong style="color:var(--ws-forest);">Tue – Thu</strong> &amp; <strong style="color:var(--ws-forest);">Fri AM</strong>
         </span>
       </div>
 
@@ -1073,8 +1156,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </div>
 
       <div class="timing-footer-tips">
-        <span><strong>⚡ 30-Minute Rule:</strong> Reply fast to every comment in the first 30 mins so Facebook boosts your post to the top!</span>
-        <span><strong>🔄 Anti-Spam Tip:</strong> Hit <strong>↻ Vary Caption</strong> after every 2–3 groups.</span>
+        <span><strong>⚡ 30-Min Rule:</strong> Reply fast to comments in the first 30 mins to boost your post!</span>
+        <span><strong>🔄 Anti-Spam:</strong> Tap <strong>↻ Vary Caption</strong> every 2–3 groups.</span>
       </div>
     </section>
 
@@ -1097,7 +1180,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             🔑 API Key
           </button>
           <button type="button" class="btn btn-sm btn-outline" id="btnShuffleIdea">
-            Shuffle Offline Deck ↻
+            Shuffle ↻
           </button>
           <button type="button" class="btn btn-sm btn-outline" id="btnToggleIdeaBody" aria-expanded="true">
             Collapse
@@ -1109,43 +1192,37 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <!-- Brand Reference Image Manager Drawer -->
         <div class="api-key-drawer hidden" id="brandAssetDrawer">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
-            <strong style="font-size:0.86rem; color:var(--ws-forest);">
-              Add Wise Scoopers Reference Photos (Logo, Robbie Poses, Cat &amp; Yard Photos — Syncs to Cloud)
+            <strong style="font-size:0.84rem; color:var(--ws-forest);">
+              Add Wise Scoopers Reference Photos (Syncs to Cloud)
             </strong>
             <span class="badge badge-green" id="brandAssetCountBadge">6 Saved</span>
           </div>
           <div class="api-key-row">
             <input type="text" id="inputNewBrandAssetLabel" class="api-key-input" style="max-width:190px; font-family:inherit;" placeholder="Label (e.g., Robbie Cape)" />
-            <input type="url" id="inputNewBrandAssetUrl" class="api-key-input" placeholder="Direct image URL (e.g., https://i.imgur.com/....png)" />
+            <input type="url" id="inputNewBrandAssetUrl" class="api-key-input" placeholder="Direct image URL (https://i.imgur.com/....png)" />
             <button type="button" class="btn btn-sm btn-primary" id="btnAddBrandAsset">+ Add Photo</button>
           </div>
           <div id="brandAssetManageList" style="display:flex; flex-direction:column; gap:0.35rem; margin-top:0.2rem;"></div>
-          <span style="font-size:0.76rem; color:var(--ws-muted);">
-            Tip: On Imgur, right-click any image in your album and select "Copy image address" to get its direct .png/.jpg link.
-          </span>
         </div>
 
         <!-- Private Gemini API Key Drawer -->
         <div class="api-key-drawer hidden" id="apiKeyDrawer">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
-            <strong style="font-size:0.86rem; color:var(--ws-forest);">
-              Google AI Studio Gemini API Key (Synced to your Cloud account across devices)
+            <strong style="font-size:0.84rem; color:var(--ws-forest);">
+              Google AI Studio Gemini API Key (Synced to Cloud)
             </strong>
             <span id="apiKeyStatusBadge" class="badge badge-amber">Not Set</span>
           </div>
           <div class="api-key-row">
-            <input type="password" id="inputGeminiApiKey" class="api-key-input" placeholder="Paste your Gemini API key (e.g., AQ.Ab8R... or AIza...)" autocomplete="off" />
+            <input type="password" id="inputGeminiApiKey" class="api-key-input" placeholder="Paste your Gemini API key..." autocomplete="off" />
             <button type="button" class="btn btn-sm btn-primary" id="btnSaveApiKey">Save Key</button>
             <button type="button" class="btn btn-sm btn-danger" id="btnClearApiKey">Clear Key</button>
           </div>
-          <span style="font-size:0.76rem; color:var(--ws-muted);">
-            Your key is saved to your authenticated Wise Scoopers Firebase account so it works on your PC, phone, and iPad.
-          </span>
         </div>
 
         <!-- Live Gemini AI Generator Bar -->
         <div class="ai-toolbar">
-          <input type="text" id="inputAiCustomTopic" class="ai-topic-input" placeholder="Optional topic (e.g., cat litter hockey, dog poop parasites & kids, muddy paws)..." />
+          <input type="text" id="inputAiCustomTopic" class="ai-topic-input" placeholder="Optional topic (e.g., cat litter hockey, muddy paws)..." />
           <button type="button" class="btn btn-sm btn-primary" id="btnGenerateAiPost">
             ✨ Generate Fresh AI Post
           </button>
@@ -1172,11 +1249,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="prompt-box-top">
               <span class="prompt-label">Ready-to-Post Facebook Caption</span>
               <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-                <button type="button" class="btn btn-sm btn-outline" id="btnVaryCaption" title="Reword slightly so Facebook doesn't flag duplicate posts across groups">
+                <button type="button" class="btn btn-sm btn-outline" id="btnVaryCaption">
                   ↻ Vary Caption
                 </button>
                 <button type="button" class="btn btn-sm btn-sage" id="btnCopyPostText">
-                  Copy Facebook Post
+                  Copy Post
                 </button>
               </div>
             </div>
@@ -1187,7 +1264,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="prompt-box-top">
               <span class="prompt-label">AI Image Prompt (4:5 Graphic)</span>
               <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
-                <button type="button" class="btn btn-sm btn-outline" id="btnToggleImageStyle" title="Switch between Cartoon style (default) and Realistic Backyard Info ad style">
+                <button type="button" class="btn btn-sm btn-outline" id="btnToggleImageStyle">
                   🎨 Style: Cartoon
                 </button>
                 <button type="button" class="btn btn-sm btn-primary" id="btnCopyAndOpenGemini">
@@ -1202,11 +1279,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <!-- Multi-Photo Reference Gallery for Attaching to Gemini -->
             <div class="brand-ref-strip" id="brandRefStrip">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
-                <span style="font-size:0.78rem; font-weight:700; color:var(--ws-forest);">
+                <span style="font-size:0.76rem; font-weight:700; color:var(--ws-forest);">
                   Reference Photos (Copy or Drag into Gemini)
                 </span>
-                <button type="button" class="btn btn-sm btn-outline" id="btnQuickAddPhoto" style="padding:0.22rem 0.55rem; font-size:0.74rem; min-height:26px;">
-                  + Add More Photos
+                <button type="button" class="btn btn-sm btn-outline" id="btnQuickAddPhoto" style="padding:0.2rem 0.5rem; font-size:0.72rem; min-height:24px;">
+                  + Add Photos
                 </button>
               </div>
               <div class="brand-gallery-grid" id="brandGalleryGrid"></div>
@@ -2140,7 +2217,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           console.error('OMW template sync error:', error);
         });
 
-        // REAL-TIME FIREBASE SYNC FOR FACEBOOK GROUP MANAGER
         if (unsubFb) unsubFb();
         unsubFb = onSnapshot(FB_DOC_REF, (docSnap) => {
           const fbBadge = document.getElementById('fbCloudBadge');
@@ -2416,7 +2492,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     window.toggleGpsStart = function() {
       useGpsStart = !useGpsStart;
       const btn = document.getElementById('btnUseGps');
-      btn.textContent = useGpsStart ? '📍 Start at My GPS: ON' : '📍 Start at My GPS: OFF';
+      btn.textContent = useGpsStart ? '📍 My GPS: ON' : '📍 My GPS: OFF';
       btn.classList.toggle('btn-sage', useGpsStart);
       btn.classList.toggle('btn-outline', !useGpsStart);
       renderCustomerMap(false);
@@ -2859,7 +2935,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     window.toggleBestRouteLine = function() {
       bestRouteEnabled = !bestRouteEnabled;
       const btn = document.getElementById('btnBestRoute');
-      btn.textContent = bestRouteEnabled ? '⚡ Road Route: ON' : '⚡ Road Route: OFF';
+      btn.textContent = bestRouteEnabled ? '⚡ Route: ON' : '⚡ Route: OFF';
       btn.classList.toggle('btn-sage', bestRouteEnabled);
       btn.classList.toggle('btn-outline', !bestRouteEnabled);
       renderCustomerMap(false);
@@ -2979,7 +3055,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         return;
       }
 
-      statusEl.textContent = useGpsStart ? 'Locating your GPS & pinning yards...' : `Pinning ${list.length} yard${list.length === 1 ? '' : 's'}...`;
+      statusEl.textContent = useGpsStart ? 'Locating GPS & pinning yards...' : `Pinning ${list.length} yard${list.length === 1 ? '' : 's'}...`;
 
       const [userCoords, resolvedStops] = await Promise.all([
         getUserLocationAsync(),
@@ -3049,7 +3125,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const pinTag = item.isManual ? '<em>(Exact custom pin)</em>' : item.isApprox ? '<em>(Town pin — drag to exact house)</em>' : '';
 
         const popupHtml = `
-          <div style="min-width:225px; font-family:inherit;">
+          <div style="min-width:215px; font-family:inherit;">
             <div style="font-weight:900; font-size:14px; color:#263A2D;">${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</div>
             <div style="font-size:12px; color:#536559; margin-bottom:5px;">${escapeHtml(c.address)}, ${escapeHtml(c.city)} ${pinTag}</div>
             <div style="font-size:11.5px; background:#F4F7F4; padding:6px 8px; border-radius:6px; margin-bottom:6px; line-height:1.4;">
@@ -3111,13 +3187,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
 
       if (bestRouteEnabled && (orderedStops.length >= 2 || (userCoords && orderedStops.length >= 1))) {
-        statusEl.textContent = `Calculating road route from ${userCoords ? 'your GPS' : 'start'}...`;
+        statusEl.textContent = `Calculating route...`;
         const roadData = await fetchRealRoadRoute(orderedStops, userCoords);
 
         if (roadData && roadData.latLngs.length > 1) {
           routeOutlinePolyline = L.polyline(roadData.latLngs, { color: '#ffffff', weight: 7, opacity: 0.9 }).addTo(leafletMap);
           routePolyline = L.polyline(roadData.latLngs, { color: '#263A2D', weight: 4.5, opacity: 0.92 }).addTo(leafletMap);
-          statusEl.textContent = `${orderedStops.length} stops${userCoords ? ' from GPS' : ''} • ${roadData.miles.toFixed(1)} mi (~${roadData.minutes} min)`;
+          statusEl.textContent = `${orderedStops.length} stops • ${roadData.miles.toFixed(1)} mi (~${roadData.minutes}m)`;
         } else {
           routePolyline = L.polyline(fallbackLatLngs, { color: '#263A2D', weight: 3.5, opacity: 0.78, dashArray: '8, 7' }).addTo(leafletMap);
           statusEl.textContent = `${orderedStops.length} yards • ~${straightMiles.toFixed(1)} mi`;
@@ -3150,7 +3226,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       document.getElementById('kpiBillingDue').textContent = billingDueList.length;
       document.getElementById('kpiBillingDueAmt').textContent = `$${billingDueAmt.toFixed(2)} ready to charge`;
       document.getElementById('kpiScoopsDue').textContent = scoopsDueCount;
-      document.getElementById('kpiTodayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+      document.getElementById('kpiTodayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
     function renderBillingTable() {
@@ -3159,12 +3235,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const today = todayStr(0);
 
       if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:28px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add New Client"</strong> or convert a lead from <strong>"🚀 Website Leads"</strong>!</td></tr>`;
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="8" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add Client"</strong> or convert a lead from <strong>"🚀 Leads"</strong>!</td></tr>`;
         return;
       }
 
       tbody.innerHTML = list.map(c => {
         const days = diffDaysFromToday(c.nextCharge);
+        const isDue = c.status === 'Active' && days <= 0;
         let badge = `<span class="badge badge-ok">In ${days} days</span>`;
         if (c.status === 'Paused') badge = `<span class="badge badge-sage">Paused</span>`;
         else if (c.status === 'One-Time') badge = `<span class="badge badge-soon">One-Time</span>`;
@@ -3182,18 +3259,25 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           : `<button class="btn btn-green btn-sm" onclick="markPaid('${c.id}')">✓ Mark Paid</button>`;
 
         return `
-          <tr>
-            <td>${badge}</td>
-            <td><strong>${formatDisplayDate(c.startDate)}</strong><br><span style="font-size:11px; color:var(--gm);">${annivLabel}</span></td>
-            <td><strong>${formatDisplayDate(c.nextCharge)}</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.payMethod)}</span></td>
-            <td>
-              <input type="date" value="${c.lastPaid || ''}" onchange="updateLastPaidInline('${c.id}', this.value)"
-                style="padding:4px 7px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; font-family:inherit; background:#FAFDFB;">
+          <tr class="mobile-card-row ${isDue ? 'is-due' : ''}">
+            <td class="m-header" data-label="Status">
+              <div>
+                <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span>
+              </div>
+              <div style="text-align:right;">
+                ${badge}<br>
+                <strong style="font-size:15px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong>
+              </div>
             </td>
-            <td><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span></td>
-            <td><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
-            <td><strong style="font-size:15.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}</strong></td>
-            <td>
+            <td data-label="Start / Anniversary"><strong>${formatDisplayDate(c.startDate)}</strong><br><span style="font-size:11px; color:var(--gm);">${annivLabel}</span></td>
+            <td data-label="Next Charge"><strong>${formatDisplayDate(c.nextCharge)}</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.payMethod)}</span></td>
+            <td data-label="Last Paid Date">
+              <input type="date" value="${c.lastPaid || ''}" onchange="updateLastPaidInline('${c.id}', this.value)"
+                style="padding:4px 6px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; font-family:inherit; background:#FAFDFB; width:100%; max-width:140px;">
+            </td>
+            <td data-label="Service & Plan"><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
+            <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
                 ${payBtnHtml}
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
@@ -3283,20 +3367,29 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const list = getFilteredClients().sort((a, b) => a.name.localeCompare(b.name));
 
       if (!list.length) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:28px; color:var(--m); font-weight:600;">No clients added yet.</td></tr>`;
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="7" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients added yet.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = list.map(c => {
         return `
-          <tr>
-            <td><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}</span></td>
-            <td>${escapeHtml(c.address)}<br><strong>${escapeHtml(c.city)}</strong></td>
-            <td>${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
-            <td style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
-            <td><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
-            <td><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
-            <td>
+          <tr class="mobile-card-row">
+            <td class="m-header" data-label="Customer">
+              <div>
+                <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}</span>
+              </div>
+              <div style="text-align:right;">
+                <strong style="font-size:14.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong><br>
+                <span class="badge badge-sage">${escapeHtml(c.status)}</span>
+              </div>
+            </td>
+            <td data-label="Address & City">${escapeHtml(c.address)}<br><strong>${escapeHtml(c.city)}</strong></td>
+            <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
+            <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11px; color:var(--gm); font-weight:700;">Next: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
+            <td data-label="Service Plan">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? `<br><span style="font-size:11px; color:var(--m);">+ ${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
+            ${c.gateNotes ? `<td class="m-full" data-label="Gate & Yard Notes" style="background:#FFFDF7; border:1px dashed #D8C79E; color:#4D3E18;">${escapeHtml(c.gateNotes)}</td>` : `<td data-label="Gate & Yard Notes">—</td>`}
+            <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px;">
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Delete</button>
@@ -3312,7 +3405,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const refs = getFilteredClients().filter(c => (c.refBy && c.refBy.trim() !== '') || c.refStatus !== 'N/A');
 
       if (!refs.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No partner referrals logged yet.</td></tr>`;
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No partner referrals logged yet.</td></tr>`;
         return;
       }
 
@@ -3322,13 +3415,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           : `<span class="badge badge-soon">Pending ($20 Owed)</span>`;
 
         return `
-          <tr>
-            <td><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.freq)}</span></td>
-            <td><strong>${escapeHtml(c.refBy || '—')}</strong></td>
-            <td>${escapeHtml(c.refLoc || c.city)}</td>
-            <td>${formatDisplayDate(c.startDate)}</td>
-            <td>${statusBadge}</td>
-            <td>
+          <tr class="mobile-card-row">
+            <td class="m-header" data-label="Referred Customer">
+              <div>
+                <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.freq)}</span>
+              </div>
+              <div>${statusBadge}</div>
+            </td>
+            <td data-label="Referred By"><strong>${escapeHtml(c.refBy || '—')}</strong></td>
+            <td data-label="Partner Town & Start">${escapeHtml(c.refLoc || c.city)} • ${formatDisplayDate(c.startDate)}</td>
+            <td class="m-actions" data-label="Actions">
               ${c.refStatus !== 'Paid'
                 ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${c.id}')">💵 Mark $20 Paid</button>`
                 : `<button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">View</button>`}
@@ -4088,7 +4185,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (syncCloud) pushFbCloudSnapshot();
       }
 
-      // CLOUD RECEIVER HOOKS CALLED BY FIREBASE ONSNAPSHOT
       window.pushCurrentFbStateToCloud = function () {
         pushFbCloudSnapshot();
       };
@@ -4984,7 +5080,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
                   rel="noopener noreferrer"
                   class="btn btn-open-fb"
                 >
-                  Open Facebook Group ↗
+                  Open Group ↗
                 </a>
 
                 <button
@@ -5748,7 +5844,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
 
         document.getElementById("btnCopyPostText").addEventListener("click", function () {
           const idea = state.aiGeneratedIdea || getCurrentIdeaPreset();
-          if (idea) copyTextToClipboard(idea.postText, this, "Copy Facebook Post");
+          if (idea) copyTextToClipboard(idea.postText, this, "Copy Post");
         });
 
         document.getElementById("btnCopyImagePrompt").addEventListener("click", function () {
