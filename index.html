@@ -305,6 +305,28 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .lead-notes-box { background: #FFFDF7; border: 1px dashed #D8C79E; border-radius: 8px; padding: 6px 9px; font-size: 11.5px; color: #4D3E18; line-height: 1.35; }
   .lead-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; padding-top: 2px; }
 
+  /* ON MY WAY TEMPLATE EDITOR DRAWER IN SCHEDULE TAB */
+  .omw-drawer {
+    background: var(--gt);
+    border-bottom: 1.5px solid var(--b);
+    padding: 14px 18px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .omw-drawer.open { display: flex; }
+  .omw-drawer textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--gm);
+    border-radius: 9px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    background: var(--w);
+    resize: vertical;
+  }
+
   /* MAP TOGGLE PILLS & CONTAINER */
   .map-toggle-group { display: inline-flex; background: var(--w); border: 1.5px solid var(--b); border-radius: 9px; padding: 3px; gap: 4px; }
   .map-toggle-btn { border: none; background: transparent; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; color: var(--m); cursor: pointer; }
@@ -840,9 +862,27 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <option value="Twice Weekly">Twice Weekly Plans Only</option>
               <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
             </select>
+            <button type="button" class="btn btn-sage btn-sm" onclick="toggleOmwEditor()">✏️ Edit "On My Way" Text</button>
             <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route Sheet</button>
           </div>
         </div>
+
+        <!-- INLINE EDITOR FOR "ON MY WAY" TEXT TEMPLATE -->
+        <div class="omw-drawer" id="omwTemplateDrawer">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <strong style="font-size:12.5px; color:var(--g);">🚗 Customize Your "On My Way" Text Message</strong>
+            <span style="font-size:11.5px; color:var(--m); font-weight:700;">Use <code>{firstName}</code> to automatically insert the customer's first name</span>
+          </div>
+          <textarea id="inputOmwTemplate" rows="2"></textarea>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+            <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset to Default Message</button>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="toggleOmwEditor()">Cancel</button>
+              <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Text Template</button>
+            </div>
+          </div>
+        </div>
+
         <div class="route-grid" id="routeCardsContainer"></div>
       </div>
     </section>
@@ -1656,6 +1696,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     const LEADS_COL = collection(db, "wise_scoopers_leads");
     const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
     const FB_DOC_REF = doc(db, "wise_scoopers_settings", "fb_manager");
+    const OMW_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template");
 
     let clients = [];
     let leads = [];
@@ -1663,7 +1704,54 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let unsubscribeLeads = null;
     let unsubApps = null;
     let unsubFb = null;
+    let unsubOmw = null;
     let isAuthenticated = false;
+
+    // "ON MY WAY" TEXT TEMPLATE STATE & EDITOR
+    const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way to service your yard and should be there in about 15–30 minutes (or less). Please make sure any pups are inside—see you soon!";
+    let currentOmwTemplate = localStorage.getItem("ws_omw_template") || DEFAULT_OMW_TEMPLATE;
+
+    window.toggleOmwEditor = function() {
+      const drawer = document.getElementById('omwTemplateDrawer');
+      const isOpen = drawer.classList.toggle('open');
+      if (isOpen) {
+        const inp = document.getElementById('inputOmwTemplate');
+        inp.value = currentOmwTemplate;
+        inp.focus();
+      }
+    };
+
+    window.saveOmwTemplate = async function() {
+      const val = document.getElementById('inputOmwTemplate').value.trim();
+      if (!val) {
+        showToast("Message template cannot be empty.");
+        return;
+      }
+      currentOmwTemplate = val;
+      localStorage.setItem("ws_omw_template", currentOmwTemplate);
+      if (isAuthenticated) {
+        await setDoc(OMW_DOC_REF, { template: currentOmwTemplate }, { merge: true });
+      }
+      document.getElementById('omwTemplateDrawer').classList.remove('open');
+      showToast('Saved "On My Way" text template to Cloud!');
+    };
+
+    window.resetOmwTemplate = function() {
+      document.getElementById('inputOmwTemplate').value = DEFAULT_OMW_TEMPLATE;
+    };
+
+    window.copyOnMyWayText = function(id) {
+      const c = clients.find(x => x.id === id);
+      if (!c) return;
+      const firstName = (c.name || "there").trim().split(' ')[0];
+      const msg = currentOmwTemplate.replace(/\{firstName\}/gi, firstName);
+
+      navigator.clipboard.writeText(msg).then(() => {
+        showToast(`Copied "On My Way" text for ${c.name}!`);
+      }).catch(() => {
+        prompt('Copy this "On My Way" text:', msg);
+      });
+    };
 
     // BRIDGE FOR FACEBOOK MANAGER CLOUD SYNC
     window.syncFbStateToCloud = async function(fbPayload) {
@@ -1993,6 +2081,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (unsubscribeLeads) unsubscribeLeads();
       if (unsubApps) unsubApps();
       if (unsubFb) unsubFb();
+      if (unsubOmw) unsubOmw();
       await signOut(auth);
     };
 
@@ -2039,6 +2128,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           console.error('Apps sync error:', error);
         });
 
+        if (unsubOmw) unsubOmw();
+        unsubOmw = onSnapshot(OMW_DOC_REF, (docSnap) => {
+          if (docSnap.exists() && docSnap.data().template) {
+            currentOmwTemplate = docSnap.data().template;
+            localStorage.setItem("ws_omw_template", currentOmwTemplate);
+          }
+        }, (error) => {
+          console.error('OMW template sync error:', error);
+        });
+
         // REAL-TIME FIREBASE SYNC FOR FACEBOOK GROUP MANAGER
         if (unsubFb) unsubFb();
         unsubFb = onSnapshot(FB_DOC_REF, (docSnap) => {
@@ -2053,7 +2152,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               fbBadge.textContent = `☁️ Cloud Synced (${count} groups)`;
             }
           } else {
-            // First time connecting: push local groups & settings up to Firebase
             if (typeof window.pushCurrentFbStateToCloud === 'function') {
               window.pushCurrentFbStateToCloud();
             }
@@ -3169,7 +3267,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
             <div class="rc-actions">
               ${scoopBtnHtml}
-              <button class="btn btn-sage btn-sm" onclick="copyGateText('${c.id}')">📋 Copy Gate Text</button>
+              <button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 Copy On My Way</button>
               <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapsLabel}</a>
               <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
             </div>
@@ -3314,22 +3412,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
       await saveClientDoc(c);
       showToast(`Undid Complete Scoop for ${c.name}.`);
-    };
-
-    window.copyGateText = function(id) {
-      const c = clients.find(x => x.id === id);
-      if (!c) return;
-      const firstName = c.name.split(' ')[0];
-      const treatSentence = c.treatLoc && c.treatLoc !== 'No Treats'
-        ? ` Bagged treats were left at your ${c.treatLoc.toLowerCase()}.`
-        : '';
-      const msg = `Hi ${firstName}! Austin with Wise Scoopers just finished servicing your yard. Your gate is closed & locked securely behind me.${treatSentence} Have a great rest of your day!`;
-
-      navigator.clipboard.writeText(msg).then(() => {
-        showToast(`Gate & treat confirmation text copied for ${c.name}!`);
-      }).catch(() => {
-        prompt('Copy this text update:', msg);
-      });
     };
 
     window.markReferralPaid = async function(id) {
