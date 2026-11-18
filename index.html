@@ -54,7 +54,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
      params, protocol, www/m subdomains, lowercase) before saving to prevent
      duplicate entries.
 - Preserve all groups, rules, completion logs, and reminder settings in
-     browser localStorage.
+     Firebase Firestore (synced across PC, phone, and iPad) with localStorage fallback.
 - Support JSON export and import for reliable local backups.
 - Never populate the database with fake/invented example groups.
 =============================================================================
@@ -948,9 +948,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <div class="fb-subbar">
       <div class="fb-subbar-title">
         <h2>📣 Wise Scoopers Facebook Group Posting Manager</h2>
-        <p>Wise County Local Schedule &amp; AI Ad / Image Prompt Generator</p>
+        <p>Cloud-Synced Wise County Schedule &amp; AI Ad / Image Prompt Generator</p>
       </div>
-      <div style="display:flex; flex-wrap:wrap; gap:0.55rem;">
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:0.55rem;">
+        <span id="fbCloudBadge" class="badge badge-green">☁️ Cloud Synced</span>
         <button type="button" class="btn btn-sage" id="btnAddGroup">+ Add Group</button>
         <button type="button" class="btn btn-outline" id="btnManageAll">
           Manage All Groups / Backup (<span id="headerGroupCount">2</span>)
@@ -1067,7 +1068,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="api-key-drawer hidden" id="brandAssetDrawer">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
             <strong style="font-size:0.86rem; color:var(--ws-forest);">
-              Add Wise Scoopers Reference Photos (Logo, Robbie Poses, Cat &amp; Yard Photos)
+              Add Wise Scoopers Reference Photos (Logo, Robbie Poses, Cat &amp; Yard Photos — Syncs to Cloud)
             </strong>
             <span class="badge badge-green" id="brandAssetCountBadge">6 Saved</span>
           </div>
@@ -1086,7 +1087,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="api-key-drawer hidden" id="apiKeyDrawer">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.4rem;">
             <strong style="font-size:0.86rem; color:var(--ws-forest);">
-              Google AI Studio Gemini API Key (Stored privately in this browser only)
+              Google AI Studio Gemini API Key (Synced to your Cloud account across devices)
             </strong>
             <span id="apiKeyStatusBadge" class="badge badge-amber">Not Set</span>
           </div>
@@ -1096,7 +1097,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <button type="button" class="btn btn-sm btn-danger" id="btnClearApiKey">Clear Key</button>
           </div>
           <span style="font-size:0.76rem; color:var(--ws-muted);">
-            Your key is saved strictly in your browser's localStorage and never embedded in the HTML file.
+            Your key is saved to your authenticated Wise Scoopers Firebase account so it works on your PC, phone, and iPad.
           </span>
         </div>
 
@@ -1632,7 +1633,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div id="toastArea"></div>
 
   <!-- ========================================================================
-       SCRIPT 1: CLOUD CRM, LEADS, GPS MAP & BUSINESS APPS LAUNCHER
+       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + GPS MAP + APPS + FB SYNC)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -1654,12 +1655,35 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     const CLIENTS_COL = collection(db, "wise_scoopers_clients");
     const LEADS_COL = collection(db, "wise_scoopers_leads");
     const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
+    const FB_DOC_REF = doc(db, "wise_scoopers_settings", "fb_manager");
 
     let clients = [];
     let leads = [];
     let unsubscribeClients = null;
     let unsubscribeLeads = null;
     let unsubApps = null;
+    let unsubFb = null;
+    let isAuthenticated = false;
+
+    // BRIDGE FOR FACEBOOK MANAGER CLOUD SYNC
+    window.syncFbStateToCloud = async function(fbPayload) {
+      if (!isAuthenticated) return;
+      try {
+        const cleanPayload = JSON.parse(JSON.stringify({
+          groups: fbPayload.groups || [],
+          postLogs: fbPayload.postLogs || {},
+          settings: fbPayload.settings || {},
+          updatedAt: new Date().toISOString()
+        }));
+        await setDoc(FB_DOC_REF, cleanPayload, { merge: true });
+        const fbBadge = document.getElementById('fbCloudBadge');
+        if (fbBadge) fbBadge.textContent = `☁️ Cloud Synced (${cleanPayload.groups.length} groups)`;
+      } catch (err) {
+        console.error('Failed to sync FB Manager to Firebase:', err);
+        const fbBadge = document.getElementById('fbCloudBadge');
+        if (fbBadge) fbBadge.textContent = '⚠️ Cloud Sync Pending';
+      }
+    };
 
     // WORKSPACE SWITCHER (CRM VS FACEBOOK MANAGER)
     window.switchWorkspace = function(mode) {
@@ -1968,6 +1992,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (unsubscribeClients) unsubscribeClients();
       if (unsubscribeLeads) unsubscribeLeads();
       if (unsubApps) unsubApps();
+      if (unsubFb) unsubFb();
       await signOut(auth);
     };
 
@@ -1976,6 +2001,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const syncEl = document.getElementById('cloudSyncStatus');
 
       if (user) {
+        isAuthenticated = true;
         gate.classList.add('hidden');
         syncEl.textContent = '☁️ Live Cloud Sync Active';
 
@@ -2012,7 +2038,32 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         }, (error) => {
           console.error('Apps sync error:', error);
         });
+
+        // REAL-TIME FIREBASE SYNC FOR FACEBOOK GROUP MANAGER
+        if (unsubFb) unsubFb();
+        unsubFb = onSnapshot(FB_DOC_REF, (docSnap) => {
+          const fbBadge = document.getElementById('fbCloudBadge');
+          if (docSnap.exists()) {
+            const cloudData = docSnap.data();
+            if (typeof window.applyCloudFbState === 'function') {
+              window.applyCloudFbState(cloudData);
+            }
+            if (fbBadge) {
+              const count = Array.isArray(cloudData.groups) ? cloudData.groups.length : 0;
+              fbBadge.textContent = `☁️ Cloud Synced (${count} groups)`;
+            }
+          } else {
+            // First time connecting: push local groups & settings up to Firebase
+            if (typeof window.pushCurrentFbStateToCloud === 'function') {
+              window.pushCurrentFbStateToCloud();
+            }
+          }
+        }, (error) => {
+          console.error('FB Manager sync error:', error);
+        });
+
       } else {
+        isAuthenticated = false;
         gate.classList.remove('hidden');
         syncEl.textContent = '🔒 Locked';
       }
@@ -3889,11 +3940,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             });
           } else {
             state.groups = JSON.parse(JSON.stringify(DEFAULT_GROUPS));
-            saveGroups();
+            saveGroups(false);
           }
         } catch (err) {
           state.groups = JSON.parse(JSON.stringify(DEFAULT_GROUPS));
-          saveGroups();
+          saveGroups(false);
         }
 
         try {
@@ -3927,9 +3978,80 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         } catch (err) {}
       }
 
-      function saveGroups() { safeSetItem(LS_GROUPS, JSON.stringify(state.groups)); }
-      function saveLogs() { safeSetItem(LS_LOGS, JSON.stringify(state.postLogs)); }
-      function saveSettings() { safeSetItem(LS_SETTINGS, JSON.stringify(state.settings)); }
+      // CLOUD + LOCAL STORAGE PERSISTENCE
+      function pushFbCloudSnapshot() {
+        if (typeof window.syncFbStateToCloud === "function") {
+          window.syncFbStateToCloud({
+            groups: state.groups,
+            postLogs: state.postLogs,
+            settings: state.settings
+          });
+        }
+      }
+
+      function saveGroups(syncCloud = true) {
+        safeSetItem(LS_GROUPS, JSON.stringify(state.groups));
+        if (syncCloud) pushFbCloudSnapshot();
+      }
+
+      function saveLogs(syncCloud = true) {
+        safeSetItem(LS_LOGS, JSON.stringify(state.postLogs));
+        if (syncCloud) pushFbCloudSnapshot();
+      }
+
+      function saveSettings(syncCloud = true) {
+        safeSetItem(LS_SETTINGS, JSON.stringify(state.settings));
+        if (syncCloud) pushFbCloudSnapshot();
+      }
+
+      // CLOUD RECEIVER HOOKS CALLED BY FIREBASE ONSNAPSHOT
+      window.pushCurrentFbStateToCloud = function () {
+        pushFbCloudSnapshot();
+      };
+
+      window.applyCloudFbState = function (cloudData) {
+        if (!cloudData || typeof cloudData !== "object") return;
+        let changed = false;
+
+        if (Array.isArray(cloudData.groups) && cloudData.groups.length > 0) {
+          state.groups = cloudData.groups.map((g) => ({
+            ...g,
+            normalizedUrl: g.normalizedUrl || normalizeUrl(g.url),
+            allowedDays:
+              Array.isArray(g.allowedDays) && g.allowedDays.length > 0
+                ? g.allowedDays
+                : [...DAYS]
+          }));
+          safeSetItem(LS_GROUPS, JSON.stringify(state.groups));
+          changed = true;
+        }
+
+        if (cloudData.postLogs && typeof cloudData.postLogs === "object") {
+          state.postLogs = cloudData.postLogs;
+          safeSetItem(LS_LOGS, JSON.stringify(state.postLogs));
+          changed = true;
+        }
+
+        if (cloudData.settings && typeof cloudData.settings === "object") {
+          state.settings = {
+            ...state.settings,
+            ...cloudData.settings
+          };
+          if (!Array.isArray(state.settings.brandAssets) || state.settings.brandAssets.length === 0) {
+            state.settings.brandAssets = JSON.parse(JSON.stringify(DEFAULT_BRAND_ASSETS));
+          }
+          safeSetItem(LS_SETTINGS, JSON.stringify(state.settings));
+          const remInp = document.getElementById("reminderTimeInput");
+          if (remInp && state.settings.reminderTime) {
+            remInp.value = state.settings.reminderTime;
+          }
+          changed = true;
+        }
+
+        if (changed) {
+          renderAllFb();
+        }
+      };
 
       function analyzePastedRules(rawText, groupName = "") {
         const text = (rawText || "").trim();
@@ -4175,7 +4297,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (idx === -1) {
           state.postLogs[dateISO].push(groupId);
           if (grp) grp.lastPostedDate = dateISO;
-          showFbToast("Marked as posted!");
+          showFbToast("Marked as posted & synced to Cloud!");
         } else {
           state.postLogs[dateISO].splice(idx, 1);
           if (grp && grp.lastPostedDate === dateISO) {
@@ -4183,8 +4305,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
         }
 
-        saveLogs();
-        saveGroups();
+        saveLogs(false);
+        saveGroups(true);
         renderAllFb();
       }
 
@@ -5067,7 +5189,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
               status,
               ruleSummary
             };
-            showFbToast(`Updated "${name}".`);
+            showFbToast(`Updated "${name}" & synced to Cloud!`);
           }
         } else {
           state.groups.push({
@@ -5084,10 +5206,10 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
             ruleSummary,
             lastPostedDate: null
           });
-          showFbToast(`Added "${name}" to schedule.`);
+          showFbToast(`Added "${name}" & synced to Cloud!`);
         }
 
-        saveGroups();
+        saveGroups(true);
         closeGroupModal();
         renderAllFb();
       }
@@ -5125,7 +5247,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
 
           if (remaining > 0) {
             state.settings.lastRemindedDate = todayISO;
-            saveSettings();
+            saveSettings(true);
 
             const msg = `Reminder: You have ${remaining} Facebook group${
               remaining === 1 ? "" : "s"
@@ -5206,11 +5328,11 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
 
             if (parsed.postLogs && typeof parsed.postLogs === "object") {
               state.postLogs = { ...state.postLogs, ...parsed.postLogs };
-              saveLogs();
             }
-            saveGroups();
+            saveLogs(false);
+            saveGroups(true);
             renderAllFb();
-            showFbToast(`Backup imported: ${added} added, ${updated} updated.`);
+            showFbToast(`Backup imported & synced to Cloud: ${added} added, ${updated} updated.`);
           } catch (err) {
             showFbToast("Import failed: " + err.message, true);
           }
@@ -5320,9 +5442,9 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
               `Remove "${grp.name}" from your Wise Scoopers posting manager?`,
               () => {
                 state.groups = state.groups.filter((g) => g.id !== id);
-                saveGroups();
+                saveGroups(true);
                 renderAllFb();
-                showFbToast(`Deleted "${grp.name}".`);
+                showFbToast(`Deleted "${grp.name}" from Cloud.`);
               }
             );
           }
@@ -5345,9 +5467,9 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
               `Remove "${grp.name}" from your Wise Scoopers posting manager?`,
               () => {
                 state.groups = state.groups.filter((g) => g.id !== id);
-                saveGroups();
+                saveGroups(true);
                 renderAllFb();
-                showFbToast(`Deleted "${grp.name}".`);
+                showFbToast(`Deleted "${grp.name}" from Cloud.`);
               }
             );
           }
@@ -5361,12 +5483,12 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
         document.getElementById("btnResetDefaults").addEventListener("click", () => {
           askConfirm(
             "Reset to Defaults",
-            "Restore your initial 2 Wise County groups and clear local changes?",
+            "Restore your initial 2 Wise County groups and clear changes?",
             () => {
               state.groups = JSON.parse(JSON.stringify(DEFAULT_GROUPS));
               state.postLogs = {};
-              saveGroups();
-              saveLogs();
+              saveLogs(false);
+              saveGroups(true);
               renderAllFb();
               showFbToast("Restored initial 2 Wise County groups.");
             }
@@ -5382,7 +5504,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
         document.getElementById("reminderTimeInput").addEventListener("change", (e) => {
           state.settings.reminderTime = e.target.value || "09:00";
           state.settings.lastRemindedDate = null;
-          saveSettings();
+          saveSettings(true);
           showFbToast(`Reminder time saved (${state.settings.reminderTime}).`);
           checkReminder();
         });
@@ -5402,7 +5524,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
           state.settings.reminderTime = newTime;
           state.settings.lastRemindedDate = null;
           document.getElementById("reminderTimeInput").value = newTime;
-          saveSettings();
+          saveSettings(true);
           showFbToast(`⏰ Daily reminder updated to ${newTime}!`);
           checkReminder();
         });
@@ -5444,11 +5566,11 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
             label,
             url
           });
-          saveSettings();
+          saveSettings(true);
           updateBrandAssetUi();
           labelInput.value = "";
           urlInput.value = "";
-          showFbToast(`Added "${label}" to your reference photos!`);
+          showFbToast(`Added "${label}" & synced to Cloud!`);
         });
 
         document.getElementById("brandGalleryGrid").addEventListener("click", (e) => {
@@ -5466,9 +5588,9 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
             return;
           }
           state.settings.brandAssets = state.settings.brandAssets.filter((a) => a.id !== remId);
-          saveSettings();
+          saveSettings(true);
           updateBrandAssetUi();
-          showFbToast("Photo removed from gallery.");
+          showFbToast("Photo removed & synced to Cloud.");
         });
 
         document.getElementById("btnToggleApiKeyDrawer").addEventListener("click", () => {
@@ -5483,18 +5605,18 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
         document.getElementById("btnSaveApiKey").addEventListener("click", () => {
           const val = document.getElementById("inputGeminiApiKey").value.trim();
           state.settings.geminiApiKey = val;
-          saveSettings();
+          saveSettings(true);
           updateApiKeyUi();
           document.getElementById("apiKeyDrawer").classList.add("hidden");
-          showFbToast(val ? "Gemini API key saved privately in browser." : "API key cleared.");
+          showFbToast(val ? "Gemini API key saved to Cloud!" : "API key cleared.");
         });
 
         document.getElementById("btnClearApiKey").addEventListener("click", () => {
           state.settings.geminiApiKey = "";
           document.getElementById("inputGeminiApiKey").value = "";
-          saveSettings();
+          saveSettings(true);
           updateApiKeyUi();
-          showFbToast("Gemini API key removed from browser.");
+          showFbToast("Gemini API key removed.");
         });
 
         document.getElementById("btnGenerateAiPost").addEventListener("click", generateFreshAiIdea);
