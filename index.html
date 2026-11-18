@@ -344,6 +344,103 @@
     color: var(--g);
   }
 
+  /* COMPACT STRUCTURED LEADS GRID (NO TEXT JUMBLES) */
+  .leads-grid {
+    padding: 14px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 12px;
+  }
+  .lead-card {
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-left: 5px solid var(--gm);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    box-shadow: 0 2px 8px rgba(38, 58, 45, 0.04);
+  }
+  .lead-hd {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    border-bottom: 1px solid #E6EDE7;
+    padding-bottom: 7px;
+  }
+  .lead-name {
+    font-size: 15.5px;
+    font-weight: 900;
+    color: var(--g);
+    line-height: 1.2;
+  }
+  .lead-contact-line {
+    font-size: 12px;
+    color: var(--m);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .lead-contact-line a {
+    color: var(--gm);
+    text-decoration: none;
+  }
+  .lead-price-box {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .lead-price-main {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--g);
+  }
+  .lead-price-sub {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--m);
+  }
+  .lead-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .lead-box {
+    background: var(--cr);
+    border: 1px solid #DCE6DA;
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 11.5px;
+    line-height: 1.35;
+  }
+  .lead-box.span-all {
+    grid-column: 1 / -1;
+  }
+  .lead-box-lbl {
+    font-size: 9.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--gm);
+    margin-bottom: 2px;
+  }
+  .lead-notes-box {
+    background: #FFFDF7;
+    border: 1px dashed #D8C79E;
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 11.5px;
+    color: #4D3E18;
+    line-height: 1.35;
+  }
+  .lead-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-top: 2px;
+  }
+
   /* MAP TOGGLE PILLS & CONTAINER */
   .map-toggle-group {
     display: inline-flex;
@@ -827,6 +924,7 @@
   @media (max-width: 680px) {
     .field.span-2 { grid-column: span 1; }
     .topbar { padding: 12px 14px; }
+    .leads-grid { grid-template-columns: 1fr; padding: 10px; }
   }
 </style>
 </head>
@@ -908,7 +1006,8 @@
     <!-- TABS & SEARCH -->
     <div class="nav-bar">
       <div class="tabs">
-        <button class="tab-btn active" data-tab="billing" onclick="switchTab('billing')">💳 Anniversary Billing</button>
+        <button class="tab-btn active" data-tab="leads" onclick="switchTab('leads')">🚀 Website Leads (<span id="leadCountBadge">0</span>)</button>
+        <button class="tab-btn" data-tab="billing" onclick="switchTab('billing')">💳 Anniversary Billing</button>
         <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">🗓️ Scoop Schedule</button>
         <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Customer Map</button>
         <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 All Clients</button>
@@ -938,8 +1037,21 @@
       </div>
     </div>
 
+    <!-- TAB 0: WEBSITE LEADS & QUOTES INBOX -->
+    <section id="tab-leads" class="view-panel active">
+      <div class="panel-card">
+        <div class="panel-hd">
+          <h2>🚀 Website Quote Leads Inbox</h2>
+          <div style="font-size:12px; color:var(--m); font-weight:700;">
+            Incoming quotes stay separated from active routes until you click <strong>"✓ Convert to Client"</strong>
+          </div>
+        </div>
+        <div class="leads-grid" id="leadsCardsContainer"></div>
+      </div>
+    </section>
+
     <!-- TAB 1: ANNIVERSARY BILLING -->
-    <section id="tab-billing" class="view-panel active">
+    <section id="tab-billing" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
           <h2>💳 Monthly Anniversary Billing Tracker</h2>
@@ -1000,8 +1112,9 @@
             </div>
             <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Road Route: ON</button>
             <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print Route Sheet</button>
-            <button class="btn btn-green btn-sm" onclick="openFullGoogleMapsRoute()">🧭 Open in Google Maps</button>
-            <button class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh Pins</button>
+            <button type="button" class="btn btn-green btn-sm" onclick="openAppleMapsRoute()">🍎 Apple Maps</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="openGoogleMapsRoute()">🧭 Google Maps</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh Pins</button>
           </div>
         </div>
 
@@ -1131,7 +1244,7 @@
               </select>
             </div>
             <div class="field span-2">
-              <label>Exact GPS Coordinates (Optional — paste from Google Maps if rural)</label>
+              <label>Exact GPS Coordinates (Optional — paste from Maps if rural)</label>
               <input type="text" id="fGpsCoords" placeholder="e.g., 33.3587, -97.6939 (or drag 💩 pin on Map tab)">
             </div>
           </div>
@@ -1158,7 +1271,7 @@
             </div>
             <div class="field">
               <label>Dog Names &amp; Temperament</label>
-              <input type="text" id="fDogNames" placeholder="e.g., Max & Bella (friendly)">
+              <input type="text" id="fDogNames" placeholder="e.g., Max &amp; Bella (friendly)">
             </div>
             <div class="field span-2">
               <label>Gate Code / Latch / Yard Instructions</label>
@@ -1280,7 +1393,7 @@
           <div class="form-grid">
             <div class="field">
               <label>Referred By (Business / Employee)</label>
-              <input type="text" id="fRefBy" placeholder="e.g., Decatur Bark & Bath — Kayla">
+              <input type="text" id="fRefBy" placeholder="e.g., Decatur Bark &amp; Bath — Kayla">
             </div>
             <div class="field">
               <label>Partner Town</label>
@@ -1325,9 +1438,37 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
   const CLIENTS_COL = collection(db, "wise_scoopers_clients");
+  const LEADS_COL = collection(db, "wise_scoopers_leads");
 
   let clients = [];
-  let unsubscribeSnapshot = null;
+  let leads = [];
+  let unsubscribeClients = null;
+  let unsubscribeLeads = null;
+
+  // SMART DEVICE DETECTION FOR APPLE MAPS (IPHONE/IPAD/MOBILE) VS GOOGLE MAPS (DESKTOP)
+  function isMobileDevice() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isIPadOS = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+    const isMobile = /Android|webOS|BlackBerry|IEMobile|Opera Mini|Mobile/i.test(ua);
+    return isIOS || isIPadOS || isMobile;
+  }
+
+  function getAppleMapsSingleUrl(destParam) {
+    return `https://maps.apple.com/?daddr=${encodeURIComponent(destParam)}&dirflg=d`;
+  }
+
+  function getGoogleMapsSingleUrl(destParam) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destParam)}`;
+  }
+
+  function getPreferredSingleMapUrl(destParam) {
+    return isMobileDevice() ? getAppleMapsSingleUrl(destParam) : getGoogleMapsSingleUrl(destParam);
+  }
+
+  function getPreferredMapLabel() {
+    return isMobileDevice() ? '🍎 Apple Maps' : '🧭 Google Maps';
+  }
 
   // AUTHENTICATION HANDLERS
   window.handleFirebaseLogin = async function(event) {
@@ -1346,7 +1487,8 @@
   };
 
   window.handleLogout = async function() {
-    if (unsubscribeSnapshot) unsubscribeSnapshot();
+    if (unsubscribeClients) unsubscribeClients();
+    if (unsubscribeLeads) unsubscribeLeads();
     await signOut(auth);
   };
 
@@ -1358,14 +1500,24 @@
       gate.classList.add('hidden');
       syncEl.textContent = '☁️ Live Cloud Sync Active';
 
-      if (unsubscribeSnapshot) unsubscribeSnapshot();
-      unsubscribeSnapshot = onSnapshot(CLIENTS_COL, (snapshot) => {
+      if (unsubscribeClients) unsubscribeClients();
+      unsubscribeClients = onSnapshot(CLIENTS_COL, (snapshot) => {
         clients = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients)`;
+        syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`;
         renderAll();
       }, (error) => {
         syncEl.textContent = '⚠️ Cloud Sync Error';
         console.error(error);
+      });
+
+      if (unsubscribeLeads) unsubscribeLeads();
+      unsubscribeLeads = onSnapshot(LEADS_COL, (snapshot) => {
+        leads = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        document.getElementById('leadCountBadge').textContent = leads.length;
+        syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`;
+        renderLeadsCards();
+      }, (error) => {
+        console.error('Leads listener error:', error);
       });
     } else {
       gate.classList.remove('hidden');
@@ -1382,6 +1534,121 @@
   async function removeClientDoc(id) {
     await deleteDoc(doc(db, "wise_scoopers_clients", id));
   }
+
+  async function removeLeadDoc(id) {
+    await deleteDoc(doc(db, "wise_scoopers_leads", id));
+  }
+
+  // PARSE CLEAN NOTES & DETAILS FROM OLD OR NEW LEAD FORMATS
+  function parseLeadDetails(lead) {
+    const rawNotes = String(lead.notes || '');
+    let cleanUserNote = rawNotes;
+    let extractedYardSign = lead.yardSign || '';
+    let extractedTreats = lead.petTreats || '';
+    let extractedAddons = [];
+
+    if (lead.yardFresh === 'Yes') extractedAddons.push(`Yard Fresh (${lead.yfSections || 1} sec)`);
+    if (lead.haulAway === 'Yes') extractedAddons.push('Haul-Away');
+    if (lead.litterSupply === 'Yes') extractedAddons.push(`Litter Supply (${lead.cats || 1})`);
+    if (lead.deepClean === 'Yes') extractedAddons.push(`Deep Clean (${lead.deepBoxes || 1})`);
+    if (lead.initialCleanup === 'Yes') extractedAddons.push('Initial Cleanup');
+
+    if (rawNotes.includes('--- PREFERENCES ---') || rawNotes.includes('--- QUOTE SUMMARY ---')) {
+      cleanUserNote = rawNotes.split('--- PREFERENCES ---')[0].split('--- QUOTE SUMMARY ---')[0].trim();
+
+      const signMatch = rawNotes.match(/Yard Sign Permitted:\s*([^\n]+)/i);
+      if (signMatch && !extractedYardSign) extractedYardSign = signMatch[1].trim();
+
+      const treatMatch = rawNotes.match(/Pet Treats Permitted:\s*([^\n]+)/i);
+      if (treatMatch && !extractedTreats) extractedTreats = treatMatch[1].trim();
+
+      const addonMatches = rawNotes.match(/•\s*([^\n]+)/g);
+      if (addonMatches && extractedAddons.length === 0) {
+        extractedAddons = addonMatches.map(m => m.replace(/^•\s*/, '').trim());
+      }
+    }
+
+    return {
+      cleanNote: cleanUserNote,
+      yardSign: extractedYardSign || 'No',
+      petTreats: extractedTreats || 'No',
+      addonsList: extractedAddons
+    };
+  }
+
+  // CONVERT WEBSITE LEAD TO ACTIVE CLIENT
+  window.convertLeadToClient = async function(leadId) {
+    const lead = leads.find(l => l.id === leadId);
+    if (!lead) return;
+
+    const parsed = parseLeadDetails(lead);
+    const today = todayStr(0);
+    const newClientId = "ws-" + Date.now();
+    const annivDay = parseISODate(today).getDate();
+    const nextChargeDate = addOneAnniversaryMonth(today, annivDay);
+
+    const addYF = lead.yardFresh === 'Yes';
+    const yfSec = Number(lead.yfSections) || 1;
+    const addHaul = lead.haulAway === 'Yes';
+    const addSupply = lead.litterSupply === 'Yes';
+    const supBoxes = Number(lead.cats) || 1;
+    const addDeep = lead.deepClean === 'Yes';
+    const deepBoxes = Number(lead.deepBoxes) || 1;
+
+    const addonParts = [];
+    if (addYF) addonParts.push(`Yard Fresh (${yfSec} sec)`);
+    if (addHaul) addonParts.push('Haul-Away');
+    if (addSupply) addonParts.push(`Litter Supply (${supBoxes})`);
+    if (addDeep) addonParts.push(`Deep Clean (${deepBoxes})`);
+
+    const treatsAllowed = String(parsed.petTreats).toLowerCase().startsWith('y');
+
+    const clientRecord = {
+      id: newClientId,
+      name: lead.name || "Converted Lead",
+      phone: lead.phone || "",
+      city: lead.city || "Decatur",
+      address: lead.address || "",
+      status: "Active",
+      dogs: Number(lead.dogs || 1),
+      cats: Number(lead.cats || 0),
+      treatLoc: treatsAllowed ? "Front Door" : "No Treats",
+      dogNames: "",
+      gateNotes: parsed.cleanNote || "",
+      startDate: today,
+      freq: lead.freq || "Weekly",
+      serviceType: lead.serviceType || "Dog Waste Removal",
+      nextScoop: today,
+      nextCharge: nextChargeDate,
+      lastPaid: "",
+      netPrice: Number(lead.netPrice || 78.00),
+      payMethod: "Card on File",
+      addons: {
+        yardFresh: addYF, yfSections: yfSec,
+        haulAway: addHaul,
+        litterSupply: addSupply, litterSupplyBoxes: supBoxes,
+        deepClean: addDeep, deepCleanBoxes: deepBoxes,
+        extraTime: false, extraTimeBlocks: 1
+      },
+      addonsSummary: addonParts.join(' + '),
+      refBy: "Website Quote Lead",
+      refLoc: lead.city || "Decatur",
+      refStatus: "N/A",
+      geo: null
+    };
+
+    await saveClientDoc(clientRecord);
+    await removeLeadDoc(leadId);
+    showToast(`Converted ${lead.name} to Active Client!`);
+    switchTab('billing');
+  };
+
+  window.deleteLead = async function(leadId) {
+    const lead = leads.find(l => l.id === leadId);
+    if (!confirm(`Dismiss and delete website quote lead from ${lead ? lead.name : 'this user'}?`)) return;
+    await removeLeadDoc(leadId);
+    showToast("Website lead dismissed.");
+  };
 
   // DATE & SCHEDULE UTILITIES
   const CITY_COORDS = {
@@ -1559,6 +1826,7 @@
   }
 
   window.renderAll = function() {
+    renderLeadsCards();
     renderKPIs();
     renderBillingTable();
     renderRouteCards();
@@ -1568,6 +1836,99 @@
       renderCustomerMap(false);
     }
   };
+
+  // RENDER COMPACT, CLEANLY SEPARATED WEBSITE LEAD CARDS
+  function renderLeadsCards() {
+    const container = document.getElementById('leadsCardsContainer');
+    const q = document.getElementById('searchInput').value.trim().toLowerCase();
+    const city = document.getElementById('cityFilter').value;
+
+    const filteredLeads = leads.filter(l => {
+      if (city && l.city !== city) return false;
+      if (!q) return true;
+      return `${l.name} ${l.city} ${l.address} ${l.phone} ${l.notes}`.toLowerCase().includes(q);
+    }).sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+
+    if (!filteredLeads.length) {
+      container.innerHTML = `<div style="padding:28px; text-align:center; color:var(--m); font-weight:600; grid-column:1/-1;">No pending website quote leads right now. New quote submissions will appear here automatically!</div>`;
+      return;
+    }
+
+    const mapBtnLabel = getPreferredMapLabel();
+
+    container.innerHTML = filteredLeads.map(l => {
+      const parsed = parseLeadDetails(l);
+      const dogCount = Number(l.dogs || 0);
+      const catCount = Number(l.cats || 0);
+      const petText = `${dogCount} Dog${dogCount === 1 ? '' : 's'}${catCount > 0 ? ` • ${catCount} Litter` : ''}`;
+      const destParam = `${l.address}, ${l.city}, TX`;
+      const mapUrl = getPreferredSingleMapUrl(destParam);
+
+      const signYes = String(parsed.yardSign).toLowerCase().startsWith('y');
+      const treatsYes = String(parsed.petTreats).toLowerCase().startsWith('y');
+
+      return `
+        <div class="lead-card">
+          <!-- TOP HEADER: NAME, PHONE, QUOTE ESTIMATE -->
+          <div class="lead-hd">
+            <div>
+              <div class="lead-name">${escapeHtml(l.name)}</div>
+              <div class="lead-contact-line">
+                <a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>
+                ${l.email ? ` • <span>✉️ ${escapeHtml(l.email)}</span>` : ''}
+              </div>
+            </div>
+            <div class="lead-price-box">
+              <div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div>
+              <div class="lead-price-sub">${l.firstTotal ? `1st: ${escapeHtml(l.firstTotal)}` : formatDisplayDate(l.submittedAt)}</div>
+            </div>
+          </div>
+
+          <!-- 2-COLUMN STRUCTURED INFO BOXES -->
+          <div class="lead-info-grid">
+            <div class="lead-box">
+              <div class="lead-box-lbl">📍 Service Address</div>
+              <strong>${escapeHtml(l.address)}</strong><br>
+              <span>${escapeHtml(l.city)}, TX</span>
+            </div>
+
+            <div class="lead-box">
+              <div class="lead-box-lbl">🧹 Plan &amp; Pets</div>
+              <strong>${escapeHtml(l.freq || 'Weekly')}</strong> (${petText})<br>
+              <span>${escapeHtml(l.serviceType || 'Dog Waste Removal')}</span>
+            </div>
+
+            <div class="lead-box">
+              <div class="lead-box-lbl">🏷️ Preferences</div>
+              <span>🪧 Yard Sign: <strong>${signYes ? 'YES' : 'No'}</strong></span><br>
+              <span>🦴 Treats: <strong>${treatsYes ? 'YES' : 'No'}</strong></span>
+            </div>
+
+            <div class="lead-box">
+              <div class="lead-box-lbl">📅 Submitted / Add-Ons</div>
+              <span>${formatDisplayDate(l.submittedAt)}</span><br>
+              <span>${parsed.addonsList.length ? escapeHtml(parsed.addonsList.join(', ')) : 'No add-ons'}</span>
+            </div>
+          </div>
+
+          <!-- CLEAN CUSTOMER / YARD NOTES -->
+          ${parsed.cleanNote ? `
+            <div class="lead-notes-box">
+              <div class="lead-box-lbl" style="color:#7A4B00;">📝 Customer / Yard Notes</div>
+              ${escapeHtml(parsed.cleanNote)}
+            </div>
+          ` : ''}
+
+          <!-- ACTION BUTTONS -->
+          <div class="lead-actions">
+            <button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button>
+            <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a>
+            <button class="btn btn-danger btn-sm" onclick="deleteLead('${l.id}')">Dismiss</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
   // NEAREST-NEIGHBOR ROUTE OPTIMIZER + REAL OSRM DRIVING ROAD GEOMETRY
   function haversineMiles(lat1, lon1, lat2, lon2) {
@@ -1773,7 +2134,7 @@
     printWin.document.close();
   };
 
-  // INTERACTIVE MAP
+  // INTERACTIVE MAP & APPLE MAPS / GOOGLE MAPS ROUTING
   function initMapIfNeeded() {
     if (leafletMap) return;
     if (typeof L === 'undefined') {
@@ -1815,15 +2176,30 @@
     renderCustomerMap(false);
   };
 
-  window.openFullGoogleMapsRoute = function() {
+  function getOrderedStopStrings() {
+    return lastOrderedRouteStops.map(item => {
+      if (item.isManual) return `${item.lat},${item.lng}`;
+      return `${item.client.address}, ${item.client.city}, TX`;
+    });
+  }
+
+  window.openAppleMapsRoute = function() {
     if (!lastOrderedRouteStops.length) {
       showToast('No stops currently shown on the map to route.');
       return;
     }
-    const stops = lastOrderedRouteStops.map(item => {
-      if (item.isManual) return `${item.lat},${item.lng}`;
-      return `${item.client.address}, ${item.client.city}, TX`;
-    });
+    const stops = getOrderedStopStrings();
+    const chained = stops.map(s => encodeURIComponent(s)).join('+to:');
+    const url = `https://maps.apple.com/?daddr=${chained}&dirflg=d`;
+    window.open(url, '_blank', 'noopener');
+  };
+
+  window.openGoogleMapsRoute = function() {
+    if (!lastOrderedRouteStops.length) {
+      showToast('No stops currently shown on the map to route.');
+      return;
+    }
+    const stops = getOrderedStopStrings();
     const destination = encodeURIComponent(stops[stops.length - 1]);
     const waypoints = stops.slice(0, -1).map(s => encodeURIComponent(s)).join('|');
     const url = waypoints
@@ -1954,11 +2330,12 @@
       });
 
       const destParam = item.isManual ? `${item.lat},${item.lng}` : `${c.address}, ${c.city}, TX`;
-      const mapsDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destParam)}`;
+      const appleUrl = getAppleMapsSingleUrl(destParam);
+      const googleUrl = getGoogleMapsSingleUrl(destParam);
       const pinTag = item.isManual ? '<em>(Exact custom pin)</em>' : item.isApprox ? '<em>(Town pin — drag to exact house)</em>' : '';
 
       const popupHtml = `
-        <div style="min-width:215px; font-family:inherit;">
+        <div style="min-width:225px; font-family:inherit;">
           <div style="font-weight:900; font-size:14px; color:#263A2D;">${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</div>
           <div style="font-size:12px; color:#536559; margin-bottom:5px;">${escapeHtml(c.address)}, ${escapeHtml(c.city)} ${pinTag}</div>
           <div style="font-size:11.5px; background:#F4F7F4; padding:6px 8px; border-radius:6px; margin-bottom:6px; line-height:1.4;">
@@ -1968,7 +2345,10 @@
             ${c.addonsSummary ? `<strong>Add-Ons:</strong> ${escapeHtml(c.addonsSummary)}` : ''}
           </div>
           ${c.gateNotes ? `<div style="font-size:11px; color:#7A4B00; margin-bottom:6px;"><strong>Gate:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
-          <a href="${mapsDirUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#263A2D; color:#fff; text-decoration:none; font-size:11.5px; font-weight:800; padding:5px 10px; border-radius:6px;">🧭 Open in Google Maps</a>
+          <div style="display:flex; gap:5px; flex-wrap:wrap;">
+            <a href="${appleUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#263A2D; color:#fff; text-decoration:none; font-size:11px; font-weight:800; padding:5px 8px; border-radius:6px;">🍎 Apple Maps</a>
+            <a href="${googleUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#E5EEE5; color:#263A2D; text-decoration:none; font-size:11px; font-weight:800; padding:5px 8px; border-radius:6px;">🧭 Google Maps</a>
+          </div>
         </div>
       `;
 
@@ -2065,7 +2445,7 @@
     const today = todayStr(0);
 
     if (!list.length) {
-      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:28px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add New Client"</strong> or <strong>"📂 Import Backup"</strong>!</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:28px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add New Client"</strong> or convert a lead from <strong>"🚀 Website Leads"</strong>!</td></tr>`;
       return;
     }
 
@@ -2129,6 +2509,8 @@
       return;
     }
 
+    const mapsLabel = getPreferredMapLabel();
+
     container.innerHTML = list.map(c => {
       const days = diffDaysFromToday(c.nextScoop);
       const isDue = days <= 0;
@@ -2144,7 +2526,7 @@
 
       const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
       const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : `${c.address}, ${c.city}, TX`;
-      const mapsDirUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destParam)}`;
+      const mapsDirUrl = getPreferredSingleMapUrl(destParam);
 
       const scoopBtnHtml = scoopedToday
         ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button>
@@ -2174,7 +2556,7 @@
           <div class="rc-actions">
             ${scoopBtnHtml}
             <button class="btn btn-sage btn-sm" onclick="copyGateText('${c.id}')">📋 Copy Gate Text</button>
-            <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">🧭 Google Maps</a>
+            <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapsLabel}</a>
             <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
           </div>
         </div>
