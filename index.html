@@ -1474,17 +1474,75 @@
 
   <!-- BUSINESS APPS & WEBSITES LAUNCHER MODAL -->
   <div class="modal-backdrop" id="appLauncherBackdrop" onclick="if(event.target===this) closeAppLauncher()">
-    <div class="modal" style="max-width: 650px;">
+    <div class="modal" style="max-width: 680px;">
       <div class="modal-hd">
         <h3>🧰 Wise Scoopers — Business Apps &amp; Websites</h3>
         <button class="modal-close" onclick="closeAppLauncher()">&times;</button>
       </div>
       <div class="modal-body">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:14px; background:var(--cr); padding:10px 14px; border-radius:10px; border:1px solid var(--b);">
-          <span style="font-size:12px; font-weight:700; color:var(--m);">Tap any app below to open in a fresh tab, or launch your daily desktop workspace:</span>
-          <button type="button" class="btn btn-dark btn-sm" onclick="launchAllBusinessApps()">🚀 Open All Core Tabs</button>
+          <span style="font-size:12px; font-weight:700; color:var(--m);">Launch your daily workspace or customize your shortcuts:</span>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline btn-sm" id="btnToggleEditApps" onclick="toggleAppEditMode()">✏️ Edit Shortcuts</button>
+            <button type="button" class="btn btn-dark btn-sm" onclick="launchAllBusinessApps()">🚀 Open All Core Tabs</button>
+          </div>
         </div>
-        <div class="app-launcher-grid" id="businessAppsGrid"></div>
+
+        <div id="popupBlockerHint" style="display:none; background:var(--warn-bg); border:1px solid var(--warn-b); color:var(--warn-ink); padding:8px 12px; border-radius:8px; font-size:11.5px; font-weight:700; margin-bottom:12px;">
+          ⚠️ Your browser blocked one or more pop-up tabs. Click the blocked pop-up icon in your browser's address bar and select <strong>"Always allow pop-ups"</strong> for this CRM so all 4 core tabs open in one click.
+        </div>
+
+        <!-- VIEW MODE: CORE + BACKEND SECTIONS -->
+        <div id="appLauncherViewMode">
+          <div class="form-section-title" style="margin-top:0;">🚀 Daily Operations (Core Tabs)</div>
+          <div class="app-launcher-grid" id="coreAppsGrid"></div>
+
+          <div class="form-section-title" style="margin-top:18px;">🛠️ Admin &amp; Backend Tools</div>
+          <div class="app-launcher-grid" id="backendAppsGrid"></div>
+        </div>
+
+        <!-- EDIT MODE: ADD / EDIT / DELETE SHORTCUTS -->
+        <div id="appLauncherEditMode" style="display:none;">
+          <div style="background:var(--gt); border:1px solid var(--gm); border-radius:10px; padding:12px; margin-bottom:14px;">
+            <div style="font-size:12px; font-weight:900; color:var(--g); margin-bottom:8px;">+ Add New Quick Shortcut</div>
+            <div style="display:grid; grid-template-columns: 74px 1fr 1fr; gap:8px; margin-bottom:8px;">
+              <select id="newAppIcon" style="padding:7px; border:1.5px solid var(--b); border-radius:7px; font-size:16px; background:#fff;">
+                <option value="📞">📞</option>
+                <option value="💳">💳</option>
+                <option value="🌐">🌐</option>
+                <option value="🧮">🧮</option>
+                <option value="💩">💩</option>
+                <option value="🐕">🐕</option>
+                <option value="🐈">🐈</option>
+                <option value="📍">📍</option>
+                <option value="📧">📧</option>
+                <option value="📱">📱</option>
+                <option value="⚙️">⚙️</option>
+                <option value="🔥">🔥</option>
+                <option value="💻">💻</option>
+                <option value="📊">📊</option>
+                <option value="🛠️">🛠️</option>
+              </select>
+              <input type="text" id="newAppName" placeholder="App Name (e.g., Facebook Page)" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12.5px;">
+              <select id="newAppSection" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12.5px; background:#fff;">
+                <option value="core">Daily Operations (Core)</option>
+                <option value="backend">Admin &amp; Backend</option>
+              </select>
+            </div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr auto; gap:8px;">
+              <input type="url" id="newAppUrl" placeholder="https://..." style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12.5px;">
+              <input type="text" id="newAppDesc" placeholder="Short description (optional)" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12.5px;">
+              <button type="button" class="btn btn-green btn-sm" onclick="addNewBusinessApp()">Add</button>
+            </div>
+          </div>
+
+          <div id="editAppsListContainer" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+          <div style="margin-top:12px; display:flex; justify-content:space-between; align-items:center;">
+            <button type="button" class="undo-link" onclick="resetDefaultBusinessApps()">Reset to Default Apps</button>
+            <button type="button" class="btn btn-dark btn-sm" onclick="saveEditedBusinessApps()">💾 Save Shortcut Changes</button>
+          </div>
+        </div>
       </div>
       <div class="modal-ft">
         <button type="button" class="btn btn-outline" onclick="closeAppLauncher()">Close</button>
@@ -1513,69 +1571,141 @@
   const db = getFirestore(app);
   const CLIENTS_COL = collection(db, "wise_scoopers_clients");
   const LEADS_COL = collection(db, "wise_scoopers_leads");
+  const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
 
   let clients = [];
   let leads = [];
   let unsubscribeClients = null;
   let unsubscribeLeads = null;
+  let unsubApps = null;
 
-  // BUSINESS APPS & WEBSITES LAUNCHER
-  const BUSINESS_APPS = [
+  // BUSINESS APPS & WEBSITES LAUNCHER (CLOUD-SYNCED & EDITABLE)
+  const ICON_CHOICES = ["📞", "💳", "🌐", "🧮", "💩", "🐕", "🐈", "📍", "📧", "📱", "⚙️", "🔥", "💻", "📊", "🛠️"];
+
+  const DEFAULT_BUSINESS_APPS = [
     {
+      id: "app-voice",
+      name: "Google Voice Phone",
+      desc: "Business calls & text messages",
+      icon: "📞",
+      url: "https://voice.google.com/u/0/messages",
+      section: "core"
+    },
+    {
+      id: "app-square",
+      name: "Square Payments",
+      desc: "Charge cards, invoices & billing",
+      icon: "💳",
+      url: "https://app.squareup.com/dashboard/",
+      section: "core"
+    },
+    {
+      id: "app-site",
       name: "Wise Scoopers Website",
-      desc: "Live customer site (WiseScoopers.com)",
+      desc: "Main customer website (WiseScoopers.com)",
       icon: "🌐",
       url: "https://wisescoopers.com",
-      launchAll: true
+      section: "core"
     },
     {
+      id: "app-quote",
       name: "Live Quote Calculator",
-      desc: "Customer quote form & pricing tool",
+      desc: "Plug in yard & pet details while on phone",
       icon: "🧮",
       url: "https://wisewasteservices.github.io/wise-waste-wuote/",
-      launchAll: true
+      section: "core"
     },
     {
-      name: "Quote Requests Sheet",
-      desc: "Google Sheet backup log of all quotes",
-      icon: "📊",
-      url: "https://docs.google.com/spreadsheets/d/1OztWe9yGs5HdFnfualdmTtVwNzLgY7EZNzR5CTe2W90/edit",
-      launchAll: true
-    },
-    {
+      id: "app-gas",
       name: "Google Apps Script",
       desc: "Pushover alerts & quote webhook",
       icon: "⚙️",
       url: "https://script.google.com/home",
-      launchAll: false
+      section: "backend"
     },
     {
+      id: "app-firebase",
       name: "Firebase Cloud Console",
       desc: "Database, logins & security rules",
       icon: "🔥",
       url: "https://console.firebase.google.com/project/wise-scoopers-crm",
-      launchAll: false
+      section: "backend"
     },
     {
+      id: "app-github",
       name: "GitHub Repositories",
       desc: "Edit & deploy your live CRM & site code",
       icon: "💻",
       url: "https://github.com",
-      launchAll: false
+      section: "backend"
     }
   ];
 
-  window.openAppLauncher = function() {
-    const grid = document.getElementById('businessAppsGrid');
-    grid.innerHTML = BUSINESS_APPS.map(appItem => `
-      <a href="${appItem.url}" target="_blank" rel="noopener" class="app-tile">
-        <div class="app-tile-icon">${appItem.icon}</div>
-        <div>
-          <div class="app-tile-name">${escapeHtml(appItem.name)}</div>
-          <div class="app-tile-desc">${escapeHtml(appItem.desc)}</div>
+  let businessApps = [...DEFAULT_BUSINESS_APPS];
+  let isEditingApps = false;
+
+  function renderAppLauncherGrids() {
+    const coreGrid = document.getElementById('coreAppsGrid');
+    const backendGrid = document.getElementById('backendAppsGrid');
+
+    const coreItems = businessApps.filter(a => a.section !== 'backend');
+    const backendItems = businessApps.filter(a => a.section === 'backend');
+
+    const buildTile = (item) => `
+      <a href="${escapeHtml(item.url)}" target="_blank" rel="noopener" class="app-tile">
+        <div class="app-tile-icon">${escapeHtml(item.icon || '🌐')}</div>
+        <div style="min-width:0;">
+          <div class="app-tile-name">${escapeHtml(item.name)}</div>
+          <div class="app-tile-desc">${escapeHtml(item.desc || item.url)}</div>
         </div>
       </a>
-    `).join('');
+    `;
+
+    coreGrid.innerHTML = coreItems.length
+      ? coreItems.map(buildTile).join('')
+      : `<div style="font-size:12px; color:var(--m);">No core apps configured. Click "Edit Shortcuts" to add one.</div>`;
+
+    backendGrid.innerHTML = backendItems.length
+      ? backendItems.map(buildTile).join('')
+      : `<div style="font-size:12px; color:var(--m);">No backend tools configured.</div>`;
+  }
+
+  function renderAppEditList() {
+    const container = document.getElementById('editAppsListContainer');
+    container.innerHTML = businessApps.map((item, idx) => {
+      const iconOptions = ICON_CHOICES.map(ic =>
+        `<option value="${ic}" ${item.icon === ic ? 'selected' : ''}>${ic}</option>`
+      ).join('');
+
+      return `
+        <div style="background:var(--cr); border:1.5px solid var(--b); border-radius:10px; padding:9px 11px; display:flex; flex-direction:column; gap:6px;">
+          <div style="display:grid; grid-template-columns: 68px 1fr 145px auto; gap:6px; align-items:center;">
+            <select data-edit-idx="${idx}" data-field="icon" style="padding:5px; border:1.5px solid var(--b); border-radius:6px; font-size:15px; background:#fff;">
+              ${iconOptions}
+            </select>
+            <input type="text" data-edit-idx="${idx}" data-field="name" value="${escapeHtml(item.name)}" placeholder="App Name" style="padding:6px 8px; border:1.5px solid var(--b); border-radius:6px; font-size:12.5px; font-weight:700;">
+            <select data-edit-idx="${idx}" data-field="section" style="padding:6px 8px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; background:#fff;">
+              <option value="core" ${item.section !== 'backend' ? 'selected' : ''}>Core Tab</option>
+              <option value="backend" ${item.section === 'backend' ? 'selected' : ''}>Backend</option>
+            </select>
+            <button type="button" class="btn btn-danger btn-sm" onclick="removeBusinessApp(${idx})" title="Remove shortcut">✕</button>
+          </div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
+            <input type="url" data-edit-idx="${idx}" data-field="url" value="${escapeHtml(item.url)}" placeholder="https://..." style="padding:6px 8px; border:1.5px solid var(--b); border-radius:6px; font-size:12px;">
+            <input type="text" data-edit-idx="${idx}" data-field="desc" value="${escapeHtml(item.desc || '')}" placeholder="Short description" style="padding:6px 8px; border:1.5px solid var(--b); border-radius:6px; font-size:12px;">
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  window.openAppLauncher = function() {
+    isEditingApps = false;
+    document.getElementById('appLauncherViewMode').style.display = 'block';
+    document.getElementById('appLauncherEditMode').style.display = 'none';
+    document.getElementById('btnToggleEditApps').textContent = '✏️ Edit Shortcuts';
+    document.getElementById('popupBlockerHint').style.display = 'none';
+    renderAppLauncherGrids();
     document.getElementById('appLauncherBackdrop').classList.add('open');
   };
 
@@ -1583,10 +1713,109 @@
     document.getElementById('appLauncherBackdrop').classList.remove('open');
   };
 
+  window.toggleAppEditMode = function() {
+    isEditingApps = !isEditingApps;
+    document.getElementById('appLauncherViewMode').style.display = isEditingApps ? 'none' : 'block';
+    document.getElementById('appLauncherEditMode').style.display = isEditingApps ? 'block' : 'none';
+    document.getElementById('btnToggleEditApps').textContent = isEditingApps ? '← Back to Apps' : '✏️ Edit Shortcuts';
+    if (isEditingApps) {
+      renderAppEditList();
+    } else {
+      renderAppLauncherGrids();
+    }
+  };
+
+  function collectEditedAppInputs() {
+    const inputs = document.querySelectorAll('#editAppsListContainer [data-edit-idx]');
+    inputs.forEach(el => {
+      const idx = Number(el.dataset.editIdx);
+      const field = el.dataset.field;
+      if (businessApps[idx]) {
+        businessApps[idx][field] = el.value.trim();
+      }
+    });
+  }
+
+  window.addNewBusinessApp = async function() {
+    collectEditedAppInputs();
+    const icon = document.getElementById('newAppIcon').value;
+    const name = document.getElementById('newAppName').value.trim();
+    const section = document.getElementById('newAppSection').value;
+    let url = document.getElementById('newAppUrl').value.trim();
+    const desc = document.getElementById('newAppDesc').value.trim();
+
+    if (!name || !url) {
+      showToast('Please enter both an App Name and URL.');
+      return;
+    }
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+    businessApps.push({
+      id: 'app-' + Date.now(),
+      name,
+      desc: desc || url,
+      icon,
+      url,
+      section
+    });
+
+    document.getElementById('newAppName').value = '';
+    document.getElementById('newAppUrl').value = '';
+    document.getElementById('newAppDesc').value = '';
+
+    renderAppEditList();
+    await setDoc(APPS_DOC_REF, { items: businessApps });
+    showToast(`Added "${name}" to your Cloud shortcuts!`);
+  };
+
+  window.removeBusinessApp = function(idx) {
+    collectEditedAppInputs();
+    businessApps.splice(idx, 1);
+    renderAppEditList();
+  };
+
+  window.saveEditedBusinessApps = async function() {
+    collectEditedAppInputs();
+    businessApps = businessApps.filter(a => a.name && a.url);
+    await setDoc(APPS_DOC_REF, { items: businessApps });
+    isEditingApps = false;
+    document.getElementById('appLauncherViewMode').style.display = 'block';
+    document.getElementById('appLauncherEditMode').style.display = 'none';
+    document.getElementById('btnToggleEditApps').textContent = '✏️ Edit Shortcuts';
+    renderAppLauncherGrids();
+    showToast('Saved shortcut changes to Cloud!');
+  };
+
+  window.resetDefaultBusinessApps = async function() {
+    if (!confirm('Reset Business Apps back to your default Wise Scoopers list?')) return;
+    businessApps = [...DEFAULT_BUSINESS_APPS];
+    await setDoc(APPS_DOC_REF, { items: businessApps });
+    renderAppEditList();
+    showToast('Reset shortcuts to defaults.');
+  };
+
   window.launchAllBusinessApps = function() {
-    const coreApps = BUSINESS_APPS.filter(a => a.launchAll);
-    coreApps.forEach(a => window.open(a.url, '_blank', 'noopener'));
-    showToast(`Opened ${coreApps.length} core business tabs!`);
+    const coreApps = businessApps.filter(a => a.section !== 'backend');
+    if (!coreApps.length) {
+      showToast('No core apps configured to open.');
+      return;
+    }
+
+    let blockedCount = 0;
+    coreApps.forEach((a) => {
+      const win = window.open(a.url, '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        blockedCount++;
+      }
+    });
+
+    if (blockedCount > 0) {
+      document.getElementById('popupBlockerHint').style.display = 'block';
+      showToast('Browser blocked pop-ups — click "Always allow pop-ups" in your address bar.');
+    } else {
+      document.getElementById('popupBlockerHint').style.display = 'none';
+      showToast(`Opened all ${coreApps.length} core tabs!`);
+    }
   };
 
   // SMART DEVICE DETECTION FOR APPLE MAPS (IPHONE/IPAD/MOBILE) VS GOOGLE MAPS (DESKTOP)
@@ -1633,6 +1862,7 @@
   window.handleLogout = async function() {
     if (unsubscribeClients) unsubscribeClients();
     if (unsubscribeLeads) unsubscribeLeads();
+    if (unsubApps) unsubApps();
     await signOut(auth);
   };
 
@@ -1662,6 +1892,20 @@
         renderLeadsCards();
       }, (error) => {
         console.error('Leads listener error:', error);
+      });
+
+      if (unsubApps) unsubApps();
+      unsubApps = onSnapshot(APPS_DOC_REF, (docSnap) => {
+        if (docSnap.exists() && Array.isArray(docSnap.data().items)) {
+          businessApps = docSnap.data().items;
+        } else {
+          businessApps = [...DEFAULT_BUSINESS_APPS];
+        }
+        if (document.getElementById('appLauncherBackdrop').classList.contains('open') && !isEditingApps) {
+          renderAppLauncherGrids();
+        }
+      }, (error) => {
+        console.error('Apps sync error:', error);
       });
     } else {
       gate.classList.remove('hidden');
