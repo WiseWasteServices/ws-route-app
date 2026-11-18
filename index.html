@@ -381,14 +381,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     #customerMap { height: 360px; }
   }
 
-  /* TABLES (DESKTOP) + AUTO-STACKED COMPACT CARDS ON MOBILE (NO HORIZONTAL SCROLLING) */
+  /* TABLES (DESKTOP) + AUTO-STACKED COMPACT CARDS ON MOBILE */
   .table-wrap { overflow-x: auto; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { background: #F8FBF8; text-align: left; padding: 11px 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--m); border-bottom: 1.5px solid var(--b); white-space: nowrap; }
   td { padding: 12px 14px; border-bottom: 1px solid #E6EDE7; vertical-align: middle; }
   tr:hover td { background: #FAFDFB; }
 
+  .mobile-only-inline { display: none; }
+
   @media (max-width: 768px) {
+    .mobile-only-inline { display: inline; }
+    .desktop-only-cell { display: none !important; }
     .table-wrap { overflow-x: visible; padding: 10px; }
     table, thead, tbody, th, td, tr { display: block; width: 100%; }
     thead { display: none; }
@@ -744,14 +748,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     .container { padding: 12px 10px 44px; }
 
-    /* Compact 2x2 KPI Grid on iPhone */
     .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .kpi-card { padding: 10px 12px; border-radius: 11px; }
     .kpi-label { font-size: 9.5px; letter-spacing: 0.4px; }
     .kpi-val { font-size: 20px; }
     .kpi-sub { font-size: 10px; }
 
-    /* Compact Tabs & Search Bar on iPhone */
     .nav-bar { gap: 8px; margin-bottom: 12px; }
     .tabs { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px; }
     .tab-btn { padding: 7px 6px; font-size: 11.5px; text-align: center; }
@@ -3260,14 +3262,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         return `
           <tr class="mobile-card-row ${isDue ? 'is-due' : ''}">
-            <td class="m-header" data-label="Status">
-              <div>
+            <td class="m-header" data-label="Billing Status">
+              <div class="mobile-only-inline">
                 <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
                 <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span>
               </div>
-              <div style="text-align:right;">
-                ${badge}<br>
-                <strong style="font-size:15px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong>
+              <div>
+                ${badge}
+                <div class="mobile-only-inline" style="margin-top:3px; font-size:14.5px; font-weight:900; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</div>
               </div>
             </td>
             <td data-label="Start / Anniversary"><strong>${formatDisplayDate(c.startDate)}</strong><br><span style="font-size:11px; color:var(--gm);">${annivLabel}</span></td>
@@ -3276,7 +3278,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <input type="date" value="${c.lastPaid || ''}" onchange="updateLastPaidInline('${c.id}', this.value)"
                 style="padding:4px 6px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; font-family:inherit; background:#FAFDFB; width:100%; max-width:140px;">
             </td>
-            <td data-label="Service & Plan"><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
+            <td class="desktop-only-cell" data-label="Customer & City"><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span></td>
+            <td data-label="Service & Add-Ons"><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
+            <td class="desktop-only-cell" data-label="Monthly Charge"><strong style="font-size:15.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}</strong></td>
             <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
                 ${payBtnHtml}
@@ -3379,16 +3383,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
                 <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}</span>
               </div>
-              <div style="text-align:right;">
+              <div class="mobile-only-inline" style="text-align:right;">
                 <strong style="font-size:14.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong><br>
                 <span class="badge badge-sage">${escapeHtml(c.status)}</span>
               </div>
             </td>
             <td data-label="Address & City">${escapeHtml(c.address)}<br><strong>${escapeHtml(c.city)}</strong></td>
             <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
-            <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11px; color:var(--gm); font-weight:700;">Next: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
-            <td data-label="Service Plan">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? `<br><span style="font-size:11px; color:var(--m);">+ ${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
-            ${c.gateNotes ? `<td class="m-full" data-label="Gate & Yard Notes" style="background:#FFFDF7; border:1px dashed #D8C79E; color:#4D3E18;">${escapeHtml(c.gateNotes)}</td>` : `<td data-label="Gate & Yard Notes">—</td>`}
+            <td data-label="Gate & Yard Notes" style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
+            <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
+            <td class="desktop-only-cell" data-label="Service & Monthly Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
             <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px;">
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
@@ -3421,10 +3425,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
                 <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.freq)}</span>
               </div>
-              <div>${statusBadge}</div>
+              <div class="mobile-only-inline">${statusBadge}</div>
             </td>
-            <td data-label="Referred By"><strong>${escapeHtml(c.refBy || '—')}</strong></td>
-            <td data-label="Partner Town & Start">${escapeHtml(c.refLoc || c.city)} • ${formatDisplayDate(c.startDate)}</td>
+            <td data-label="Referring Business"><strong>${escapeHtml(c.refBy || '—')}</strong></td>
+            <td data-label="Partner Town">${escapeHtml(c.refLoc || c.city)}</td>
+            <td data-label="Start Date">${formatDisplayDate(c.startDate)}</td>
+            <td class="desktop-only-cell" data-label="$20 Reward Status">${statusBadge}</td>
             <td class="m-actions" data-label="Actions">
               ${c.refStatus !== 'Paid'
                 ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${c.id}')">💵 Mark $20 Paid</button>`
