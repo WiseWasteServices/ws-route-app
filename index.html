@@ -4655,10 +4655,12 @@ Return ONLY valid JSON with these exact keys:
         }'"
 }`;
 
-const candidateModels = [
-  "gemini-3.5-flash-lite",
-  "gemini-3-flash-preview"
-];
+        const candidateModels = [
+          "gemini-3.5-flash-lite",
+          "gemini-3-flash-preview",
+          "gemini-2.5-flash"
+        ];
+        const retryablePattern = /not found|no longer available|not supported|high demand|overloaded|unavailable|quota|rate limit/i;
 
         try {
           let parsed = null;
@@ -4666,7 +4668,7 @@ const candidateModels = [
 
           for (const modelName of candidateModels) {
             const controller = new AbortController();
-            const timerId = setTimeout(() => controller.abort(), 12000);
+            const timerId = setTimeout(() => controller.abort(), 14000);
 
             try {
               const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
@@ -4686,7 +4688,12 @@ const candidateModels = [
               const data = await response.json();
               if (!response.ok) {
                 const msg = data?.error?.message || `HTTP ${response.status}`;
-                if (response.status === 404 || /not found|no longer available|not supported/i.test(msg)) {
+                if (
+                  response.status === 404 ||
+                  response.status === 429 ||
+                  response.status === 503 ||
+                  retryablePattern.test(msg)
+                ) {
                   lastError = new Error(msg);
                   continue;
                 }
@@ -4700,11 +4707,11 @@ const candidateModels = [
             } catch (innerErr) {
               clearTimeout(timerId);
               if (innerErr.name === "AbortError") {
-                lastError = new Error("Request timed out after 12 seconds.");
+                lastError = new Error("Request timed out.");
                 continue;
               }
               lastError = innerErr;
-              if (!/not found|no longer available|not supported/i.test(innerErr.message || "")) {
+              if (!retryablePattern.test(innerErr.message || "")) {
                 throw innerErr;
               }
             }
@@ -4777,35 +4784,83 @@ const candidateModels = [
         btn.disabled = true;
         btn.textContent = "Spinning...";
 
+        const isFreebiePost = /100%\s*FREE/i.test(currentIdea.postText);
+        const footerRule = isFreebiePost
+          ? `🎁 100% FREE — No Purchase Needed!\n📞 Call/Text: (940) 247-0522\n🌐 WiseScoopers.com`
+          : `🎁 FIRST SCOOP FREE with recurring service!\n📞 Call/Text: (940) 247-0522\n🌐 WiseScoopers.com`;
+
         const spinPrompt = `Rewrite this Facebook group post for Wise Scoopers with a fresh opening hook and slightly different wording so Facebook does not flag it as duplicate spam when posted across multiple Wise County groups. Keep it under 55 words, punchy, and keep the exact ending footer:
-🎁 FIRST SCOOP FREE with recurring service!
-📞 Call/Text: (940) 247-0522
-🌐 WiseScoopers.com
+${footerRule}
 
 Original post:
 ${currentIdea.postText}
 
 Return ONLY valid JSON: { "postText": "rewritten post here" }`;
 
+        const candidateModels = [
+          "gemini-3.5-flash-lite",
+          "gemini-3-flash-preview",
+          "gemini-2.5-flash"
+        ];
+        const retryablePattern = /not found|no longer available|not supported|high demand|overloaded|unavailable|quota|rate limit/i;
+
         try {
-const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${encodeURIComponent(
-  apiKey
-)}`;
-          const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: spinPrompt }] }],
-              generationConfig: { responseMimeType: "application/json" }
-            })
-          });
-          const data = await response.json();
-          if (!response.ok) {
-            throw new Error(data?.error?.message || `HTTP ${response.status}`);
+          let parsed = null;
+          let lastError = null;
+
+          for (const modelName of candidateModels) {
+            const controller = new AbortController();
+            const timerId = setTimeout(() => controller.abort(), 14000);
+
+            try {
+              const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
+                apiKey
+              )}`;
+              const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{ parts: [{ text: spinPrompt }] }],
+                  generationConfig: { responseMimeType: "application/json" }
+                }),
+                signal: controller.signal
+              });
+              clearTimeout(timerId);
+
+              const data = await response.json();
+              if (!response.ok) {
+                const msg = data?.error?.message || `HTTP ${response.status}`;
+                if (
+                  response.status === 404 ||
+                  response.status === 429 ||
+                  response.status === 503 ||
+                  retryablePattern.test(msg)
+                ) {
+                  lastError = new Error(msg);
+                  continue;
+                }
+                throw new Error(msg);
+              }
+
+              const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+              parsed = JSON.parse(rawText.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim());
+              break;
+            } catch (innerErr) {
+              clearTimeout(timerId);
+              if (innerErr.name === "AbortError") {
+                lastError = new Error("Request timed out.");
+                continue;
+              }
+              lastError = innerErr;
+              if (!retryablePattern.test(innerErr.message || "")) {
+                throw innerErr;
+              }
+            }
           }
-          const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-          const parsed = JSON.parse(rawText.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim());
-          if (!parsed.postText) throw new Error("Missing rewritten caption.");
+
+          if (!parsed || !parsed.postText) {
+            throw lastError || new Error("Missing rewritten caption.");
+          }
 
           state.aiGeneratedIdea = {
             ...currentIdea,
