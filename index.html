@@ -658,6 +658,53 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   #fbWorkspace .brand-asset-btns { display: flex; gap: 0.25rem; width: 100%; justify-content: center; }
   #fbWorkspace .brand-asset-btns .btn { padding: 0.24rem 0.45rem; font-size: 0.7rem; min-height: 26px; }
 
+  /* SAVED POST IMAGE STASH (PASTE & RE-COPY FOR FACEBOOK) */
+  #fbWorkspace .post-stash-box {
+    background-color: var(--ws-white);
+    border: 1.5px solid var(--gm);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    box-shadow: var(--shadow-sm);
+  }
+  #fbWorkspace .post-stash-dropzone {
+    border: 2px dashed var(--gm);
+    background-color: var(--ws-cream);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    outline: none;
+  }
+  #fbWorkspace .post-stash-dropzone:hover,
+  #fbWorkspace .post-stash-dropzone:focus,
+  #fbWorkspace .post-stash-dropzone.drag-over {
+    background-color: var(--ws-sage-tint);
+    border-color: var(--ws-forest);
+  }
+  #fbWorkspace .post-stash-preview-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+    background-color: var(--ws-cream);
+    border: 1px solid var(--ws-border);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem;
+  }
+  #fbWorkspace .post-stash-thumb {
+    width: 112px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--ws-forest);
+    background-color: var(--ws-white);
+    flex-shrink: 0;
+  }
+
   #fbWorkspace .queue-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
   #fbWorkspace .queue-heading h2 { margin: 0; font-size: 1.1rem; color: var(--ws-forest); font-weight: 900; }
   #fbWorkspace .queue-heading span { font-size: 0.84rem; color: var(--ws-muted); font-weight: 600; }
@@ -1292,6 +1339,58 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
 
             <div class="prompt-content" id="ideaImagePrompt"></div>
+          </div>
+        </div>
+
+        <!-- SAVED POST GRAPHIC STASH (PASTE GENERATED IMAGE ONCE, RE-COPY FOR EVERY GROUP) -->
+        <div class="post-stash-box" id="postImageStashBox">
+          <div class="prompt-box-top">
+            <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;">
+              <span class="prompt-label">📸 Saved Post Graphic (Ready to Paste into Facebook)</span>
+              <span class="badge badge-amber" id="stashStatusBadge">Empty — Paste Your Graphic</span>
+            </div>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <button type="button" class="btn btn-sm btn-outline" id="btnPasteStashedImage" title="Paste image from clipboard">
+                📋 Paste Image
+              </button>
+              <label class="btn btn-sm btn-outline" style="cursor:pointer;" title="Upload an image file from your device">
+                📁 Upload
+                <input type="file" id="inputStashImageFile" accept="image/*" class="hidden" />
+              </label>
+              <button type="button" class="btn btn-sm btn-primary hidden" id="btnCopyStashedImage">
+                📋 Copy Image for FB
+              </button>
+              <button type="button" class="btn btn-sm btn-danger hidden" id="btnClearStashedImage" title="Remove saved graphic">
+                ✕ Clear
+              </button>
+            </div>
+          </div>
+
+          <div id="postStashDropzone" class="post-stash-dropzone" tabindex="0">
+            <div style="font-size:0.9rem; font-weight:800; color:var(--ws-forest); margin-bottom:0.2rem;">
+              📋 Click here &amp; press Ctrl+V (or Cmd+V) to paste your finished ad image
+            </div>
+            <div style="font-size:0.77rem; color:var(--ws-muted);">
+              Once saved here, click <strong>"📋 Copy Image for FB"</strong> anytime as you go down your group checklist!
+            </div>
+          </div>
+
+          <div id="postStashPreviewWrap" class="post-stash-preview-wrap hidden">
+            <img id="postStashImgPreview" class="post-stash-thumb" src="" alt="Saved Post Graphic" />
+            <div style="flex:1; min-width:190px; display:flex; flex-direction:column; gap:0.4rem;">
+              <div style="font-size:0.9rem; font-weight:800; color:var(--ws-forest);" id="postStashMetaText">
+                Graphic saved &amp; synced to Cloud!
+              </div>
+              <div style="font-size:0.78rem; color:var(--ws-muted); line-height:1.35;">
+                1. Click <strong>"Copy Post"</strong> above and paste text into Facebook.<br>
+                2. Click <strong>"📋 Copy Image for FB"</strong> below and press <strong>Ctrl+V</strong> in Facebook!
+              </div>
+              <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.15rem;">
+                <button type="button" class="btn btn-sm btn-green" id="btnCopyStashedImageBig">
+                  📋 Copy Image for Facebook
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -4012,7 +4111,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           reminderTime: "09:00",
           lastRemindedDate: null,
           geminiApiKey: "",
-          brandAssets: JSON.parse(JSON.stringify(DEFAULT_BRAND_ASSETS))
+          brandAssets: JSON.parse(JSON.stringify(DEFAULT_BRAND_ASSETS)),
+          stashedPostImage: null
         },
         selectedDay: getTodayDayName(),
         ideaCategory: "all",
@@ -4877,6 +4977,164 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
         }
       }
 
+      // ======================================================================
+      // SAVED POST IMAGE STASH (PASTE IMAGE ONCE -> SAVE TO CLOUD -> RE-COPY)
+      // ======================================================================
+      function compressImageBlobToDataUrl(blob) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+              const maxDim = 1080;
+              let w = img.naturalWidth;
+              let h = img.naturalHeight;
+              if (w > maxDim || h > maxDim) {
+                if (w >= h) {
+                  h = Math.round((h * maxDim) / w);
+                  w = maxDim;
+                } else {
+                  w = Math.round((w * maxDim) / h);
+                  h = maxDim;
+                }
+              }
+              const canvas = document.createElement("canvas");
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext("2d");
+              ctx.drawImage(img, 0, 0, w, h);
+              // WebP keeps crisp graphics well under Firestore's 1MB doc limit
+              let dataUrl = canvas.toDataURL("image/webp", 0.86);
+              if (dataUrl.length > 650000) {
+                dataUrl = canvas.toDataURL("image/jpeg", 0.82);
+              }
+              resolve(dataUrl);
+            };
+            img.onerror = () => reject(new Error("Could not decode pasted image."));
+            img.src = e.target.result;
+          };
+          reader.onerror = () => reject(new Error("Could not read image data."));
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      async function saveStashedImageBlob(blob) {
+        if (!blob || !blob.type.startsWith("image/")) {
+          showFbToast("Clipboard did not contain an image.", true);
+          return;
+        }
+        try {
+          const dataUrl = await compressImageBlobToDataUrl(blob);
+          state.settings.stashedPostImage = {
+            dataUrl,
+            savedAt: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          };
+          saveSettings(true);
+          renderPostImageStash();
+          showFbToast("📸 Graphic saved! Use 'Copy Image for FB' as you post to each group.");
+        } catch (err) {
+          showFbToast("Image save failed: " + (err.message || "Error"), true);
+        }
+      }
+
+      function renderPostImageStash() {
+        const badge = document.getElementById("stashStatusBadge");
+        const dropzone = document.getElementById("postStashDropzone");
+        const previewWrap = document.getElementById("postStashPreviewWrap");
+        const imgEl = document.getElementById("postStashImgPreview");
+        const metaEl = document.getElementById("postStashMetaText");
+        const btnCopyTop = document.getElementById("btnCopyStashedImage");
+        const btnClear = document.getElementById("btnClearStashedImage");
+
+        if (!badge || !dropzone || !previewWrap) return;
+
+        const stash = state.settings.stashedPostImage;
+        if (stash && stash.dataUrl) {
+          badge.textContent = "Ready to Copy ✓";
+          badge.className = "badge badge-green";
+          dropzone.classList.add("hidden");
+          previewWrap.classList.remove("hidden");
+          imgEl.src = stash.dataUrl;
+          metaEl.textContent = stash.savedAt
+            ? `Saved at ${stash.savedAt} • Synced across devices`
+            : "Graphic saved & synced to Cloud!";
+          btnCopyTop.classList.remove("hidden");
+          btnClear.classList.remove("hidden");
+        } else {
+          badge.textContent = "Empty — Paste Your Graphic";
+          badge.className = "badge badge-amber";
+          dropzone.classList.remove("hidden");
+          previewWrap.classList.add("hidden");
+          imgEl.src = "";
+          btnCopyTop.classList.add("hidden");
+          btnClear.classList.add("hidden");
+        }
+      }
+
+      async function copyStashedImageToClipboard(btnElement) {
+        const stash = state.settings.stashedPostImage;
+        if (!stash || !stash.dataUrl) {
+          showFbToast("Paste or upload your graphic first.", true);
+          return;
+        }
+        const origLabel = btnElement.textContent;
+        try {
+          if (!navigator.clipboard || typeof ClipboardItem === "undefined") {
+            throw new Error("Clipboard image API unavailable in this browser.");
+          }
+          // Convert saved dataUrl onto a clean PNG blob so Facebook accepts Ctrl+V seamlessly
+          const pngBlob = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement("canvas");
+              canvas.width = img.naturalWidth;
+              canvas.height = img.naturalHeight;
+              canvas.getContext("2d").drawImage(img, 0, 0);
+              canvas.toBlob(
+                (b) => (b ? resolve(b) : reject(new Error("PNG conversion failed"))),
+                "image/png"
+              );
+            };
+            img.onerror = () => reject(new Error("Could not load saved graphic."));
+            img.src = stash.dataUrl;
+          });
+
+          await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })]);
+          btnElement.textContent = "Image Copied! ✓";
+          btnElement.classList.add("btn-copy-done");
+          showFbToast("📋 Image copied! Go to Facebook & press Ctrl+V (or Paste).");
+          setTimeout(() => {
+            btnElement.textContent = origLabel;
+            btnElement.classList.remove("btn-copy-done");
+          }, 2200);
+        } catch (err) {
+          showFbToast("Could not copy image automatically: " + (err.message || "Right-click the preview image and click Copy Image."), true);
+        }
+      }
+
+      async function readImageFromSystemClipboard() {
+        try {
+          if (!navigator.clipboard || !navigator.clipboard.read) {
+            document.getElementById("postStashDropzone").focus();
+            showFbToast("Click the dashed box and press Ctrl+V (or Cmd+V) to paste your image.");
+            return;
+          }
+          const items = await navigator.clipboard.read();
+          for (const item of items) {
+            const imgType = item.types.find((t) => t.startsWith("image/"));
+            if (imgType) {
+              const blob = await item.getType(imgType);
+              await saveStashedImageBlob(blob);
+              return;
+            }
+          }
+          showFbToast("No image found in clipboard—copy your image first, then paste.", true);
+        } catch (err) {
+          document.getElementById("postStashDropzone").focus();
+          showFbToast("Press Ctrl+V (or Cmd+V) inside the box to paste your image.");
+        }
+      }
+
       function updateBrandAssetUi() {
         const assets =
           Array.isArray(state.settings.brandAssets) && state.settings.brandAssets.length > 0
@@ -5000,6 +5258,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
 
         updateApiKeyUi();
         updateBrandAssetUi();
+        renderPostImageStash();
 
         const isRealistic = state.imageStyleMode === "realistic";
         if (styleBtn) {
@@ -5918,6 +6177,68 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
           if (!text) return;
           copyTextToClipboard(text, this, "Copy & Open Gemini ↗");
           window.open("https://gemini.google.com/app", "_blank", "noopener,noreferrer");
+        });
+
+        // SAVED POST IMAGE STASH EVENTS (PASTE, DRAG-DROP, FILE UPLOAD, RE-COPY, CLEAR)
+        const stashDropzone = document.getElementById("postStashDropzone");
+        const stashFileInp = document.getElementById("inputStashImageFile");
+
+        document.getElementById("btnPasteStashedImage").addEventListener("click", readImageFromSystemClipboard);
+
+        document.getElementById("btnCopyStashedImage").addEventListener("click", function () {
+          copyStashedImageToClipboard(this);
+        });
+
+        document.getElementById("btnCopyStashedImageBig").addEventListener("click", function () {
+          copyStashedImageToClipboard(this);
+        });
+
+        document.getElementById("btnClearStashedImage").addEventListener("click", () => {
+          state.settings.stashedPostImage = null;
+          saveSettings(true);
+          renderPostImageStash();
+          showFbToast("Cleared saved graphic.");
+        });
+
+        stashFileInp.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) saveStashedImageBlob(file);
+          e.target.value = "";
+        });
+
+        stashDropzone.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          stashDropzone.classList.add("drag-over");
+        });
+
+        stashDropzone.addEventListener("dragleave", () => {
+          stashDropzone.classList.remove("drag-over");
+        });
+
+        stashDropzone.addEventListener("drop", (e) => {
+          e.preventDefault();
+          stashDropzone.classList.remove("drag-over");
+          const file = e.dataTransfer?.files?.[0];
+          if (file) saveStashedImageBlob(file);
+        });
+
+        // Global paste listener whenever FB Groups & Ads workspace is open (and user isn't typing in a text input)
+        document.addEventListener("paste", (e) => {
+          const fbWorkspace = document.getElementById("fbWorkspace");
+          if (!fbWorkspace || fbWorkspace.classList.contains("hidden")) return;
+          const activeTag = (document.activeElement?.tagName || "").toUpperCase();
+          if (activeTag === "INPUT" || activeTag === "TEXTAREA") return;
+
+          const items = e.clipboardData?.items;
+          if (!items) return;
+          for (let i = 0; i < items.length; i++) {
+            if (items[i].type.startsWith("image/")) {
+              e.preventDefault();
+              const blob = items[i].getAsFile();
+              saveStashedImageBlob(blob);
+              break;
+            }
+          }
         });
       }
 
