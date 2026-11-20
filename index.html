@@ -335,6 +335,77 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     resize: vertical;
   }
 
+  /* SQUARE BILLING MODAL EXTRAS */
+  .sq-status-banner {
+    padding: 10px 13px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .sq-status-banner.has-card {
+    background: var(--ok-bg);
+    border: 1.5px solid var(--ok-b);
+    color: var(--ok-ink);
+  }
+  .sq-status-banner.no-card {
+    background: var(--warn-bg);
+    border: 1.5px solid var(--warn-b);
+    color: var(--warn-ink);
+  }
+  .sq-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .sq-item-row {
+    display: grid;
+    grid-template-columns: auto 1fr 96px;
+    align-items: center;
+    gap: 10px;
+    background: var(--cr);
+    border: 1.5px solid var(--b);
+    border-radius: 9px;
+    padding: 8px 11px;
+  }
+  .sq-item-row.checked {
+    background: #EDF6EE;
+    border-color: var(--gm);
+  }
+  .sq-total-bar {
+    background: var(--g);
+    color: var(--w);
+    border-radius: 10px;
+    padding: 11px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    font-weight: 900;
+  }
+  .sq-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 135px;
+    overflow-y: auto;
+  }
+  .sq-history-item {
+    background: #FAFDFB;
+    border: 1px solid var(--b);
+    border-radius: 7px;
+    padding: 6px 9px;
+    font-size: 11.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
   /* MAP TOGGLE PILLS & CONTAINER */
   .map-toggle-group { display: inline-flex; background: var(--w); border: 1.5px solid var(--b); border-radius: 9px; padding: 3px; gap: 4px; }
   .map-toggle-btn { border: none; background: transparent; padding: 6px 11px; border-radius: 6px; font-size: 12px; font-weight: 800; color: var(--m); cursor: pointer; }
@@ -958,9 +1029,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     <section id="tab-billing" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>💳 Monthly Anniversary Billing Tracker</h2>
-          <div style="font-size:11.5px; color:var(--m); font-weight:700;">
-            One-click lock prevents double-charging a month
+          <h2>💳 Monthly Anniversary Billing &amp; Square Sync</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span style="font-size:11.5px; color:var(--m); font-weight:700;">CRM is primary • Sync checks Cards on File</span>
+            <button type="button" class="btn btn-sage btn-sm" id="btnSyncSquare" onclick="syncSquareContacts()">🔄 Sync Square Contacts</button>
           </div>
         </div>
         <div class="table-wrap">
@@ -971,7 +1043,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <th>Start Date / Anniversary</th>
                 <th>Next Charge Date</th>
                 <th>Last Paid Date</th>
-                <th>Customer &amp; City</th>
+                <th>Customer &amp; Card Status</th>
                 <th>Service &amp; Add-Ons</th>
                 <th>Monthly Charge</th>
                 <th>Actions</th>
@@ -1064,7 +1136,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="panel-card">
         <div class="panel-hd">
           <h2>🐾 Complete Client Directory</h2>
-          <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button class="btn btn-sage btn-sm" onclick="syncSquareContacts()">🔄 Sync Square</button>
+            <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
+          </div>
         </div>
         <div class="table-wrap">
           <table>
@@ -1409,7 +1484,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   </div>
 
   <!-- ========================================================================
-       CRM MODALS (CLIENT EDITOR & BUSINESS APPS LAUNCHER)
+       CRM MODALS (CLIENT EDITOR, SQUARE CHARGE/INVOICE & BUSINESS APPS)
        ======================================================================== -->
   <div class="modal-backdrop" id="clientModalBackdrop">
     <div class="modal">
@@ -1430,6 +1505,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="field">
               <label>Phone Number *</label>
               <input type="tel" id="fPhone" required placeholder="(940) 555-0192">
+            </div>
+            <div class="field">
+              <label>Email Address (Optional)</label>
+              <input type="email" id="fEmail" placeholder="sarah@email.com">
             </div>
             <div class="field">
               <label>City *</label>
@@ -1630,6 +1709,61 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <button type="submit" class="btn btn-dark">Save Client Profile</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- SQUARE QUICK CHARGE & SMS/EMAIL INVOICE MODAL -->
+  <div class="modal-backdrop" id="squareModalBackdrop" onclick="if(event.target===this) closeSquareModal()">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-hd">
+        <h3 id="sqModalTitle">💳 Square Charge &amp; Invoice</h3>
+        <button class="modal-close" onclick="closeSquareModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="sqClientId">
+        <div id="sqCardBanner" class="sq-status-banner no-card"></div>
+
+        <div class="form-section-title">1. Select Items to Bill</div>
+        <div class="sq-items-list" id="sqItemsContainer"></div>
+
+        <div style="display:grid; grid-template-columns: 1fr 110px auto; gap:8px; align-items:center; margin-top:4px;">
+          <input type="text" id="sqCustomDesc" placeholder="Add custom item or discount (e.g., First Scoop Free)" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:8px; font-size:12.5px;">
+          <input type="number" id="sqCustomPrice" step="0.01" placeholder="10.00" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:8px; font-size:12.5px;">
+          <button type="button" class="btn btn-sage btn-sm" onclick="addSquareCustomItem()">+ Add</button>
+        </div>
+
+        <div class="sq-total-bar">
+          <span>Total to Bill:</span>
+          <span id="sqTotalAmountDisplay">$0.00</span>
+        </div>
+
+        <div class="form-section-title">2. Invoice Delivery Option (If Sending Invoice)</div>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+          <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
+            <input type="radio" name="sqDelivery" value="SMS" checked> 📱 Text / SMS (Fastest)
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
+            <input type="radio" name="sqDelivery" value="EMAIL"> ✉️ Email
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
+            <input type="radio" name="sqDelivery" value="SHARE_MANUALLY"> 🔗 Copy Payment Link Only
+          </label>
+        </div>
+
+        <div id="sqResultBox" class="hidden" style="background:var(--gt); border:1.5px solid var(--gm); border-radius:10px; padding:10px 12px; font-size:12.5px;"></div>
+
+        <div id="sqHistorySection" class="hidden">
+          <div class="form-section-title">Recent Square Activity</div>
+          <div class="sq-history-list" id="sqHistoryList"></div>
+        </div>
+      </div>
+      <div class="modal-ft" style="justify-content:space-between; flex-wrap:wrap;">
+        <button type="button" class="btn btn-outline" onclick="closeSquareModal()">Close</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-sage" id="btnSqSendInvoice" onclick="submitSquareInvoice()">📩 Send Invoice</button>
+          <button type="button" class="btn btn-dark hidden" id="btnSqChargeCard" onclick="submitSquareCharge()">⚡ Charge Card Now</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1853,7 +1987,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div id="toastArea"></div>
 
   <!-- ========================================================================
-       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + GPS MAP + APPS + FB SYNC)
+       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + SQUARE + GPS MAP + FB SYNC)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -1868,6 +2002,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       messagingSenderId: "932036851635",
       appId: "1:932036851635:web:aec2d21d345cd6d5e37dc6"
     };
+
+    const SQUARE_ENDPOINT = "https://script.google.com/macros/s/AKfycbyCDemM3MYGckMTXnyBD02ssiY8KYMmqSIFAY5j0-w8iJcuT-gmUWsr8V1mjMGOtp2rDw/exec";
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -1886,6 +2022,404 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let unsubFb = null;
     let unsubOmw = null;
     let isAuthenticated = false;
+
+    // SQUARE BACKEND BRIDGE
+    async function callSquareApi(payloadObj) {
+      const res = await fetch(SQUARE_ENDPOINT, {
+        method: "POST",
+        body: new URLSearchParams({ payload: JSON.stringify(payloadObj) })
+      });
+      const data = await res.json();
+      if (!data.success) {
+        throw new Error(data.error || "Square request failed.");
+      }
+      return data;
+    }
+
+    function normalizePhone10(raw) {
+      const digits = String(raw || "").replace(/\D/g, "");
+      if (digits.length === 11 && digits.startsWith("1")) return digits.slice(1);
+      return digits;
+    }
+
+    function formatDisplayPhone(raw) {
+      const d = normalizePhone10(raw);
+      if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+      return raw || "";
+    }
+
+    // SYNC SQUARE CONTACTS -> CRM (CRM STAYS PRIMARY; NEVER OVERWRITES GATE/PET NOTES)
+    window.syncSquareContacts = async function() {
+      const btn = document.getElementById("btnSyncSquare");
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "⏳ Syncing Square...";
+      }
+      try {
+        const res = await callSquareApi({ action: "square_sync_contacts" });
+        const sqList = res.customers || [];
+        let matchedCount = 0;
+        let importedCount = 0;
+
+        for (const sq of sqList) {
+          const sqPhone10 = normalizePhone10(sq.phone);
+          const sqEmailLow = (sq.email || "").trim().toLowerCase();
+
+          let existing = clients.find(c => c.squareCustomerId && c.squareCustomerId === sq.squareCustomerId);
+          if (!existing && sqPhone10.length === 10) {
+            existing = clients.find(c => normalizePhone10(c.phone) === sqPhone10);
+          }
+          if (!existing && sqEmailLow) {
+            existing = clients.find(c => (c.email || "").trim().toLowerCase() === sqEmailLow);
+          }
+
+          if (existing) {
+            existing.squareCustomerId = sq.squareCustomerId;
+            existing.hasCardOnFile = !!sq.hasCardOnFile;
+            existing.squareCardId = sq.cardId || "";
+            existing.squareCardLabel = sq.cardLabel || "";
+            if (!existing.email && sq.email) existing.email = sq.email;
+            if (!existing.phone && sq.phone) existing.phone = formatDisplayPhone(sq.phone);
+            if (sq.hasCardOnFile && existing.payMethod === "Invoice Link") {
+              existing.payMethod = "Card on File";
+            }
+            await saveClientDoc(existing);
+            matchedCount++;
+          } else {
+            const today = todayStr(0);
+            const newRec = {
+              id: "ws-sq-" + sq.squareCustomerId,
+              squareCustomerId: sq.squareCustomerId,
+              hasCardOnFile: !!sq.hasCardOnFile,
+              squareCardId: sq.cardId || "",
+              squareCardLabel: sq.cardLabel || "",
+              name: sq.name || "Square Customer",
+              phone: formatDisplayPhone(sq.phone),
+              email: sq.email || "",
+              city: sq.city || "Decatur",
+              address: sq.address || "Address Needed",
+              status: "Active",
+              dogs: 1,
+              cats: 0,
+              treatLoc: "Front Door",
+              dogNames: "",
+              gateNotes: "Imported from Square — verify yard & gate details",
+              startDate: today,
+              freq: "Weekly",
+              serviceType: "Dog Waste Removal",
+              nextScoop: today,
+              nextCharge: addOneAnniversaryMonth(today, parseISODate(today).getDate()),
+              lastPaid: "",
+              netPrice: 78.00,
+              payMethod: sq.hasCardOnFile ? "Card on File" : "Invoice Link",
+              addons: { yardFresh: false, yfSections: 1, haulAway: false, litterSupply: false, litterSupplyBoxes: 1, deepClean: false, deepCleanBoxes: 1, extraTime: false, extraTimeBlocks: 1 },
+              addonsSummary: "",
+              refBy: "",
+              refLoc: "",
+              refStatus: "N/A",
+              geo: null
+            };
+            await saveClientDoc(newRec);
+            importedCount++;
+          }
+        }
+
+        showToast(`Square (${res.env}) synced: ${matchedCount} linked, ${importedCount} imported!`);
+      } catch (err) {
+        alert(err.message || "Could not sync Square contacts.");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "🔄 Sync Square Contacts";
+        }
+      }
+    };
+
+    // SQUARE QUICK CHARGE & INVOICE MODAL LOGIC
+    let sqModalItems = [];
+
+    window.openSquareModal = function(clientId) {
+      const c = clients.find(x => x.id === clientId);
+      if (!c) return;
+
+      document.getElementById("sqClientId").value = c.id;
+      document.getElementById("sqModalTitle").textContent = `💳 Square Billing — ${c.name}`;
+      document.getElementById("sqResultBox").classList.add("hidden");
+      document.getElementById("sqCustomDesc").value = "";
+      document.getElementById("sqCustomPrice").value = "";
+
+      const banner = document.getElementById("sqCardBanner");
+      const chargeBtn = document.getElementById("btnSqChargeCard");
+      const invBtn = document.getElementById("btnSqSendInvoice");
+
+      if (c.hasCardOnFile) {
+        banner.className = "sq-status-banner has-card";
+        banner.innerHTML = `<span>✅ <strong>Card on File Detected:</strong> ${escapeHtml(c.squareCardLabel || "Saved Card")}</span><span>Default: Charge Immediately</span>`;
+        chargeBtn.classList.remove("hidden");
+        invBtn.textContent = "📩 Send Invoice Instead";
+      } else {
+        banner.className = "sq-status-banner no-card";
+        banner.innerHTML = `<span>⚠️ <strong>No Card on File</strong> in Square</span><span>Default: Send SMS/Email Invoice</span>`;
+        chargeBtn.classList.add("hidden");
+        invBtn.textContent = "📩 Send Square Invoice";
+      }
+
+      // Build smart pre-populated line items from client's profile
+      sqModalItems = [];
+      const a = c.addons || {};
+
+      if (a.yardFresh) {
+        const secs = Number(a.yfSections) || 1;
+        const yfAmt = 10 + 7 * Math.max(0, secs - 1);
+        sqModalItems.push({
+          checked: true,
+          name: `Yard Fresh Treatment (${secs} section${secs > 1 ? "s" : ""})`,
+          price: yfAmt
+        });
+      }
+      if (a.haulAway) {
+        sqModalItems.push({
+          checked: true,
+          name: "Waste Haul-Away (Per Visit)",
+          price: 5.00
+        });
+      }
+      if (a.litterSupply) {
+        const boxes = Number(a.litterSupplyBoxes) || 1;
+        sqModalItems.push({
+          checked: true,
+          name: `Clumping Litter Supply (${boxes} box${boxes > 1 ? "es" : ""})`,
+          price: 10 * boxes
+        });
+      }
+      if (a.deepClean) {
+        const boxes = Number(a.deepCleanBoxes) || 1;
+        const dcAmt = 25 + 15 * Math.max(0, boxes - 1);
+        sqModalItems.push({
+          checked: true,
+          name: `Litter Box Deep Clean (${boxes} box${boxes > 1 ? "es" : ""})`,
+          price: dcAmt
+        });
+      }
+      if (a.extraTime) {
+        const blocks = Number(a.extraTimeBlocks) || 1;
+        sqModalItems.push({
+          checked: true,
+          name: `Extra Yard Time (+${blocks * 15} mins)`,
+          price: 12.50 * blocks
+        });
+      }
+
+      // Include their base monthly/service rate (checked by default if they have no per-visit add-ons)
+      const hasPerVisitItems = sqModalItems.length > 0;
+      sqModalItems.push({
+        checked: !hasPerVisitItems,
+        name: `${c.serviceType || "Dog Waste Removal"} (${c.freq || "Monthly"})`,
+        price: Number(c.netPrice || 78.00)
+      });
+
+      renderSquareModalItems();
+
+      // Render Square billing history if present
+      const histSec = document.getElementById("sqHistorySection");
+      const histList = document.getElementById("sqHistoryList");
+      const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
+      if (hist.length > 0) {
+        histSec.classList.remove("hidden");
+        histList.innerHTML = hist.slice().reverse().map(h => `
+          <div class="sq-history-item">
+            <div>
+              <strong>$${Number(h.amount).toFixed(2)}</strong> • ${escapeHtml(h.method)}
+              <div style="font-size:10.5px; color:var(--m);">${escapeHtml(h.date)} — ${escapeHtml(h.summary)}</div>
+            </div>
+            ${h.url ? `<a href="${escapeHtml(h.url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Link ↗</a>` : `<span class="badge badge-ok">${escapeHtml(h.status || "Done")}</span>`}
+          </div>
+        `).join("");
+      } else {
+        histSec.classList.add("hidden");
+      }
+
+      document.getElementById("squareModalBackdrop").classList.add("open");
+    };
+
+    window.closeSquareModal = function() {
+      document.getElementById("squareModalBackdrop").classList.remove("open");
+    };
+
+    function renderSquareModalItems() {
+      const container = document.getElementById("sqItemsContainer");
+      container.innerHTML = sqModalItems.map((it, idx) => `
+        <div class="sq-item-row ${it.checked ? "checked" : ""}">
+          <input type="checkbox" ${it.checked ? "checked" : ""} onchange="toggleSqItem(${idx}, this.checked)">
+          <span style="font-size:12.5px; font-weight:700;">${escapeHtml(it.name)}</span>
+          <input type="number" step="0.01" value="${Number(it.price).toFixed(2)}" onchange="updateSqItemPrice(${idx}, this.value)"
+            style="padding:5px 7px; border:1.5px solid var(--b); border-radius:6px; font-size:12.5px; font-weight:800; text-align:right;">
+        </div>
+      `).join("");
+
+      const total = sqModalItems.filter(i => i.checked).reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+      document.getElementById("sqTotalAmountDisplay").textContent = `$${total.toFixed(2)}`;
+    }
+
+    window.toggleSqItem = function(idx, isChecked) {
+      if (sqModalItems[idx]) {
+        sqModalItems[idx].checked = isChecked;
+        renderSquareModalItems();
+      }
+    };
+
+    window.updateSqItemPrice = function(idx, val) {
+      if (sqModalItems[idx]) {
+        sqModalItems[idx].price = parseFloat(val) || 0;
+        renderSquareModalItems();
+      }
+    };
+
+    window.addSquareCustomItem = function() {
+      const desc = document.getElementById("sqCustomDesc").value.trim();
+      const price = parseFloat(document.getElementById("sqCustomPrice").value);
+      if (!desc || isNaN(price) || price === 0) {
+        showToast("Enter a description and dollar amount first.");
+        return;
+      }
+      sqModalItems.push({ checked: true, name: desc, price: price });
+      document.getElementById("sqCustomDesc").value = "";
+      document.getElementById("sqCustomPrice").value = "";
+      renderSquareModalItems();
+    };
+
+    window.submitSquareCharge = async function() {
+      const c = clients.find(x => x.id === document.getElementById("sqClientId").value);
+      if (!c) return;
+
+      const selected = sqModalItems.filter(i => i.checked);
+      const total = selected.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+      if (!selected.length || total < 1) {
+        alert("Select at least $1.00 of items to charge.");
+        return;
+      }
+
+      if (!confirm(`Charge $${total.toFixed(2)} to ${c.name}'s saved Square card (${c.squareCardLabel || "Card on File"}) right now?`)) {
+        return;
+      }
+
+      const btn = document.getElementById("btnSqChargeCard");
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "⏳ Charging...";
+
+      try {
+        const res = await callSquareApi({
+          action: "square_charge_card",
+          idempotencyKey: "ws-pay-" + c.id + "-" + Date.now(),
+          totalAmount: total,
+          items: selected.map(i => ({ name: i.name, amount: i.price })),
+          client: {
+            name: c.name,
+            phone: c.phone,
+            email: c.email || "",
+            address: c.address,
+            city: c.city,
+            squareCustomerId: c.squareCustomerId || ""
+          }
+        });
+
+        c.squareCustomerId = res.squareCustomerId;
+        c.hasCardOnFile = true;
+        c.squareCardId = res.cardId;
+        c.squareCardLabel = res.cardLabel;
+        if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
+        c.squareHistory.push({
+          date: todayStr(0),
+          amount: total,
+          method: `Card Charged (${res.cardLabel})`,
+          summary: selected.map(i => i.name).join(", "),
+          status: "PAID",
+          url: res.receiptUrl || ""
+        });
+
+        await saveClientDoc(c);
+
+        const resBox = document.getElementById("sqResultBox");
+        resBox.classList.remove("hidden");
+        resBox.innerHTML = `✅ <strong>Charged $${total.toFixed(2)} via Square (${res.env})!</strong> ${res.receiptUrl ? `<a href="${escapeHtml(res.receiptUrl)}" target="_blank" rel="noopener" style="font-weight:800; color:var(--g);">View Receipt ↗</a>` : ""}`;
+        showToast(`Charged $${total.toFixed(2)} to ${c.name}!`);
+      } catch (err) {
+        alert(err.message || "Card charge failed.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    };
+
+    window.submitSquareInvoice = async function() {
+      const c = clients.find(x => x.id === document.getElementById("sqClientId").value);
+      if (!c) return;
+
+      const selected = sqModalItems.filter(i => i.checked);
+      const total = selected.reduce((sum, i) => sum + (Number(i.price) || 0), 0);
+      if (!selected.length || total <= 0) {
+        alert("Select at least one positive line item to invoice.");
+        return;
+      }
+
+      const deliveryRadio = document.querySelector('input[name="sqDelivery"]:checked');
+      const deliveryMethod = deliveryRadio ? deliveryRadio.value : "SMS";
+
+      const btn = document.getElementById("btnSqSendInvoice");
+      const orig = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = "⏳ Sending Invoice...";
+
+      try {
+        const res = await callSquareApi({
+          action: "square_send_invoice",
+          deliveryMethod: deliveryMethod,
+          items: selected.map(i => ({ name: i.name, qty: 1, unitPrice: i.price })),
+          client: {
+            name: c.name,
+            phone: c.phone,
+            email: c.email || "",
+            address: c.address,
+            city: c.city,
+            squareCustomerId: c.squareCustomerId || ""
+          }
+        });
+
+        c.squareCustomerId = res.squareCustomerId;
+        c.hasCardOnFile = !!res.hasCardOnFile;
+        c.squareCardId = res.cardId || "";
+        c.squareCardLabel = res.cardLabel || "";
+        if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
+        c.squareHistory.push({
+          date: todayStr(0),
+          amount: total,
+          method: `Square Invoice (${res.deliveryUsed})`,
+          summary: selected.map(i => i.name).join(", "),
+          status: "SENT",
+          url: res.publicUrl || ""
+        });
+
+        await saveClientDoc(c);
+
+        const resBox = document.getElementById("sqResultBox");
+        resBox.classList.remove("hidden");
+        resBox.innerHTML = `
+          ✅ <strong>Square Invoice #${escapeHtml(res.invoiceNumber)} Created ($${total.toFixed(2)})!</strong><br>
+          ${res.fallbackNote ? `<span style="color:var(--warn-ink); font-weight:700;">${escapeHtml(res.fallbackNote)}</span><br>` : ""}
+          ${res.publicUrl ? `<div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
+            <a href="${escapeHtml(res.publicUrl)}" target="_blank" rel="noopener" class="btn btn-dark btn-sm">Open Invoice ↗</a>
+            <button type="button" class="btn btn-sage btn-sm" onclick="navigator.clipboard.writeText('${escapeHtml(res.publicUrl)}'); showToast('Payment link copied!');">📋 Copy Link to Text</button>
+          </div>` : ""}
+        `;
+        showToast(`Square Invoice sent for ${c.name}!`);
+      } catch (err) {
+        alert(err.message || "Invoice creation failed.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    };
 
     // "ON MY WAY" TEXT TEMPLATE STATE & EDITOR
     const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way to service your yard and should be there in about 15–30 minutes (or less). Please make sure any pups are inside—see you soon!";
@@ -2374,8 +2908,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (lead.deepClean === 'Yes') extractedAddons.push(`Deep Clean (${lead.deepBoxes || 1})`);
       if (lead.initialCleanup === 'Yes') extractedAddons.push('Initial Cleanup');
 
-      if (rawNotes.includes('--- PREFERENCES ---') || rawNotes.includes('--- QUOTE SUMMARY ---')) {
-        cleanUserNote = rawNotes.split('--- PREFERENCES ---')[0].split('--- QUOTE SUMMARY ---')[0].trim();
+      if (rawNotes.includes('--- REFERRAL & PREFERENCES ---') || rawNotes.includes('--- PREFERENCES ---') || rawNotes.includes('--- QUOTE SUMMARY ---')) {
+        cleanUserNote = rawNotes
+          .split('--- REFERRAL & PREFERENCES ---')[0]
+          .split('--- PREFERENCES ---')[0]
+          .split('--- QUOTE SUMMARY ---')[0]
+          .trim();
 
         const signMatch = rawNotes.match(/Yard Sign Permitted:\s*([^\n]+)/i);
         if (signMatch && !extractedYardSign) extractedYardSign = signMatch[1].trim();
@@ -2428,6 +2966,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         id: newClientId,
         name: lead.name || "Converted Lead",
         phone: lead.phone || "",
+        email: lead.email || "",
         city: lead.city || "Decatur",
         address: lead.address || "",
         status: "Active",
@@ -3336,7 +3875,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const today = todayStr(0);
 
       if (!list.length) {
-        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="8" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add Client"</strong> or convert a lead from <strong>"🚀 Leads"</strong>!</td></tr>`;
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="8" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add Client"</strong>, <strong>"🔄 Sync Square Contacts"</strong>, or convert a lead from <strong>"🚀 Leads"</strong>!</td></tr>`;
         return;
       }
 
@@ -3350,6 +3889,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         else if (days === 0) badge = `<span class="badge badge-due">Due Today</span>`;
         else if (days <= 4) badge = `<span class="badge badge-soon">Due in ${days}d</span>`;
 
+        const cardBadge = c.hasCardOnFile
+          ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>`
+          : `<span class="badge badge-amber">No Card on File</span>`;
+
         const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
         const annivLabel = startDay ? `Bills on the <strong>${getOrdinal(startDay)}</strong>` : 'Monthly';
         const paidToday = c.paidActionDate === today;
@@ -3359,6 +3902,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
              <button class="undo-link" onclick="undoMarkPaid('${c.id}')" title="Undo accidental Mark Paid">Undo</button>`
           : `<button class="btn btn-green btn-sm" onclick="markPaid('${c.id}')">✓ Mark Paid</button>`;
 
+        const sqBtnLabel = c.hasCardOnFile ? '⚡ Square Charge' : '📩 Square Invoice';
+
         return `
           <tr class="mobile-card-row ${isDue ? 'is-due' : ''}">
             <td class="m-header" data-label="Billing Status">
@@ -3367,7 +3912,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span>
               </div>
               <div>
-                ${badge}
+                ${badge} ${cardBadge}
                 <div class="mobile-only-inline" style="margin-top:3px; font-size:14.5px; font-weight:900; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</div>
               </div>
             </td>
@@ -3377,11 +3922,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <input type="date" value="${c.lastPaid || ''}" onchange="updateLastPaidInline('${c.id}', this.value)"
                 style="padding:4px 6px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; font-family:inherit; background:#FAFDFB; width:100%; max-width:140px;">
             </td>
-            <td class="desktop-only-cell" data-label="Customer & City"><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span></td>
+            <td class="desktop-only-cell" data-label="Customer & City"><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span><br>${cardBadge}</td>
             <td data-label="Service & Add-Ons"><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
             <td class="desktop-only-cell" data-label="Monthly Charge"><strong style="font-size:15.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}</strong></td>
             <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+                <button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">${sqBtnLabel}</button>
                 ${payBtnHtml}
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
               </div>
@@ -3434,6 +3980,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
              <button class="undo-link" onclick="undoCompleteScoop('${c.id}')" title="Undo accidental Complete Scoop">Undo</button>`
           : `<button class="btn btn-dark btn-sm" onclick="completeScoop('${c.id}')">✓ Complete Scoop</button>`;
 
+        const sqActionLabel = c.hasCardOnFile ? '⚡ Bill Add-On' : '📩 Invoice';
+
         return `
           <div class="route-card ${scoopedToday ? 'scooped-done' : isDue ? 'due-today' : ''}">
             <div style="display:flex; flex-direction:column; gap:8px;">
@@ -3456,7 +4004,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
             <div class="rc-actions">
               ${scoopBtnHtml}
-              <button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 Copy On My Way</button>
+              <button class="btn btn-green btn-sm" onclick="openSquareModal('${c.id}')">${sqActionLabel}</button>
+              <button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button>
               <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapsLabel}</a>
               <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
             </div>
@@ -3475,12 +4024,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
 
       tbody.innerHTML = list.map(c => {
+        const cardBadge = c.hasCardOnFile
+          ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>`
+          : '';
+
         return `
           <tr class="mobile-card-row">
             <td class="m-header" data-label="Customer">
               <div>
                 <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
                 <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}</span>
+                ${cardBadge ? `<div style="margin-top:2px;">${cardBadge}</div>` : ''}
               </div>
               <div class="mobile-only-inline" style="text-align:right;">
                 <strong style="font-size:14.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong><br>
@@ -3493,7 +4047,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
             <td class="desktop-only-cell" data-label="Service & Monthly Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
             <td class="m-actions" data-label="Actions">
-              <div style="display:flex; gap:6px;">
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">💳 Square</button>
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
                 <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Delete</button>
               </div>
@@ -3691,6 +4246,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById('modalTitle').textContent = `Edit Client — ${c.name}`;
         document.getElementById('fName').value = c.name;
         document.getElementById('fPhone').value = c.phone;
+        document.getElementById('fEmail').value = c.email || '';
         document.getElementById('fCity').value = c.city;
         document.getElementById('fAddress').value = c.address;
         document.getElementById('fStatus').value = c.status;
@@ -3783,6 +4339,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         id: existingId || 'ws-' + Date.now(),
         name: document.getElementById('fName').value.trim(),
         phone: document.getElementById('fPhone').value.trim(),
+        email: document.getElementById('fEmail').value.trim(),
         city: cityVal,
         address: addrVal,
         status: document.getElementById('fStatus').value,
@@ -3814,6 +4371,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       };
 
       if (existingObj) {
+        if (existingObj.squareCustomerId) record.squareCustomerId = existingObj.squareCustomerId;
+        if (existingObj.hasCardOnFile) record.hasCardOnFile = existingObj.hasCardOnFile;
+        if (existingObj.squareCardId) record.squareCardId = existingObj.squareCardId;
+        if (existingObj.squareCardLabel) record.squareCardLabel = existingObj.squareCardLabel;
+        if (existingObj.squareHistory) record.squareHistory = existingObj.squareHistory;
         if (existingObj.scoopedActionDate) record.scoopedActionDate = existingObj.scoopedActionDate;
         if (existingObj.paidActionDate) record.paidActionDate = existingObj.paidActionDate;
         if (existingObj.prevScoopSnapshot) record.prevScoopSnapshot = existingObj.prevScoopSnapshot;
@@ -3825,7 +4387,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Saved ${record.name} to Cloud!`);
     };
   </script>
-
   <!-- ========================================================================
        SCRIPT 2: WISE SCOOPERS FACEBOOK GROUP POSTING MANAGER & AD GENERATOR
        ======================================================================== -->
@@ -5003,7 +5564,6 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
               canvas.height = h;
               const ctx = canvas.getContext("2d");
               ctx.drawImage(img, 0, 0, w, h);
-              // WebP keeps crisp graphics well under Firestore's 1MB doc limit
               let dataUrl = canvas.toDataURL("image/webp", 0.86);
               if (dataUrl.length > 650000) {
                 dataUrl = canvas.toDataURL("image/jpeg", 0.82);
@@ -5082,7 +5642,6 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
           if (!navigator.clipboard || typeof ClipboardItem === "undefined") {
             throw new Error("Clipboard image API unavailable in this browser.");
           }
-          // Convert saved dataUrl onto a clean PNG blob so Facebook accepts Ctrl+V seamlessly
           const pngBlob = await new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
@@ -6179,7 +6738,7 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
           window.open("https://gemini.google.com/app", "_blank", "noopener,noreferrer");
         });
 
-        // SAVED POST IMAGE STASH EVENTS (PASTE, DRAG-DROP, FILE UPLOAD, RE-COPY, CLEAR)
+        // SAVED POST IMAGE STASH EVENTS
         const stashDropzone = document.getElementById("postStashDropzone");
         const stashFileInp = document.getElementById("inputStashImageFile");
 
@@ -6222,7 +6781,6 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
           if (file) saveStashedImageBlob(file);
         });
 
-        // Global paste listener whenever FB Groups & Ads workspace is open (and user isn't typing in a text input)
         document.addEventListener("paste", (e) => {
           const fbWorkspace = document.getElementById("fbWorkspace");
           if (!fbWorkspace || fbWorkspace.classList.contains("hidden")) return;
