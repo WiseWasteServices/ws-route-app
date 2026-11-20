@@ -264,6 +264,98 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   /* MAIN LAYOUT */
   .container { max-width: 1280px; margin: 0 auto; padding: 18px 18px 50px; }
 
+  /* WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET */
+  .weather-widget {
+    background: linear-gradient(135deg, #263A2D 0%, #375742 100%);
+    color: var(--w);
+    border: 1.5px solid var(--gm);
+    border-radius: 15px;
+    padding: 13px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 18px rgba(24, 36, 28, 0.14);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .weather-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .weather-main-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .weather-temp-pill {
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(229, 238, 229, 0.35);
+    border-radius: 11px;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .weather-big-temp {
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .weather-range-box {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--gt);
+    line-height: 1.3;
+  }
+  .weather-sun-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 11.5px;
+    font-weight: 800;
+  }
+  .weather-chip {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(229, 238, 229, 0.28);
+    border-radius: 8px;
+    padding: 5px 9px;
+    color: #ffffff;
+  }
+  .weather-timeline-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+    gap: 6px;
+    background: rgba(0, 0, 0, 0.16);
+    border-radius: 10px;
+    padding: 7px 9px;
+  }
+  .weather-slot {
+    background: rgba(255, 255, 255, 0.09);
+    border-radius: 7px;
+    padding: 5px 7px;
+    font-size: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .weather-slot.is-rain {
+    background: rgba(230, 168, 58, 0.25);
+    border: 1px solid rgba(230, 168, 58, 0.6);
+  }
+  .weather-slot-time {
+    font-weight: 900;
+    color: var(--gt);
+    font-size: 10.5px;
+  }
+  .weather-slot-desc {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
   /* KPI SUMMARY CARDS */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
   .kpi-card {
@@ -391,7 +483,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     display: flex;
     flex-direction: column;
     gap: 5px;
-    max-height: 135px;
+    max-height: 155px;
     overflow-y: auto;
   }
   .sq-history-item {
@@ -951,6 +1043,33 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
        ======================================================================== -->
   <main class="container" id="crmWorkspace">
 
+    <!-- WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET -->
+    <section class="weather-widget" id="wiseWeatherWidget" aria-label="Wise County and Southern Montague Weather Forecast">
+      <div class="weather-top-row">
+        <div class="weather-main-info">
+          <div class="weather-temp-pill">
+            <span id="weatherMainIcon" style="font-size:26px;">🌤️</span>
+            <div>
+              <div class="weather-big-temp" id="weatherCurrentTemp">--°F</div>
+              <div style="font-size:10.5px; font-weight:700; color:var(--gt);" id="weatherSummaryLabel">Loading Wise &amp; S. Montague forecast...</div>
+            </div>
+          </div>
+          <div class="weather-range-box">
+            <div>📍 <strong>Wise County &amp; Southern Montague County, TX</strong></div>
+            <div id="weatherHighLowLine">High: --°F • Low: --°F • Rain Windows: Checking...</div>
+          </div>
+        </div>
+        <div class="weather-sun-row">
+          <span class="weather-chip" id="weatherSunriseChip">🌅 Sunrise: --:-- AM</span>
+          <span class="weather-chip" id="weatherSunsetChip">🌇 Sunset: --:-- PM</span>
+          <button type="button" class="btn btn-sage btn-sm" onclick="loadRegionalWeather(true)" title="Refresh regional forecast">↻</button>
+        </div>
+      </div>
+      <div class="weather-timeline-bar" id="weatherHourlySlots">
+        <div class="weather-slot"><span class="weather-slot-time">Loading</span><span class="weather-slot-desc">Fetching hourly timeline...</span></div>
+      </div>
+    </section>
+
     <!-- KPI DASHBOARD -->
     <section class="kpi-grid">
       <div class="kpi-card">
@@ -968,7 +1087,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="kpi-card alert">
         <div class="kpi-label">Billing Due</div>
         <div class="kpi-val" id="kpiBillingDue">0</div>
-        <div class="kpi-sub" id="kpiBillingDueAmt">$0.00 ready to charge</div>
+        <div class="kpi-sub" id="kpiBillingDueAmt">$0.00 ready to bill</div>
       </div>
 
       <div class="kpi-card">
@@ -1025,21 +1144,22 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </div>
     </section>
 
-    <!-- TAB 1: ANNIVERSARY BILLING -->
+    <!-- TAB 1: ANNIVERSARY BILLING (SQUARE-SYNCED) -->
     <section id="tab-billing" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>💳 Monthly Anniversary Billing &amp; Square Sync</h2>
+          <h2>💳 Monthly Anniversary Billing &amp; Square Payment Sync</h2>
           <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <span style="font-size:11.5px; color:var(--m); font-weight:700;">CRM is primary • Sync checks Cards on File</span>
-            <button type="button" class="btn btn-sage btn-sm" id="btnSyncSquare" onclick="syncSquareContacts()">🔄 Sync Square Contacts</button>
+            <span style="font-size:11.5px; color:var(--m); font-weight:700;">Square syncs PAID / UNPAID invoices &amp; Cards on File</span>
+            <button type="button" class="btn btn-dark btn-sm" id="btnSyncSquareBilling" onclick="syncSquareBillingStatuses()">🔄 Refresh Square Payments</button>
+            <button type="button" class="btn btn-sage btn-sm" id="btnSyncSquare" onclick="syncSquareContacts()">👥 Sync Square Contacts</button>
           </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Billing Status</th>
+                <th>Due &amp; Payment Status</th>
                 <th>Start Date / Anniversary</th>
                 <th>Next Charge Date</th>
                 <th>Last Paid Date</th>
@@ -1146,7 +1266,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <thead>
               <tr>
                 <th>Customer</th>
-                <th>Address / City</th>
+                <th>Service Address</th>
                 <th>Pets &amp; Treat Location</th>
                 <th>Gate &amp; Yard Notes</th>
                 <th>Start Date &amp; Next Scoop</th>
@@ -1160,13 +1280,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </div>
     </section>
 
-    <!-- TAB 5: PARTNER REFERRALS -->
+    <!-- TAB 5: BUSINESS PARTNER REFERRALS ($20) -->
     <section id="tab-referrals" class="view-panel">
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>🤝 Partner Referrals ($20 Rewards)</h2>
+          <h2>🤝 Business Partner Referrals ($20 Rewards)</h2>
           <div style="font-size:11.5px; color:var(--m); font-weight:700;">
-            Tracks local pet business referrals &amp; $20 payouts
+            Business Partner Program only • Requires a named referring business or employee for the $20 payout
           </div>
         </div>
         <div class="table-wrap">
@@ -1174,7 +1294,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <thead>
               <tr>
                 <th>Referred Customer</th>
-                <th>Referring Business / Employee</th>
+                <th>Referring Business &amp; Employee Details</th>
                 <th>Partner Town</th>
                 <th>Start Date</th>
                 <th>$20 Reward Status</th>
@@ -1511,35 +1631,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <input type="email" id="fEmail" placeholder="sarah@email.com">
             </div>
             <div class="field">
-              <label>City *</label>
-              <select id="fCity">
-                <option>Decatur</option>
-                <option>Alvord</option>
-                <option>Bridgeport</option>
-                <option>Bowie</option>
-                <option>Sunset</option>
-                <option>Rhome</option>
-                <option>Newark</option>
-                <option>Boyd</option>
-                <option>Chico</option>
-                <option>Aurora</option>
-                <option>New Fairview</option>
-                <option>Paradise</option>
-                <option>Runaway Bay</option>
-                <option>Lake Bridgeport</option>
-              </select>
-            </div>
-            <div class="field span-2">
-              <label>Street Address *</label>
-              <input type="text" id="fAddress" required placeholder="e.g., 412 W Walnut St">
-            </div>
-            <div class="field">
               <label>Account Status</label>
               <select id="fStatus">
                 <option value="Active">Active</option>
                 <option value="One-Time">One-Time Job</option>
                 <option value="Paused">Paused</option>
               </select>
+            </div>
+            <div class="field span-2">
+              <label>Full Service Address (Street, City, State &amp; ZIP) *</label>
+              <input type="text" id="fAddress" required placeholder="e.g., 215 Mosley Ln, Alvord, TX 76225">
             </div>
             <div class="field span-2">
               <label>Exact GPS Coordinates (Optional — paste from Maps if rural)</label>
@@ -1683,20 +1784,31 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <div class="form-section-title">5. Local Business Partner Referral ($20 Reward)</div>
+          <div class="form-section-title">5. How They Heard of Us &amp; Business Partner Referral ($20 Program)</div>
           <div class="form-grid">
             <div class="field">
-              <label>Referred By (Business / Employee)</label>
-              <input type="text" id="fRefBy" placeholder="e.g., Decatur Bark &amp; Bath — Kayla">
+              <label>How They Heard of Us *</label>
+              <select id="fHowHeard" onchange="onHowHeardChanged()">
+                <option value="Facebook Group / Social Media">Facebook Group / Social Media</option>
+                <option value="Google Search / Website">Google Search / Website</option>
+                <option value="Yard Sign / Vehicle Decal">Yard Sign / Vehicle Decal</option>
+                <option value="Neighbor / Friend Word-of-Mouth">Neighbor / Friend Word-of-Mouth</option>
+                <option value="Door Hanger / Flyer">Door Hanger / Flyer</option>
+                <option value="Business Referral / Partner">Business Referral / Partner ($20 Program)</option>
+              </select>
             </div>
-            <div class="field">
+            <div class="field" id="partnerTownFieldWrap">
               <label>Partner Town</label>
               <input type="text" id="fRefLoc" placeholder="e.g., Decatur">
             </div>
-            <div class="field">
+            <div class="field span-2" id="partnerDetailsFieldWrap">
+              <label>Referring Business &amp; Employee Name (Required for $20 Payout) *</label>
+              <input type="text" id="fRefBy" placeholder="e.g., Decatur Bark &amp; Bath — Kayla (or full customer write-up)" oninput="onPartnerDetailsInput()">
+            </div>
+            <div class="field" id="partnerStatusFieldWrap">
               <label>$20 Referral Payout Status</label>
               <select id="fRefStatus">
-                <option value="N/A">Not a Partner Referral</option>
+                <option value="N/A">Not Eligible (No Business/Employee Named)</option>
                 <option value="Pending">Pending ($20 Owed)</option>
                 <option value="Paid">Paid ($20 Sent)</option>
               </select>
@@ -1722,6 +1834,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="modal-body">
         <input type="hidden" id="sqClientId">
         <div id="sqCardBanner" class="sq-status-banner no-card"></div>
+
+        <!-- CARD-ON-FILE CHECKOUT ENCOURAGEMENT NOTE -->
+        <div id="sqSaveCardPromptNote" style="background:var(--gt); border:1.5px solid var(--gm); border-radius:9px; padding:8px 11px; font-size:11.5px; color:var(--g); font-weight:700;">
+          💳 <strong>Card-on-File Checkout Prompt Included:</strong> Invoices automatically include a checkout note asking the customer to check <em>"Save card on file"</em> for hassle-free monthly billing.
+        </div>
 
         <!-- PLAN & FIRST SCOOP FREE PROMO CONTROLS -->
         <div class="form-section-title">1. Service Plan &amp; First Scoop Free Promo</div>
@@ -1800,7 +1917,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div id="sqResultBox" class="hidden" style="background:var(--gt); border:1.5px solid var(--gm); border-radius:10px; padding:10px 12px; font-size:12.5px;"></div>
 
         <div id="sqHistorySection" class="hidden">
-          <div class="form-section-title">Recent Square Activity</div>
+          <div class="form-section-title">Recent Square Invoices &amp; Charges</div>
           <div class="sq-history-list" id="sqHistoryList"></div>
         </div>
       </div>
@@ -2033,7 +2150,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div class="toast" id="toast"></div>
   <div id="toastArea"></div>
 <!-- ========================================================================
-       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + SQUARE + GPS MAP + FB SYNC)
+       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + SQUARE + GPS MAP + WEATHER)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -2069,7 +2186,149 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let unsubOmw = null;
     let isAuthenticated = false;
 
-    // SQUARE BACKEND BRIDGE
+    // ========================================================================
+    // WISE COUNTY & SOUTHERN MONTAGUE COUNTY WEATHER WIDGET (OPEN-METEO)
+    // ========================================================================
+    function weatherCodeToTextAndIcon(code) {
+      const c = Number(code);
+      if (c === 0) return { icon: "☀️", label: "Sunny / Clear", isRain: false };
+      if (c === 1) return { icon: "🌤️", label: "Mostly Sunny", isRain: false };
+      if (c === 2) return { icon: "⛅", label: "Partly Cloudy", isRain: false };
+      if (c === 3) return { icon: "☁️", label: "Overcast", isRain: false };
+      if (c === 45 || c === 48) return { icon: "🌫️", label: "Foggy", isRain: false };
+      if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return { icon: "🌧️", label: "Rain / Showers", isRain: true };
+      if (c >= 71 && c <= 77) return { icon: "❄️", label: "Wintry Mix / Snow", isRain: true };
+      if (c >= 95) return { icon: "⛈️", label: "Thunderstorms", isRain: true };
+      return { icon: "🌤️", label: "Fair", isRain: false };
+    }
+
+    function formatClockTime(isoStr) {
+      if (!isoStr) return "--:--";
+      const d = new Date(isoStr);
+      if (isNaN(d.getTime())) return isoStr;
+      return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    }
+
+    window.loadRegionalWeather = async function(manualRefresh = false) {
+      const tempEl = document.getElementById("weatherCurrentTemp");
+      const iconEl = document.getElementById("weatherMainIcon");
+      const sumEl = document.getElementById("weatherSummaryLabel");
+      const hlEl = document.getElementById("weatherHighLowLine");
+      const srEl = document.getElementById("weatherSunriseChip");
+      const ssEl = document.getElementById("weatherSunsetChip");
+      const slotsEl = document.getElementById("weatherHourlySlots");
+
+      if (manualRefresh && sumEl) {
+        sumEl.textContent = "Refreshing Wise & S. Montague forecast...";
+      }
+
+      try {
+        // Blend Decatur (Central Wise), Alvord/Chico (North Wise), and Bowie/Sunset (Southern Montague)
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=33.2343,33.3587,33.5582&longitude=-97.5861,-97.6939,-97.8495&current=temperature_2m,weather_code,precipitation_probability&hourly=temperature_2m,precipitation_probability,weather_code&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=1";
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Weather service unavailable");
+        const raw = await res.json();
+        const points = Array.isArray(raw) ? raw : [raw];
+
+        const curTemps = points.map(p => Number(p.current?.temperature_2m)).filter(n => !isNaN(n));
+        const avgCurTemp = curTemps.length ? Math.round(curTemps.reduce((a, b) => a + b, 0) / curTemps.length) : "--";
+
+        const allMax = points.map(p => Number(p.daily?.temperature_2m_max?.[0])).filter(n => !isNaN(n));
+        const allMin = points.map(p => Number(p.daily?.temperature_2m_min?.[0])).filter(n => !isNaN(n));
+        const regionalHigh = allMax.length ? Math.round(Math.max(...allMax)) : "--";
+        const regionalLow = allMin.length ? Math.round(Math.min(...allMin)) : "--";
+
+        const sunriseIso = points[0]?.daily?.sunrise?.[0] || "";
+        const sunsetIso = points[0]?.daily?.sunset?.[0] || "";
+
+        // Analyze hourly timeline across all 3 regional points
+        const times = points[0]?.hourly?.time || [];
+        const hourlySummary = times.map((t, idx) => {
+          const tempsAtHour = points.map(p => Number(p.hourly?.temperature_2m?.[idx])).filter(n => !isNaN(n));
+          const probsAtHour = points.map(p => Number(p.hourly?.precipitation_probability?.[idx] || 0));
+          const codesAtHour = points.map(p => Number(p.hourly?.weather_code?.[idx] || 0));
+
+          const avgTemp = tempsAtHour.length ? Math.round(tempsAtHour.reduce((a, b) => a + b, 0) / tempsAtHour.length) : "--";
+          const maxProb = probsAtHour.length ? Math.max(...probsAtHour) : 0;
+          const worstCode = codesAtHour.length ? Math.max(...codesAtHour) : 0;
+          const info = weatherCodeToTextAndIcon(worstCode);
+          const isRainHour = info.isRain || maxProb >= 35;
+
+          const dt = new Date(t);
+          const hourLabel = dt.toLocaleTimeString("en-US", { hour: "numeric" });
+          return {
+            hour: dt.getHours(),
+            hourLabel,
+            temp: avgTemp,
+            prob: maxProb,
+            icon: isRainHour ? "🌧️" : info.icon,
+            label: isRainHour ? `Rain ${maxProb}%` : info.label,
+            isRain: isRainHour
+          };
+        });
+
+        const rainHours = hourlySummary.filter(h => h.isRain).map(h => h.hourLabel);
+        const rainWindowText = rainHours.length > 0
+          ? `Rain expected around: ${rainHours.join(", ")}`
+          : "Dry / Sunny windows all day (0% major rain risk)";
+
+        const curInfo = weatherCodeToTextAndIcon(points[0]?.current?.weather_code || 0);
+        if (tempEl) tempEl.textContent = `${avgCurTemp}°F`;
+        if (iconEl) iconEl.textContent = curInfo.icon;
+        if (sumEl) sumEl.textContent = `${curInfo.label} across Wise & S. Montague`;
+        if (hlEl) hlEl.innerHTML = `High: <strong>${regionalHigh}°F</strong> • Low: <strong>${regionalLow}°F</strong> • ${rainWindowText}`;
+        if (srEl) srEl.textContent = `🌅 Sunrise: ${formatClockTime(sunriseIso)}`;
+        if (ssEl) ssEl.textContent = `🌇 Sunset: ${formatClockTime(sunsetIso)}`;
+
+        // Show key 2-hour intervals across the work day (6 AM to 8 PM)
+        const keySlots = hourlySummary.filter(h => h.hour >= 6 && h.hour <= 20 && h.hour % 2 === 0);
+        if (slotsEl && keySlots.length > 0) {
+          slotsEl.innerHTML = keySlots.map(s => `
+            <div class="weather-slot ${s.isRain ? "is-rain" : ""}">
+              <span class="weather-slot-time">${s.hourLabel} • ${s.temp}°F</span>
+              <span class="weather-slot-desc">${s.icon} ${s.label}</span>
+            </div>
+          `).join("");
+        }
+        if (manualRefresh) showToast("Regional Wise & S. Montague forecast updated!");
+      } catch (err) {
+        if (sumEl) sumEl.textContent = "Forecast temporarily unavailable";
+      }
+    };
+
+    // ========================================================================
+    // FULL ADDRESS & CITY EXTRACTION HELPERS (NO DOUBLE-APPENDING)
+    // ========================================================================
+    const KNOWN_TOWNS = [
+      "Decatur", "Alvord", "Bridgeport", "Bowie", "Sunset", "Rhome",
+      "Newark", "Boyd", "Chico", "Aurora", "New Fairview", "Paradise",
+      "Runaway Bay", "Lake Bridgeport"
+    ];
+
+    function extractCityFromAddress(fullAddress, fallbackCity = "") {
+      const addr = String(fullAddress || "").trim();
+      if (!addr) return fallbackCity || "";
+      const m = addr.match(/^.+?,\s*([^,]+?),\s*[A-Za-z]{2}(?:\s+\d{5}(?:-\d{4})?)?$/);
+      if (m) return m[1].trim();
+      const matchedTown = KNOWN_TOWNS.find(t => new RegExp(`\\b${t}\\b`, "i").test(addr));
+      if (matchedTown) return matchedTown;
+      return fallbackCity || "";
+    }
+
+    function formatClientFullAddress(c) {
+      const addr = String(c.address || "").trim();
+      const city = String(c.city || "").trim();
+      if (!addr) return city ? `${city}, TX` : "";
+      // If address already includes city or state/ZIP, return it directly without appending anything
+      if ((city && addr.toLowerCase().includes(city.toLowerCase())) || /,\s*[A-Za-z]{2}\b/.test(addr)) {
+        return addr;
+      }
+      return city ? `${addr}, ${city}, TX` : addr;
+    }
+
+    // ========================================================================
+    // SQUARE BACKEND BRIDGE & AUTOMATIC BILLING STATUS SYNC
+    // ========================================================================
     async function callSquareApi(payloadObj) {
       const res = await fetch(SQUARE_ENDPOINT, {
         method: "POST",
@@ -2093,6 +2352,115 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
       return raw || "";
     }
+
+    // SYNC SQUARE INVOICE PAYMENT STATUSES & CARDS ON FILE
+    window.syncSquareBillingStatuses = async function(silent = false) {
+      const btn = document.getElementById("btnSyncSquareBilling");
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "⏳ Checking Square...";
+      }
+      try {
+        const invoiceIds = [];
+        const customerIds = [];
+
+        clients.forEach(c => {
+          if (c.squareCustomerId && !customerIds.includes(c.squareCustomerId)) {
+            customerIds.push(c.squareCustomerId);
+          }
+          if (Array.isArray(c.squareHistory)) {
+            c.squareHistory.forEach(h => {
+              if (h.invoiceId && !invoiceIds.includes(h.invoiceId)) {
+                invoiceIds.push(h.invoiceId);
+              }
+            });
+          }
+        });
+
+        if (!invoiceIds.length && !customerIds.length) {
+          if (!silent) showToast("No Square-linked clients or invoices to refresh yet.");
+          return;
+        }
+
+        const res = await callSquareApi({
+          action: "square_sync_billing",
+          invoiceIds: invoiceIds,
+          customerIds: customerIds
+        });
+
+        const invUpdates = res.invoiceUpdates || {};
+        const custUpdates = res.customerUpdates || {};
+        let newlyPaidCount = 0;
+
+        for (const c of clients) {
+          let changed = false;
+          const custUpd = c.squareCustomerId ? custUpdates[c.squareCustomerId] : null;
+
+          if (custUpd) {
+            if (Boolean(c.hasCardOnFile) !== Boolean(custUpd.hasCardOnFile)) {
+              c.hasCardOnFile = !!custUpd.hasCardOnFile;
+              changed = true;
+            }
+            if ((c.squareCardId || "") !== (custUpd.cardId || "")) {
+              c.squareCardId = custUpd.cardId || "";
+              changed = true;
+            }
+            if ((c.squareCardLabel || "") !== (custUpd.cardLabel || "")) {
+              c.squareCardLabel = custUpd.cardLabel || "";
+              changed = true;
+            }
+            if (custUpd.hasCardOnFile && c.payMethod === "Invoice Link") {
+              c.payMethod = "Card on File";
+              changed = true;
+            }
+          }
+
+          if (Array.isArray(c.squareHistory)) {
+            for (const h of c.squareHistory) {
+              const upd = h.invoiceId ? invUpdates[h.invoiceId] : null;
+              if (upd && h.status !== upd.status) {
+                const wasNotPaid = h.status !== "PAID";
+                h.status = upd.status;
+                if (upd.publicUrl) h.url = upd.publicUrl;
+                changed = true;
+
+                // If Square shows the invoice was just paid, advance nextCharge & set lastPaid automatically
+                if (wasNotPaid && upd.status === "PAID") {
+                  newlyPaidCount++;
+                  const today = todayStr(0);
+                  c.lastPaid = today;
+                  if (c.freq === "One-Time") {
+                    c.status = "Paused";
+                  } else {
+                    const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate();
+                    c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay);
+                  }
+                }
+              }
+            }
+          }
+
+          if (changed) {
+            await saveClientDoc(c);
+          }
+        }
+
+        if (!silent) {
+          showToast(
+            newlyPaidCount > 0
+              ? `Square synced! ${newlyPaidCount} invoice(s) confirmed PAID.`
+              : `Square billing & Card-on-File statuses up to date!`
+          );
+        }
+      } catch (err) {
+        if (!silent) alert(err.message || "Could not refresh Square payment statuses.");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "🔄 Refresh Square Payments";
+        }
+      }
+    };
 
     // SYNC SQUARE CONTACTS -> CRM (CRM STAYS PRIMARY; NEVER OVERWRITES GATE/PET NOTES)
     window.syncSquareContacts = async function() {
@@ -2133,6 +2501,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             matchedCount++;
           } else {
             const today = todayStr(0);
+            const cleanAddr = sq.address || "Address Needed";
+            const parsedCity = sq.city || extractCityFromAddress(cleanAddr, "");
             const newRec = {
               id: "ws-sq-" + sq.squareCustomerId,
               squareCustomerId: sq.squareCustomerId,
@@ -2142,8 +2512,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               name: sq.name || "Square Customer",
               phone: formatDisplayPhone(sq.phone),
               email: sq.email || "",
-              city: sq.city || "Decatur",
-              address: sq.address || "Address Needed",
+              city: parsedCity,
+              address: cleanAddr,
               status: "Active",
               dogs: 1,
               cats: 0,
@@ -2160,6 +2530,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               payMethod: sq.hasCardOnFile ? "Card on File" : "Invoice Link",
               addons: { yardFresh: false, yfSections: 1, haulAway: false, litterSupply: false, litterSupplyBoxes: 1, deepClean: false, deepCleanBoxes: 1, extraTime: false, extraTimeBlocks: 1 },
               addonsSummary: "",
+              howHeard: "Google Search / Website",
               refBy: "",
               refLoc: "",
               refStatus: "N/A",
@@ -2176,7 +2547,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.textContent = "🔄 Sync Square Contacts";
+          btn.textContent = "👥 Sync Square Contacts";
         }
       }
     };
@@ -2325,9 +2696,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         invBtn.textContent = "📩 Send Invoice Instead";
       } else {
         banner.className = "sq-status-banner no-card";
-        banner.innerHTML = `<span>⚠️ <strong>No Card on File</strong> in Square</span><span>Default: Send SMS/Email Invoice</span>`;
+        banner.innerHTML = `<span>⚠️ <strong>No Card on File</strong> in Square</span><span>Default: Send Invoice (Prompts Card Save)</span>`;
         chargeBtn.classList.add("hidden");
         invBtn.textContent = "📩 Send Square Invoice";
+      }
+
+      // Default to Email if email exists on profile, otherwise SMS
+      const emailRadio = document.querySelector('input[name="sqDelivery"][value="EMAIL"]');
+      const smsRadio = document.querySelector('input[name="sqDelivery"][value="SMS"]');
+      if (c.email && c.email.trim() !== "" && emailRadio) {
+        emailRadio.checked = true;
+      } else if (smsRadio) {
+        smsRadio.checked = true;
       }
 
       // Match plan dropdown to client's current plan
@@ -2346,7 +2726,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       sqModalItems = [];
       const a = c.addons || {};
 
-      // Base plan item first
       sqModalItems.push({
         checked: true,
         isBasePlan: true,
@@ -2401,21 +2780,27 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       syncFirstScoopPromoItem();
       renderSquareModalItems();
 
-      // Render Square billing history if present
+      // Render Square billing history with PAID vs SENT badges
       const histSec = document.getElementById("sqHistorySection");
       const histList = document.getElementById("sqHistoryList");
       const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
       if (hist.length > 0) {
         histSec.classList.remove("hidden");
-        histList.innerHTML = hist.slice().reverse().map(h => `
-          <div class="sq-history-item">
-            <div>
-              <strong>$${Number(h.amount).toFixed(2)}</strong> • ${escapeHtml(h.method)}
-              <div style="font-size:10.5px; color:var(--m);">${escapeHtml(h.date)} — ${escapeHtml(h.summary)}</div>
+        histList.innerHTML = hist.slice().reverse().map(h => {
+          const isPaid = h.status === "PAID";
+          const stBadge = isPaid
+            ? `<span class="badge badge-ok">✓ PAID</span>`
+            : `<span class="badge badge-amber">${escapeHtml(h.status || "SENT / UNPAID")}</span>`;
+          return `
+            <div class="sq-history-item">
+              <div>
+                <strong>$${Number(h.amount).toFixed(2)}</strong> • ${escapeHtml(h.method)} ${stBadge}
+                <div style="font-size:10.5px; color:var(--m);">${escapeHtml(h.date)} — ${escapeHtml(h.summary)}</div>
+              </div>
+              ${h.url ? `<a href="${escapeHtml(h.url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Link ↗</a>` : ""}
             </div>
-            ${h.url ? `<a href="${escapeHtml(h.url)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Link ↗</a>` : `<span class="badge badge-ok">${escapeHtml(h.status || "Done")}</span>`}
-          </div>
-        `).join("");
+          `;
+        }).join("");
       } else {
         histSec.classList.add("hidden");
       }
@@ -2509,22 +2894,31 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             name: c.name,
             phone: c.phone,
             email: c.email || "",
-            address: c.address,
-            city: c.city,
+            address: formatClientFullAddress(c),
+            city: c.city || "",
             squareCustomerId: c.squareCustomerId || ""
           }
         });
 
         await persistSquareModalEditsToClient(c);
+        const today = todayStr(0);
         c.squareCustomerId = res.squareCustomerId;
         c.hasCardOnFile = true;
         c.squareCardId = res.cardId;
         c.squareCardLabel = res.cardLabel;
+        c.lastPaid = today;
+        if (c.freq === "One-Time") {
+          c.status = "Paused";
+        } else {
+          const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate();
+          c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay);
+        }
+
         if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
         c.squareHistory.push({
-          date: todayStr(0),
+          date: today,
           amount: total,
-          method: `Card Charged (${res.cardLabel})`,
+          method: `Card on File (${res.cardLabel})`,
           summary: selected.map(i => i.name).join(", "),
           status: "PAID",
           url: res.receiptUrl || ""
@@ -2534,7 +2928,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         const resBox = document.getElementById("sqResultBox");
         resBox.classList.remove("hidden");
-        resBox.innerHTML = `✅ <strong>Charged $${total.toFixed(2)} via Square (${res.env})!</strong> ${res.receiptUrl ? `<a href="${escapeHtml(res.receiptUrl)}" target="_blank" rel="noopener" style="font-weight:800; color:var(--g);">View Receipt ↗</a>` : ""}`;
+        resBox.innerHTML = `✅ <strong>Charged $${total.toFixed(2)} via Card on File (${res.env})!</strong> ${res.receiptUrl ? `<a href="${escapeHtml(res.receiptUrl)}" target="_blank" rel="noopener" style="font-weight:800; color:var(--g);">View Receipt ↗</a>` : ""}`;
         showToast(`Charged $${total.toFixed(2)} to ${c.name}!`);
       } catch (err) {
         alert(err.message || "Card charge failed.");
@@ -2542,6 +2936,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         btn.disabled = false;
         btn.textContent = orig;
       }
+    };
+
+    window.copyInvoiceSmsWithCardPrompt = function(clientName, amountStr, url) {
+      const firstName = (clientName || "there").trim().split(/\s+/)[0];
+      const msg = `Hi ${firstName}! Here is your Wise Scoopers invoice for $${amountStr}: ${url} — Tip: Check the "Save card on file" box when paying so future monthly bills are automatic and hassle-free!`;
+      navigator.clipboard.writeText(msg).then(() => {
+        showToast("Copied text message with payment link & card-on-file tip!");
+      }).catch(() => {
+        prompt("Copy this text message:", msg);
+      });
     };
 
     window.submitSquareInvoice = async function() {
@@ -2572,8 +2976,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             name: c.name,
             phone: c.phone,
             email: c.email || "",
-            address: c.address,
-            city: c.city,
+            address: formatClientFullAddress(c),
+            city: c.city || "",
             squareCustomerId: c.squareCustomerId || ""
           }
         });
@@ -2587,6 +2991,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         c.squareHistory.push({
           date: todayStr(0),
           amount: total,
+          invoiceId: res.invoiceId || "",
+          invoiceNumber: res.invoiceNumber || "",
           method: `Square Invoice (${res.deliveryUsed})`,
           summary: selected.map(i => i.name).join(", "),
           status: "SENT",
@@ -2597,12 +3003,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         const resBox = document.getElementById("sqResultBox");
         resBox.classList.remove("hidden");
+        const amtFixed = total.toFixed(2);
         resBox.innerHTML = `
-          ✅ <strong>Square Invoice #${escapeHtml(res.invoiceNumber)} Created ($${total.toFixed(2)})!</strong><br>
+          ✅ <strong>Square Invoice #${escapeHtml(res.invoiceNumber)} Created ($${amtFixed})!</strong><br>
           ${res.fallbackNote ? `<span style="color:var(--warn-ink); font-weight:700;">${escapeHtml(res.fallbackNote)}</span><br>` : ""}
           ${res.publicUrl ? `<div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
             <a href="${escapeHtml(res.publicUrl)}" target="_blank" rel="noopener" class="btn btn-dark btn-sm">Open Invoice ↗</a>
-            <button type="button" class="btn btn-sage btn-sm" onclick="navigator.clipboard.writeText('${escapeHtml(res.publicUrl)}'); showToast('Payment link copied!');">📋 Copy Link to Text</button>
+            <button type="button" class="btn btn-green btn-sm" onclick="copyInvoiceSmsWithCardPrompt('${escapeHtml(c.name)}', '${amtFixed}', '${escapeHtml(res.publicUrl)}')">📱 Copy Text + Card-Save Tip</button>
+            <button type="button" class="btn btn-sage btn-sm" onclick="navigator.clipboard.writeText('${escapeHtml(res.publicUrl)}'); showToast('Payment link copied!');">🔗 Copy Link Only</button>
           </div>` : ""}
         `;
         showToast(`Square Invoice sent for ${c.name}!`);
@@ -3000,6 +3408,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         isAuthenticated = true;
         gate.classList.add('hidden');
         syncEl.textContent = '☁️ Live Cloud Sync Active';
+        loadRegionalWeather(false);
 
         if (unsubscribeClients) unsubscribeClients();
         unsubscribeClients = onSnapshot(CLIENTS_COL, (snapshot) => {
@@ -3087,12 +3496,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       await deleteDoc(doc(db, "wise_scoopers_leads", id));
     }
 
-    // PARSE CLEAN NOTES & DETAILS FROM OLD OR NEW LEAD FORMATS
+    // PARSE CLEAN NOTES & BUSINESS REFERRAL DETAILS FROM LEAD FORMATS
     function parseLeadDetails(lead) {
       const rawNotes = String(lead.notes || '');
       let cleanUserNote = rawNotes;
       let extractedYardSign = lead.yardSign || '';
       let extractedTreats = lead.petTreats || '';
+      let extractedReferralSource = lead.referralSource || '';
+      let extractedReferralDetails = lead.referralDetails || '';
       let extractedAddons = [];
 
       if (lead.yardFresh === 'Yes') extractedAddons.push(`Yard Fresh (${lead.yfSections || 1} sec)`);
@@ -3114,6 +3525,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const treatMatch = rawNotes.match(/Pet Treats Permitted:\s*([^\n]+)/i);
         if (treatMatch && !extractedTreats) extractedTreats = treatMatch[1].trim();
 
+        const srcMatch = rawNotes.match(/(?:How did you hear about us|Referral Source|Heard About Us)\s*:\s*([^\n]+)/i);
+        if (srcMatch && !extractedReferralSource) extractedReferralSource = srcMatch[1].trim();
+
+        const detMatch = rawNotes.match(/(?:Business|Partner|Employee|Referred By|Referral Details|Who referred you)\s*:\s*([^\n]+)/i);
+        if (detMatch && !extractedReferralDetails) extractedReferralDetails = detMatch[1].trim();
+
         const addonMatches = rawNotes.match(/•\s*([^\n]+)/g);
         if (addonMatches && extractedAddons.length === 0) {
           extractedAddons = addonMatches.map(m => m.replace(/^•\s*/, '').trim());
@@ -3124,11 +3541,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         cleanNote: cleanUserNote,
         yardSign: extractedYardSign || 'No',
         petTreats: extractedTreats || 'No',
+        referralSource: extractedReferralSource,
+        referralDetails: extractedReferralDetails,
         addonsList: extractedAddons
       };
     }
 
-    // CONVERT WEBSITE LEAD TO ACTIVE CLIENT
+    // CONVERT WEBSITE LEAD TO ACTIVE CLIENT (INCLUDES FULL BUSINESS PARTNER REFERRAL INFO)
     window.convertLeadToClient = async function(leadId) {
       const lead = leads.find(l => l.id === leadId);
       if (!lead) return;
@@ -3154,14 +3573,21 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (addDeep) addonParts.push(`Deep Clean (${deepBoxes})`);
 
       const treatsAllowed = String(parsed.petTreats).toLowerCase().startsWith('y');
+      const fullAddr = formatClientFullAddress(lead);
+      const detectedCity = extractCityFromAddress(fullAddr, lead.city || "");
+
+      // Business Partner Referral Program: only eligible for $20 when Business Referral/Partner is selected AND business/employee info is provided
+      const isBusinessPartner = /business|partner/i.test(parsed.referralSource || "");
+      const hasPartnerWriteup = Boolean((parsed.referralDetails || "").trim());
+      const eligibleFor20 = isBusinessPartner && hasPartnerWriteup;
 
       const clientRecord = {
         id: newClientId,
         name: lead.name || "Converted Lead",
         phone: lead.phone || "",
         email: lead.email || "",
-        city: lead.city || "Decatur",
-        address: lead.address || "",
+        city: detectedCity,
+        address: fullAddr,
         status: "Active",
         dogs: Number(lead.dogs || 1),
         cats: Number(lead.cats || 0),
@@ -3175,7 +3601,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         nextCharge: nextChargeDate,
         lastPaid: "",
         netPrice: Number(lead.netPrice || 78.00),
-        payMethod: "Card on File",
+        payMethod: "Invoice Link",
         addons: {
           yardFresh: addYF, yfSections: yfSec,
           haulAway: addHaul,
@@ -3184,9 +3610,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           extraTime: false, extraTimeBlocks: 1
         },
         addonsSummary: addonParts.join(' + '),
-        refBy: "Website Quote Lead",
-        refLoc: lead.city || "Decatur",
-        refStatus: "N/A",
+        howHeard: isBusinessPartner ? "Business Referral / Partner" : (parsed.referralSource || "Google Search / Website"),
+        refBy: eligibleFor20 ? parsed.referralDetails.trim() : (isBusinessPartner ? parsed.referralDetails.trim() : ""),
+        refLoc: detectedCity,
+        refStatus: eligibleFor20 ? "Pending" : "N/A",
         geo: null
       };
 
@@ -3303,7 +3730,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let lastOrderedRouteStops = [];
     let lastUserCoords = null;
 
-    // LIVE GPS GEOLOCATION HELPER
     function getUserLocationAsync() {
       return new Promise((resolve) => {
         if (!useGpsStart || !navigator.geolocation) {
@@ -3401,9 +3827,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const q = document.getElementById('searchInput').value.trim().toLowerCase();
       const city = document.getElementById('cityFilter').value;
       return clients.filter(c => {
-        if (city && c.city !== city) return false;
+        const derivedCity = c.city || extractCityFromAddress(c.address, "");
+        if (city && derivedCity.toLowerCase() !== city.toLowerCase() && !String(c.address || "").toLowerCase().includes(city.toLowerCase())) {
+          return false;
+        }
         if (!q) return true;
-        const hay = `${c.name} ${c.city} ${c.address} ${c.phone} ${c.dogNames} ${c.refBy} ${c.serviceType} ${c.addonsSummary}`.toLowerCase();
+        const hay = `${c.name} ${derivedCity} ${c.address} ${c.phone} ${c.dogNames} ${c.refBy} ${c.serviceType} ${c.addonsSummary}`.toLowerCase();
         return hay.includes(q);
       });
     }
@@ -3427,9 +3856,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const city = document.getElementById('cityFilter').value;
 
       const filteredLeads = leads.filter(l => {
-        if (city && l.city !== city) return false;
+        const fullAddr = formatClientFullAddress(l);
+        if (city && !fullAddr.toLowerCase().includes(city.toLowerCase()) && (l.city || "").toLowerCase() !== city.toLowerCase()) {
+          return false;
+        }
         if (!q) return true;
-        return `${l.name} ${l.city} ${l.address} ${l.phone} ${l.notes}`.toLowerCase().includes(q);
+        return `${l.name} ${fullAddr} ${l.phone} ${l.notes} ${l.referralDetails || ''}`.toLowerCase().includes(q);
       }).sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
 
       if (!filteredLeads.length) {
@@ -3444,11 +3876,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const dogCount = Number(l.dogs || 0);
         const catCount = Number(l.cats || 0);
         const petText = `${dogCount} Dog${dogCount === 1 ? '' : 's'}${catCount > 0 ? ` • ${catCount} Litter` : ''}`;
-        const destParam = `${l.address}, ${l.city}, TX`;
-        const mapUrl = getPreferredSingleMapUrl(destParam);
+        const fullAddr = formatClientFullAddress(l);
+        const mapUrl = getPreferredSingleMapUrl(fullAddr);
 
         const signYes = String(parsed.yardSign).toLowerCase().startsWith('y');
         const treatsYes = String(parsed.petTreats).toLowerCase().startsWith('y');
+        const hasBizReferral = parsed.referralSource || parsed.referralDetails;
 
         return `
           <div class="lead-card">
@@ -3469,8 +3902,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="lead-info-grid">
               <div class="lead-box">
                 <div class="lead-box-lbl">📍 Service Address</div>
-                <strong>${escapeHtml(l.address)}</strong><br>
-                <span>${escapeHtml(l.city)}, TX</span>
+                <strong>${escapeHtml(fullAddr)}</strong>
               </div>
 
               <div class="lead-box">
@@ -3491,6 +3923,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <span>${parsed.addonsList.length ? escapeHtml(parsed.addonsList.join(', ')) : 'No add-ons'}</span>
               </div>
             </div>
+
+            ${hasBizReferral ? `
+              <div class="lead-box" style="background:var(--gt); border-color:var(--gm);">
+                <div class="lead-box-lbl">🤝 How Heard / Business Referral</div>
+                <strong>${escapeHtml(parsed.referralSource || 'Referral')}</strong>
+                ${parsed.referralDetails ? ` — <span>${escapeHtml(parsed.referralDetails)}</span>` : ''}
+              </div>
+            ` : ''}
 
             ${parsed.cleanNote ? `
               <div class="lead-notes-box">
@@ -3637,6 +4077,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const dogCount = Number(c.dogs || 0);
         const catCount = Number(c.cats || 0);
         const petLine = `${dogCount} Dog${dogCount === 1 ? '' : 's'}${catCount > 0 ? ` + ${catCount} Litter Box${catCount === 1 ? '' : 'es'}` : ''}${c.dogNames ? ` (${escapeHtml(c.dogNames)})` : ''}`;
+        const fullAddr = formatClientFullAddress(c);
 
         return `
           <div class="stop-card">
@@ -3648,7 +4089,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <div class="stop-header">
                 <div>
                   <div class="client-name">${escapeHtml(c.name)}</div>
-                  <div class="client-addr">${escapeHtml(c.address)}, ${escapeHtml(c.city)}, TX</div>
+                  <div class="client-addr">${escapeHtml(fullAddr)}</div>
                 </div>
                 <div class="client-phone">📞 ${escapeHtml(c.phone || 'No phone')}</div>
               </div>
@@ -3777,7 +4218,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     function getOrderedStopStrings() {
       return lastOrderedRouteStops.map(item => {
         if (item.isManual) return `${item.lat},${item.lng}`;
-        return `${item.client.address}, ${item.client.city}, TX`;
+        return formatClientFullAddress(item.client);
       });
     }
 
@@ -3843,19 +4284,22 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         return [client.geo.lat, client.geo.lng, false, true];
       }
 
-      const fullQuery = `${client.address}, ${client.city}, TX`;
+      const fullQuery = formatClientFullAddress(client);
       if (!forceRefresh && client.geo && client.geo.query === fullQuery && client.geo.lat && client.geo.lng) {
         return [client.geo.lat, client.geo.lng, !!client.geo.approx, false];
       }
 
-      const exactCoords = await geocodeViaCensus(client.address, client.city);
+      const streetOnly = String(client.address || "").split(",")[0].trim();
+      const derivedCity = client.city || extractCityFromAddress(client.address, "Decatur");
+
+      const exactCoords = await geocodeViaCensus(streetOnly, derivedCity);
       if (exactCoords) {
         client.geo = { lat: exactCoords[0], lng: exactCoords[1], query: fullQuery, approx: false, manual: false };
         await saveClientDoc(client);
         return [exactCoords[0], exactCoords[1], false, false];
       }
 
-      const base = CITY_COORDS[client.city] || [33.2343, -97.5861];
+      const base = CITY_COORDS[derivedCity] || [33.2343, -97.5861];
       const hash = [...client.id].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
       const lat = base[0] + ((hash % 15) - 7) * 0.0012;
       const lng = base[1] + (((hash * 7) % 15) - 7) * 0.0012;
@@ -3932,6 +4376,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const item = orderedStops[i];
         const c = item.client;
         const stopNumber = i + 1;
+        const fullAddr = formatClientFullAddress(c);
+        const derivedCity = c.city || extractCityFromAddress(fullAddr, "");
 
         if (i === 0 && userCoords) {
           straightMiles += haversineMiles(userCoords.lat, userCoords.lng, item.lat, item.lng);
@@ -3952,7 +4398,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           popupAnchor: [0, -30]
         });
 
-        const destParam = item.isManual ? `${item.lat},${item.lng}` : `${c.address}, ${c.city}, TX`;
+        const destParam = item.isManual ? `${item.lat},${item.lng}` : fullAddr;
         const appleUrl = getAppleMapsSingleUrl(destParam);
         const googleUrl = getGoogleMapsSingleUrl(destParam);
         const pinTag = item.isManual ? '<em>(Exact custom pin)</em>' : item.isApprox ? '<em>(Town pin — drag to exact house)</em>' : '';
@@ -3960,7 +4406,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const popupHtml = `
           <div style="min-width:215px; font-family:inherit;">
             <div style="font-weight:900; font-size:14px; color:#263A2D;">${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</div>
-            <div style="font-size:12px; color:#536559; margin-bottom:5px;">${escapeHtml(c.address)}, ${escapeHtml(c.city)} ${pinTag}</div>
+            <div style="font-size:12px; color:#536559; margin-bottom:5px;">${escapeHtml(fullAddr)} ${pinTag}</div>
             <div style="font-size:11.5px; background:#F4F7F4; padding:6px 8px; border-radius:6px; margin-bottom:6px; line-height:1.4;">
               <strong>Schedule:</strong> ${escapeHtml(c.freq)}<br>
               <strong>Next Scoop:</strong> ${formatDisplayDate(c.nextScoop)}<br>
@@ -3982,7 +4428,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           c.geo = {
             lat: Number(pos.lat.toFixed(6)),
             lng: Number(pos.lng.toFixed(6)),
-            query: `${c.address}, ${c.city}, TX`,
+            query: fullAddr,
             approx: false,
             manual: true
           };
@@ -4001,9 +4447,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 ${bestRouteEnabled ? `<span class="stop-num-badge ${isDue ? 'due' : ''}">${stopNumber}</span>` : ''}
                 <strong style="font-size:13px; color:var(--g);">${escapeHtml(c.name)}</strong>
               </div>
-              <span class="badge ${isDue ? 'badge-due' : 'badge-sage'}">${isDue ? 'Due' : escapeHtml(c.city)}</span>
+              <span class="badge ${isDue ? 'badge-due' : 'badge-sage'}">${isDue ? 'Due' : escapeHtml(derivedCity || 'Active')}</span>
             </div>
-            <div style="font-size:11.5px; color:var(--m); margin-top:2px;">${escapeHtml(c.address)}, ${escapeHtml(c.city)}</div>
+            <div style="font-size:11.5px; color:var(--m); margin-top:2px;">${escapeHtml(fullAddr)}</div>
             <div style="font-size:11px; color:var(--ink); margin-top:3px; font-weight:600;">
               ${escapeHtml(c.freq)} • Next: ${formatDisplayDate(c.nextScoop)}
             </div>
@@ -4057,71 +4503,81 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       document.getElementById('kpiTotalPets').textContent = `${totalDogs} dog${totalDogs === 1 ? '' : 's'} • ${totalCats} litter box${totalCats === 1 ? '' : 'es'}`;
       document.getElementById('kpiMonthlyRev').textContent = `$${estMonthly.toFixed(2)}`;
       document.getElementById('kpiBillingDue').textContent = billingDueList.length;
-      document.getElementById('kpiBillingDueAmt').textContent = `$${billingDueAmt.toFixed(2)} ready to charge`;
+      document.getElementById('kpiBillingDueAmt').textContent = `$${billingDueAmt.toFixed(2)} ready to bill`;
       document.getElementById('kpiScoopsDue').textContent = scoopsDueCount;
       document.getElementById('kpiTodayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
+    // UPDATED BILLING TABLE: NO MANUAL "MARK PAID" BUTTON — SQUARE DRIVES PAID/UNPAID & CARD ON FILE
     function renderBillingTable() {
       const tbody = document.getElementById('billingTableBody');
       const list = getFilteredClients().sort((a, b) => (a.nextCharge || '9999').localeCompare(b.nextCharge || '9999'));
-      const today = todayStr(0);
 
       if (!list.length) {
-        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="8" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add Client"</strong>, <strong>"🔄 Sync Square Contacts"</strong>, or convert a lead from <strong>"🚀 Leads"</strong>!</td></tr>`;
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="8" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients in cloud database yet. Click <strong>"+ Add Client"</strong>, <strong>"👥 Sync Square Contacts"</strong>, or convert a lead from <strong>"🚀 Leads"</strong>!</td></tr>`;
         return;
       }
 
       tbody.innerHTML = list.map(c => {
         const days = diffDaysFromToday(c.nextCharge);
         const isDue = c.status === 'Active' && days <= 0;
-        let badge = `<span class="badge badge-ok">In ${days} days</span>`;
-        if (c.status === 'Paused') badge = `<span class="badge badge-sage">Paused</span>`;
-        else if (c.status === 'One-Time') badge = `<span class="badge badge-soon">One-Time</span>`;
-        else if (days < 0) badge = `<span class="badge badge-due">Overdue (${Math.abs(days)}d)</span>`;
-        else if (days === 0) badge = `<span class="badge badge-due">Due Today</span>`;
-        else if (days <= 4) badge = `<span class="badge badge-soon">Due in ${days}d</span>`;
+        let dueBadge = `<span class="badge badge-ok">Next in ${days}d</span>`;
+        if (c.status === 'Paused') dueBadge = `<span class="badge badge-sage">Paused</span>`;
+        else if (c.status === 'One-Time') dueBadge = `<span class="badge badge-soon">One-Time</span>`;
+        else if (days < 0) dueBadge = `<span class="badge badge-due">Overdue (${Math.abs(days)}d)</span>`;
+        else if (days === 0) dueBadge = `<span class="badge badge-due">Due Today</span>`;
+        else if (days <= 4) dueBadge = `<span class="badge badge-soon">Due in ${days}d</span>`;
 
         const cardBadge = c.hasCardOnFile
           ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>`
           : `<span class="badge badge-amber">No Card on File</span>`;
 
+        // Latest Square payment/invoice status badge
+        const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
+        const latestSq = hist.length > 0 ? hist[hist.length - 1] : null;
+        let sqPaymentBadge = "";
+        if (latestSq) {
+          if (latestSq.status === "PAID") {
+            const paidHow = /card/i.test(latestSq.method || "") ? "Paid via Card on File" : "Invoice Paid";
+            sqPaymentBadge = `<span class="badge badge-ok">✓ ${paidHow} (${formatDisplayDate(latestSq.date)})</span>`;
+          } else if (latestSq.status === "PARTIALLY_PAID") {
+            sqPaymentBadge = `<span class="badge badge-soon">Partially Paid</span>`;
+          } else if (latestSq.status === "CANCELED") {
+            sqPaymentBadge = `<span class="badge badge-sage">Invoice Canceled</span>`;
+          } else {
+            sqPaymentBadge = `<span class="badge badge-amber">⏳ Invoice Sent / Unpaid</span>`;
+          }
+        }
+
         const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
         const annivLabel = startDay ? `Bills on the <strong>${getOrdinal(startDay)}</strong>` : 'Monthly';
-        const paidToday = c.paidActionDate === today;
-
-        const payBtnHtml = paidToday
-          ? `<button class="btn btn-done btn-sm" disabled>✓ Paid Today</button>
-             <button class="undo-link" onclick="undoMarkPaid('${c.id}')" title="Undo accidental Mark Paid">Undo</button>`
-          : `<button class="btn btn-green btn-sm" onclick="markPaid('${c.id}')">✓ Mark Paid</button>`;
-
-        const sqBtnLabel = c.hasCardOnFile ? '⚡ Square Charge' : '📩 Square Invoice';
+        const derivedCity = c.city || extractCityFromAddress(c.address, "");
+        const sqBtnLabel = c.hasCardOnFile ? '⚡ Charge / Invoice' : '📩 Send Invoice';
 
         return `
           <tr class="mobile-card-row ${isDue ? 'is-due' : ''}">
-            <td class="m-header" data-label="Billing Status">
+            <td class="m-header" data-label="Billing & Payment Status">
               <div class="mobile-only-inline">
                 <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
-                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(derivedCity)} • ${escapeHtml(c.phone)}</span>
               </div>
               <div>
-                ${badge} ${cardBadge}
+                ${dueBadge} ${cardBadge} ${sqPaymentBadge}
                 <div class="mobile-only-inline" style="margin-top:3px; font-size:14.5px; font-weight:900; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</div>
               </div>
             </td>
             <td data-label="Start / Anniversary"><strong>${formatDisplayDate(c.startDate)}</strong><br><span style="font-size:11px; color:var(--gm);">${annivLabel}</span></td>
-            <td data-label="Next Charge"><strong>${formatDisplayDate(c.nextCharge)}</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.payMethod)}</span></td>
+            <td data-label="Next Charge"><strong>${formatDisplayDate(c.nextCharge)}</strong><br><span style="font-size:11px; color:var(--m);">${c.hasCardOnFile ? 'Card on File' : escapeHtml(c.payMethod)}</span></td>
             <td data-label="Last Paid Date">
-              <input type="date" value="${c.lastPaid || ''}" onchange="updateLastPaidInline('${c.id}', this.value)"
-                style="padding:4px 6px; border:1.5px solid var(--b); border-radius:6px; font-size:12px; font-family:inherit; background:#FAFDFB; width:100%; max-width:140px;">
+              <strong>${c.lastPaid ? formatDisplayDate(c.lastPaid) : 'Not paid yet'}</strong>
+              ${latestSq && latestSq.url && latestSq.status !== "PAID" ? `<br><a href="${escapeHtml(latestSq.url)}" target="_blank" rel="noopener" style="font-size:11px; font-weight:800; color:var(--gm);">Open Unpaid Invoice ↗</a>` : ''}
             </td>
-            <td class="desktop-only-cell" data-label="Customer & City"><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</span><br>${cardBadge}</td>
+            <td class="desktop-only-cell" data-label="Customer & Card"><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(derivedCity)} • ${escapeHtml(c.phone)}</span><br>${cardBadge}</td>
             <td data-label="Service & Add-Ons"><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}</td>
             <td class="desktop-only-cell" data-label="Monthly Charge"><strong style="font-size:15.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}</strong></td>
             <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
                 <button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">${sqBtnLabel}</button>
-                ${payBtnHtml}
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
               </div>
             </td>
@@ -4156,6 +4612,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const isDue = days <= 0;
         const isFirstDay = c.startDate && c.startDate === c.nextScoop;
         const scoopedToday = c.scoopedActionDate === today;
+        const fullAddr = formatClientFullAddress(c);
 
         let statusBadge = `<span class="badge badge-ok">Next: ${formatDisplayDate(c.nextScoop)}</span>`;
         if (scoopedToday) statusBadge = `<span class="badge badge-ok">✓ Scooped • Next: ${formatDisplayDate(c.nextScoop)}</span>`;
@@ -4165,7 +4622,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         else if (days === 1) statusBadge = `<span class="badge badge-soon">Tomorrow (${formatDisplayDate(c.nextScoop)})</span>`;
 
         const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
-        const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : `${c.address}, ${c.city}, TX`;
+        const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : fullAddr;
         const mapsDirUrl = getPreferredSingleMapUrl(destParam);
 
         const scoopBtnHtml = scoopedToday
@@ -4181,7 +4638,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <div class="rc-top">
                 <div>
                   <div class="rc-name">${escapeHtml(c.name)}</div>
-                  <div class="rc-addr">${escapeHtml(c.address)}, ${escapeHtml(c.city)} • ${escapeHtml(c.phone)}</div>
+                  <div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div>
                 </div>
                 ${statusBadge}
               </div>
@@ -4220,6 +4677,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const cardBadge = c.hasCardOnFile
           ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>`
           : '';
+        const fullAddr = formatClientFullAddress(c);
 
         return `
           <tr class="mobile-card-row">
@@ -4234,7 +4692,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <span class="badge badge-sage">${escapeHtml(c.status)}</span>
               </div>
             </td>
-            <td data-label="Address & City">${escapeHtml(c.address)}<br><strong>${escapeHtml(c.city)}</strong></td>
+            <td data-label="Service Address"><strong>${escapeHtml(fullAddr)}</strong></td>
             <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
             <td data-label="Gate & Yard Notes" style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
             <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
@@ -4251,16 +4709,22 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
+    // BUSINESS-ONLY PARTNER REFERRAL TABLE ($20 PAYOUT ONLY WHEN BUSINESS/EMPLOYEE IS NAMED)
     function renderReferralsTable() {
       const tbody = document.getElementById('referralsTableBody');
-      const refs = getFilteredClients().filter(c => (c.refBy && c.refBy.trim() !== '') || c.refStatus !== 'N/A');
+      const refs = getFilteredClients().filter(c => {
+        const isBizProgram = /business|partner/i.test(c.howHeard || "") || (c.refStatus && c.refStatus !== "N/A");
+        const hasNamedPartner = Boolean((c.refBy || "").trim()) && !/website quote lead/i.test(c.refBy.trim());
+        return isBizProgram && hasNamedPartner;
+      });
 
       if (!refs.length) {
-        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No partner referrals logged yet.</td></tr>`;
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No eligible Business Partner Referrals logged yet. Select <strong>"Business Referral / Partner"</strong> under <em>How They Heard of Us</em> and enter the referring business/employee name to qualify for the $20 payout.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = refs.map(c => {
+        const derivedCity = c.city || extractCityFromAddress(c.address, "");
         const statusBadge = c.refStatus === 'Paid'
           ? `<span class="badge badge-ok">✓ Paid ($20)</span>`
           : `<span class="badge badge-soon">Pending ($20 Owed)</span>`;
@@ -4270,68 +4734,28 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <td class="m-header" data-label="Referred Customer">
               <div>
                 <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
-                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.city)} • ${escapeHtml(c.freq)}</span>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(derivedCity)} • ${escapeHtml(c.freq)}</span>
               </div>
               <div class="mobile-only-inline">${statusBadge}</div>
             </td>
-            <td data-label="Referring Business"><strong>${escapeHtml(c.refBy || '—')}</strong></td>
-            <td data-label="Partner Town">${escapeHtml(c.refLoc || c.city)}</td>
+            <td data-label="Referring Business & Employee"><strong>${escapeHtml(c.refBy)}</strong></td>
+            <td data-label="Partner Town">${escapeHtml(c.refLoc || derivedCity)}</td>
             <td data-label="Start Date">${formatDisplayDate(c.startDate)}</td>
             <td class="desktop-only-cell" data-label="$20 Reward Status">${statusBadge}</td>
             <td class="m-actions" data-label="Actions">
-              ${c.refStatus !== 'Paid'
-                ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${c.id}')">💵 Mark $20 Paid</button>`
-                : `<button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">View</button>`}
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                ${c.refStatus !== 'Paid'
+                  ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${c.id}')">💵 Mark $20 Paid</button>`
+                  : ''}
+                <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">View / Edit</button>
+              </div>
             </td>
           </tr>
         `;
       }).join('');
     }
 
-    // CLOUD WORKFLOW ACTIONS WITH ONCE-PER-DAY LOCK + UNDO
-    window.updateLastPaidInline = async function(id, newDate) {
-      const c = clients.find(x => x.id === id);
-      if (!c) return;
-      c.lastPaid = newDate;
-      await saveClientDoc(c);
-      showToast(`Updated Last Paid date for ${c.name} to ${formatDisplayDate(newDate)}`);
-    };
-
-    window.markPaid = async function(id) {
-      const c = clients.find(x => x.id === id);
-      if (!c) return;
-      const today = todayStr(0);
-      if (c.paidActionDate === today) return;
-
-      c.prevBillingSnapshot = { nextCharge: c.nextCharge, lastPaid: c.lastPaid, status: c.status };
-      c.lastPaid = today;
-      c.paidActionDate = today;
-
-      if (c.freq === 'One-Time') {
-        c.status = 'Paused';
-      } else {
-        const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate();
-        c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay);
-      }
-
-      await saveClientDoc(c);
-      showToast(`Marked ${c.name} PAID ($${Number(c.netPrice).toFixed(2)}). Next charge: ${formatDisplayDate(c.nextCharge)}`);
-    };
-
-    window.undoMarkPaid = async function(id) {
-      const c = clients.find(x => x.id === id);
-      if (!c || !c.prevBillingSnapshot) return;
-
-      c.nextCharge = c.prevBillingSnapshot.nextCharge;
-      c.lastPaid = c.prevBillingSnapshot.lastPaid;
-      c.status = c.prevBillingSnapshot.status;
-      delete c.paidActionDate;
-      delete c.prevBillingSnapshot;
-
-      await saveClientDoc(c);
-      showToast(`Undid Mark Paid for ${c.name}.`);
-    };
-
+    // CLOUD SCOOP & REFERRAL WORKFLOW ACTIONS
     window.completeScoop = async function(id) {
       const c = clients.find(x => x.id === id);
       if (!c) return;
@@ -4380,6 +4804,38 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (!confirm(`Remove ${c.name} from your Cloud CRM?`)) return;
       await removeClientDoc(id);
       showToast(`Removed ${c.name}.`);
+    };
+
+    // BUSINESS REFERRAL FIELD VISIBILITY & $20 ELIGIBILITY LOGIC
+    window.onHowHeardChanged = function() {
+      const val = document.getElementById('fHowHeard').value;
+      const isPartner = val === 'Business Referral / Partner';
+      document.getElementById('partnerTownFieldWrap').classList.toggle('hidden', !isPartner);
+      document.getElementById('partnerDetailsFieldWrap').classList.toggle('hidden', !isPartner);
+      document.getElementById('partnerStatusFieldWrap').classList.toggle('hidden', !isPartner);
+
+      const refInput = document.getElementById('fRefBy');
+      const statusSel = document.getElementById('fRefStatus');
+      if (isPartner) {
+        refInput.required = true;
+        if (refInput.value.trim() && statusSel.value === 'N/A') {
+          statusSel.value = 'Pending';
+        }
+      } else {
+        refInput.required = false;
+        statusSel.value = 'N/A';
+      }
+    };
+
+    window.onPartnerDetailsInput = function() {
+      const isPartner = document.getElementById('fHowHeard').value === 'Business Referral / Partner';
+      const hasText = Boolean(document.getElementById('fRefBy').value.trim());
+      const statusSel = document.getElementById('fRefStatus');
+      if (isPartner && hasText && statusSel.value === 'N/A') {
+        statusSel.value = 'Pending';
+      } else if (!hasText) {
+        statusSel.value = 'N/A';
+      }
     };
 
     // MODAL HANDLERS
@@ -4440,8 +4896,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById('fName').value = c.name;
         document.getElementById('fPhone').value = c.phone;
         document.getElementById('fEmail').value = c.email || '';
-        document.getElementById('fCity').value = c.city;
-        document.getElementById('fAddress').value = c.address;
+        document.getElementById('fAddress').value = formatClientFullAddress(c);
         document.getElementById('fStatus').value = c.status;
         document.getElementById('fGpsCoords').value = (c.geo && c.geo.manual) ? `${c.geo.lat}, ${c.geo.lng}` : '';
         document.getElementById('fDogs').value = c.dogs;
@@ -4457,7 +4912,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById('fNextCharge').value = c.nextCharge || todayStr(0);
         document.getElementById('fLastPaid').value = c.lastPaid || '';
         document.getElementById('fNetPrice').value = Number(c.netPrice || 0).toFixed(2);
-        document.getElementById('fPayMethod').value = c.payMethod || 'Card on File';
+        document.getElementById('fPayMethod').value = c.payMethod || 'Invoice Link';
 
         const a = c.addons || {};
         document.getElementById('addYardFresh').checked = !!a.yardFresh;
@@ -4470,7 +4925,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById('addExtraTime').checked = !!a.extraTime;
         document.getElementById('extraTimeBlocks').value = a.extraTimeBlocks || 1;
 
-        document.getElementById('fRefBy').value = c.refBy || '';
+        const isBiz = /business|partner/i.test(c.howHeard || "") || (c.refStatus && c.refStatus !== "N/A");
+        document.getElementById('fHowHeard').value = isBiz ? "Business Referral / Partner" : (c.howHeard || "Facebook Group / Social Media");
+        document.getElementById('fRefBy').value = (c.refBy && !/website quote lead/i.test(c.refBy)) ? c.refBy : '';
         document.getElementById('fRefLoc').value = c.refLoc || '';
         document.getElementById('fRefStatus').value = c.refStatus || 'N/A';
 
@@ -4479,10 +4936,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById('modalTitle').textContent = 'Add New Client';
         const today = todayStr(0);
         document.getElementById('fStartDate').value = today;
-        document.getElementById('fLastPaid').value = today;
+        document.getElementById('fLastPaid').value = '';
+        document.getElementById('fHowHeard').value = 'Facebook Group / Social Media';
         onStartDateOrFreqChange(true);
       }
 
+      onHowHeardChanged();
       refreshAddonStyles();
       document.getElementById('clientModalBackdrop').classList.add('open');
     };
@@ -4514,7 +4973,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (addTime) addonParts.push(`+${timeBlocks * 15}m Extra Time`);
 
       const addrVal = document.getElementById('fAddress').value.trim();
-      const cityVal = document.getElementById('fCity').value;
+      const derivedCity = extractCityFromAddress(addrVal, existingObj ? existingObj.city : "");
       const manualParsed = parseManualCoords(document.getElementById('fGpsCoords').value);
 
       let geoData = existingObj ? existingObj.geo : null;
@@ -4522,10 +4981,21 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         geoData = {
           lat: manualParsed.lat,
           lng: manualParsed.lng,
-          query: `${addrVal}, ${cityVal}, TX`,
+          query: addrVal,
           approx: false,
           manual: true
         };
+      }
+
+      const howHeardVal = document.getElementById('fHowHeard').value;
+      const isBizPartner = howHeardVal === 'Business Referral / Partner';
+      const refByVal = isBizPartner ? document.getElementById('fRefBy').value.trim() : '';
+      const refLocVal = isBizPartner ? document.getElementById('fRefLoc').value.trim() : '';
+      let refStatusVal = isBizPartner ? document.getElementById('fRefStatus').value : 'N/A';
+      if (isBizPartner && refByVal && refStatusVal === 'N/A') {
+        refStatusVal = 'Pending';
+      } else if (!isBizPartner || !refByVal) {
+        refStatusVal = 'N/A';
       }
 
       const record = {
@@ -4533,7 +5003,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         name: document.getElementById('fName').value.trim(),
         phone: document.getElementById('fPhone').value.trim(),
         email: document.getElementById('fEmail').value.trim(),
-        city: cityVal,
+        city: derivedCity,
         address: addrVal,
         status: document.getElementById('fStatus').value,
         dogs: Number(document.getElementById('fDogs').value) || 0,
@@ -4557,9 +5027,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           extraTime: addTime, extraTimeBlocks: timeBlocks
         },
         addonsSummary: addonParts.join(' + '),
-        refBy: document.getElementById('fRefBy').value.trim(),
-        refLoc: document.getElementById('fRefLoc').value.trim(),
-        refStatus: document.getElementById('fRefStatus').value,
+        howHeard: howHeardVal,
+        refBy: refByVal,
+        refLoc: refLocVal,
+        refStatus: refStatusVal,
         geo: geoData
       };
 
@@ -4570,9 +5041,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (existingObj.squareCardLabel) record.squareCardLabel = existingObj.squareCardLabel;
         if (existingObj.squareHistory) record.squareHistory = existingObj.squareHistory;
         if (existingObj.scoopedActionDate) record.scoopedActionDate = existingObj.scoopedActionDate;
-        if (existingObj.paidActionDate) record.paidActionDate = existingObj.paidActionDate;
         if (existingObj.prevScoopSnapshot) record.prevScoopSnapshot = existingObj.prevScoopSnapshot;
-        if (existingObj.prevBillingSnapshot) record.prevBillingSnapshot = existingObj.prevBillingSnapshot;
       }
 
       await saveClientDoc(record);
