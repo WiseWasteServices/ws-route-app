@@ -2135,8 +2135,128 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // SQUARE QUICK CHARGE & INVOICE MODAL LOGIC
+// SQUARE QUICK CHARGE & INVOICE MODAL LOGIC
     let sqModalItems = [];
+
+    function calcFirstScoopCredit(freq, monthlyAmt) {
+      const f = String(freq || "").toLowerCase();
+      if (f.includes("one-time") || f.includes("onetime") || monthlyAmt <= 0) return 0;
+      const visitsPerYear = f.includes("twice") ? 104 : f.includes("bi") ? 26 : 52;
+      return Math.round((monthlyAmt * 12) / visitsPerYear);
+    }
+
+    function syncFirstScoopPromoItem() {
+      const promoChecked = document.getElementById("sqFirstScoopFreeCheck").checked;
+      const baseItem = sqModalItems.find(i => i.isBasePlan);
+      const promoIdx = sqModalItems.findIndex(i => i.isPromo);
+
+      let creditAmt = 0;
+      let freqLabel = "Weekly";
+      if (baseItem) {
+        freqLabel = baseItem.freq || "Weekly";
+        creditAmt = calcFirstScoopCredit(freqLabel, Number(baseItem.price) || 0);
+      }
+
+      const promoLabelEl = document.getElementById("sqPromoLabel");
+      if (promoLabelEl) {
+        promoLabelEl.textContent = creditAmt > 0
+          ? `🎁 1st Visit Free (-$${creditAmt.toFixed(2)})`
+          : `🎁 1st Visit Free (Recurring only)`;
+      }
+
+      if (promoChecked && creditAmt > 0 && baseItem && baseItem.checked) {
+        const promoObj = {
+          checked: true,
+          isPromo: true,
+          name: `First Scoop Free Promo (${freqLabel} 1st Visit Credit)`,
+          price: -creditAmt
+        };
+        if (promoIdx !== -1) {
+          sqModalItems[promoIdx] = promoObj;
+        } else {
+          const baseIdx = sqModalItems.findIndex(i => i.isBasePlan);
+          sqModalItems.splice(baseIdx + 1, 0, promoObj);
+        }
+      } else if (promoIdx !== -1) {
+        sqModalItems.splice(promoIdx, 1);
+      }
+    }
+
+    window.onSquarePromoToggled = function() {
+      syncFirstScoopPromoItem();
+      renderSquareModalItems();
+    };
+
+    window.onSquarePlanChanged = function() {
+      const val = document.getElementById("sqServicePlanSelect").value;
+      const baseIdx = sqModalItems.findIndex(i => i.isBasePlan);
+      if (val === "custom") return;
+
+      const [serviceType, freq, priceStr] = val.split("|");
+      const price = parseFloat(priceStr) || 0;
+      const newBase = {
+        checked: true,
+        isBasePlan: true,
+        serviceType: serviceType,
+        freq: freq,
+        name: `${serviceType} (${freq})`,
+        price: price
+      };
+
+      if (baseIdx !== -1) {
+        sqModalItems[baseIdx] = newBase;
+      } else {
+        sqModalItems.unshift(newBase);
+      }
+
+      if (freq === "One-Time") {
+        document.getElementById("sqFirstScoopFreeCheck").checked = false;
+      }
+      syncFirstScoopPromoItem();
+      renderSquareModalItems();
+    };
+
+    window.quickAddSquarePreset = function(itemName, itemPrice) {
+      sqModalItems.push({
+        checked: true,
+        name: itemName,
+        price: Number(itemPrice)
+      });
+      renderSquareModalItems();
+    };
+
+    window.removeSquareItem = function(idx) {
+      if (sqModalItems[idx]) {
+        if (sqModalItems[idx].isPromo) {
+          document.getElementById("sqFirstScoopFreeCheck").checked = false;
+        }
+        sqModalItems.splice(idx, 1);
+        renderSquareModalItems();
+      }
+    };
+
+    async function persistSquareModalEditsToClient(c) {
+      const saveToggle = document.getElementById("sqSaveChangesToProfile");
+      if (!saveToggle || !saveToggle.checked) return;
+
+      const baseItem = sqModalItems.find(i => i.isBasePlan && i.checked);
+      if (baseItem) {
+        if (baseItem.serviceType) c.serviceType = baseItem.serviceType;
+        if (baseItem.freq) c.freq = baseItem.freq;
+        c.netPrice = Number(baseItem.price) || c.netPrice;
+      }
+
+      const checkedNames = sqModalItems.filter(i => i.checked && !i.isBasePlan && !i.isPromo).map(i => i.name);
+      if (!c.addons) c.addons = {};
+      c.addons.yardFresh = checkedNames.some(n => /yard fresh/i.test(n));
+      c.addons.haulAway = checkedNames.some(n => /haul-away/i.test(n));
+      c.addons.litterSupply = checkedNames.some(n => /litter supply/i.test(n));
+      c.addons.deepClean = checkedNames.some(n => /deep clean/i.test(n));
+      c.addons.extraTime = checkedNames.some(n => /extra yard time/i.test(n));
+      if (checkedNames.length > 0) {
+        c.addonsSummary = checkedNames.join(" + ");
+      }
+    }
 
     window.openSquareModal = function(clientId) {
       const c = clients.find(x => x.id === clientId);
@@ -2164,9 +2284,31 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         invBtn.textContent = "📩 Send Square Invoice";
       }
 
-      // Build smart pre-populated line items from client's profile
+      // Match plan dropdown to client's current plan
+      const planSelect = document.getElementById("sqServicePlanSelect");
+      const matchVal = `${c.serviceType || "Dog Waste Removal"}|${c.freq || "Weekly"}|${Math.round(Number(c.netPrice || 78))}`;
+      const hasOption = Array.from(planSelect.options).some(opt => opt.value === matchVal);
+      planSelect.value = hasOption ? matchVal : "custom";
+
+      // Auto-check First Scoop Free if customer started within last 30 days & has no prior Square charges
+      const daysSinceStart = c.startDate ? Math.abs(diffDaysFromToday(c.startDate)) : 0;
+      const isRecurring = !String(c.freq || "").toLowerCase().includes("one-time");
+      const hasPriorPaid = Array.isArray(c.squareHistory) && c.squareHistory.some(h => h.status === "PAID");
+      const defaultPromo = isRecurring && daysSinceStart <= 30 && !hasPriorPaid;
+      document.getElementById("sqFirstScoopFreeCheck").checked = defaultPromo;
+
       sqModalItems = [];
       const a = c.addons || {};
+
+      // Base plan item first
+      sqModalItems.push({
+        checked: true,
+        isBasePlan: true,
+        serviceType: c.serviceType || "Dog Waste Removal",
+        freq: c.freq || "Weekly",
+        name: `${c.serviceType || "Dog Waste Removal"} (${c.freq || "Monthly"})`,
+        price: Number(c.netPrice || 78.00)
+      });
 
       if (a.yardFresh) {
         const secs = Number(a.yfSections) || 1;
@@ -2210,14 +2352,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         });
       }
 
-      // Include their base monthly/service rate (checked by default if they have no per-visit add-ons)
-      const hasPerVisitItems = sqModalItems.length > 0;
-      sqModalItems.push({
-        checked: !hasPerVisitItems,
-        name: `${c.serviceType || "Dog Waste Removal"} (${c.freq || "Monthly"})`,
-        price: Number(c.netPrice || 78.00)
-      });
-
+      syncFirstScoopPromoItem();
       renderSquareModalItems();
 
       // Render Square billing history if present
@@ -2249,11 +2384,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     function renderSquareModalItems() {
       const container = document.getElementById("sqItemsContainer");
       container.innerHTML = sqModalItems.map((it, idx) => `
-        <div class="sq-item-row ${it.checked ? "checked" : ""}">
+        <div class="sq-item-row ${it.checked ? "checked" : ""}" style="grid-template-columns: auto 1fr 90px auto;">
           <input type="checkbox" ${it.checked ? "checked" : ""} onchange="toggleSqItem(${idx}, this.checked)">
-          <span style="font-size:12.5px; font-weight:700;">${escapeHtml(it.name)}</span>
+          <span style="font-size:12.5px; font-weight:700; ${it.price < 0 ? "color:var(--ok-ink);" : ""}">${escapeHtml(it.name)}</span>
           <input type="number" step="0.01" value="${Number(it.price).toFixed(2)}" onchange="updateSqItemPrice(${idx}, this.value)"
             style="padding:5px 7px; border:1.5px solid var(--b); border-radius:6px; font-size:12.5px; font-weight:800; text-align:right;">
+          <button type="button" class="btn btn-danger btn-sm" style="padding:3px 7px;" onclick="removeSquareItem(${idx})" title="Remove item">✕</button>
         </div>
       `).join("");
 
@@ -2264,6 +2400,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     window.toggleSqItem = function(idx, isChecked) {
       if (sqModalItems[idx]) {
         sqModalItems[idx].checked = isChecked;
+        if (sqModalItems[idx].isBasePlan) {
+          syncFirstScoopPromoItem();
+        }
+        if (sqModalItems[idx].isPromo && !isChecked) {
+          document.getElementById("sqFirstScoopFreeCheck").checked = false;
+        }
         renderSquareModalItems();
       }
     };
@@ -2271,6 +2413,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     window.updateSqItemPrice = function(idx, val) {
       if (sqModalItems[idx]) {
         sqModalItems[idx].price = parseFloat(val) || 0;
+        if (sqModalItems[idx].isBasePlan) {
+          syncFirstScoopPromoItem();
+        }
         renderSquareModalItems();
       }
     };
@@ -2324,6 +2469,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
         });
 
+        await persistSquareModalEditsToClient(c);
         c.squareCustomerId = res.squareCustomerId;
         c.hasCardOnFile = true;
         c.squareCardId = res.cardId;
@@ -2386,6 +2532,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
         });
 
+        await persistSquareModalEditsToClient(c);
         c.squareCustomerId = res.squareCustomerId;
         c.hasCardOnFile = !!res.hasCardOnFile;
         c.squareCardId = res.cardId || "";
