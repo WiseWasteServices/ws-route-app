@@ -251,6 +251,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .btn-done { background: var(--ok-bg); color: var(--ok-ink); border: 1.5px solid var(--ok-b); }
   .btn-outline { background: var(--w); color: var(--g); border: 1.5px solid var(--b); }
   .btn-outline:hover:not(:disabled) { background: var(--cr); }
+  .btn-amber { background: var(--warn-bg); color: var(--warn-ink); border: 1.5px solid var(--warn-b); }
+  .btn-amber:hover:not(:disabled) { background: #ffedd0; }
   .btn-danger { background: var(--due-bg); color: var(--due-ink); border: 1px solid var(--due-b); }
   .btn-danger:hover:not(:disabled) { background: #fbd5d5; }
   .btn-sm { padding: 5px 10px; font-size: 11.5px; border-radius: 6px; }
@@ -385,12 +387,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .panel-hd { background: var(--cr); border-bottom: 1.5px solid var(--b); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .panel-hd h2 { margin: 0; font-size: 15.5px; font-weight: 900; color: var(--g); }
 
-  /* COMPACT STRUCTURED LEADS GRID */
+  /* COMPACT STRUCTURED LEADS & POTENTIAL CLIENTS GRID */
   .leads-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
   .lead-card {
     background: var(--w); border: 1.5px solid var(--b); border-left: 5px solid var(--gm);
     border-radius: 12px; padding: 12px 13px; display: flex; flex-direction: column; gap: 8px;
     box-shadow: 0 2px 8px rgba(38, 58, 45, 0.04);
+  }
+  .lead-card.potential-card {
+    border-left: 5px solid var(--warn-b);
+    background: linear-gradient(180deg, #FFFDF8 0%, #FFFFFF 100%);
   }
   .lead-hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; border-bottom: 1px solid #E6EDE7; padding-bottom: 7px; }
   .lead-name { font-size: 15px; font-weight: 900; color: var(--g); line-height: 1.2; }
@@ -511,13 +517,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .dot { width: 11px; height: 11px; border-radius: 50%; display: inline-block; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.25); }
   .dot-due { background: #D9534F; }
   .dot-active { background: #263A2D; }
+  .dot-trial { background: #E6A83A; }
   .dot-gps { background: #1A73E8; }
   .map-list { overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
   .map-stop-item { background: var(--w); border: 1.5px solid var(--b); border-radius: 9px; padding: 9px 11px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
   .map-stop-item:hover { border-color: var(--gm); background: var(--cr); }
   .map-stop-item.is-due { border-left: 4px solid #D9534F; }
+  .map-stop-item.is-trial { border-left: 4px solid #E6A83A; }
   .stop-num-badge { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--g); color: var(--w); font-size: 11px; font-weight: 900; margin-right: 6px; flex-shrink: 0; }
   .stop-num-badge.due { background: #D9534F; }
+  .stop-num-badge.trial { background: #C68314; }
 
   .ws-pin {
     position: relative; width: 30px; height: 30px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
@@ -532,6 +541,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   }
   .ws-pin.pin-active { background: #263A2D; }
   .ws-pin.pin-due { background: #D9534F; }
+  .ws-pin.pin-trial { background: #D48817; }
   .ws-pin.pin-paused { background: #7D8A82; }
   .ws-user-pin {
     width: 22px; height: 22px; border-radius: 50%; background: #1A73E8; border: 3px solid #ffffff;
@@ -630,6 +640,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .route-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
   .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 12px; padding: 13px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 9px; }
   .route-card.due-today { border-left-color: #D9534F; background: linear-gradient(180deg, #FFF9F9 0%, #FFFFFF 100%); }
+  .route-card.trial-card { border-left-color: #E6A83A; background: linear-gradient(180deg, #FFFDF5 0%, #FFFFFF 100%); }
   .route-card.scooped-done { border-left-color: #3B8754; background: #F6FBF7; }
   .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
   .rc-name { font-size: 15.5px; font-weight: 900; color: var(--g); }
@@ -1131,13 +1142,28 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </div>
     </div>
 
-    <!-- TAB 0: WEBSITE LEADS & QUOTES INBOX -->
+    <!-- TAB 0: WEBSITE LEADS & POTENTIAL CLIENTS ("TRY US") PIPELINE -->
     <section id="tab-leads" class="view-panel active">
+      <!-- SUB-SECTION A: POTENTIAL CLIENTS ("TRY US" FREE TRIAL & FOLLOW-UPS) -->
+      <div class="panel-card" style="border-color: var(--warn-b);">
+        <div class="panel-hd" style="background: var(--warn-bg);">
+          <h2>🎁 Potential Clients &amp; "Try Us" Free Trial List (<span id="potentialCountBadge">0</span>)</h2>
+          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <span style="font-size:11.5px; color:var(--warn-ink); font-weight:700;">
+              Add notes, schedule a free <strong>"Try Us"</strong> scoop day, or convert to regular client
+            </span>
+            <button type="button" class="btn btn-dark btn-sm" onclick="openPotentialModal()">+ Add Potential Client</button>
+          </div>
+        </div>
+        <div class="leads-grid" id="potentialLeadsContainer"></div>
+      </div>
+
+      <!-- SUB-SECTION B: INCOMING NEW LEADS -->
       <div class="panel-card">
         <div class="panel-hd">
-          <h2>🚀 Website Quote Leads Inbox</h2>
+          <h2>🚀 New Website Quote Leads Inbox (<span id="newLeadsSubBadge">0</span>)</h2>
           <div style="font-size:11.5px; color:var(--m); font-weight:700;">
-            Tap <strong>"✓ Convert to Client"</strong> to add to your route
+            Move to <strong>"🎁 Potential Client / Try Us"</strong> to nurture or <strong>"✓ Convert to Client"</strong> when ready
           </div>
         </div>
         <div class="leads-grid" id="leadsCardsContainer"></div>
@@ -1182,8 +1208,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <h2>🗓️ Yard Scoop Schedule &amp; Route Sheet</h2>
           <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
             <select id="routeFilter" class="filter-select" onchange="renderAll()">
-              <option value="all">All Active Yards</option>
+              <option value="all">All Active Yards + Try Us Trials</option>
               <option value="due">Due Today or Overdue</option>
+              <option value="trial">🎁 "Try Us" Potential Trials Only</option>
               <option value="Weekly">Weekly Plans Only</option>
               <option value="Twice Weekly">Twice Weekly Plans Only</option>
               <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
@@ -1243,6 +1270,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="map-legend">
               <span class="legend-item"><span class="dot dot-gps"></span> Your GPS</span>
               <span class="legend-item"><span class="dot dot-due"></span> Due Today</span>
+              <span class="legend-item"><span class="dot dot-trial"></span> Try Us Trial</span>
               <span class="legend-item"><span class="dot dot-active"></span> Active Yard</span>
             </div>
             <div class="map-list" id="mapSidebarList"></div>
@@ -1268,7 +1296,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <th>Customer</th>
                 <th>Service Address</th>
                 <th>Pets &amp; Treat Location</th>
-                <th>Gate &amp; Yard Notes</th>
+                <th>Notes</th>
                 <th>Start Date &amp; Next Scoop</th>
                 <th>Service &amp; Monthly Rate</th>
                 <th>Actions</th>
@@ -1604,7 +1632,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   </div>
 
   <!-- ========================================================================
-       CRM MODALS (CLIENT EDITOR, SQUARE CHARGE/INVOICE & BUSINESS APPS)
+       CRM MODALS (CLIENT EDITOR, POTENTIAL CLIENT "TRY US", SQUARE & APPS)
        ======================================================================== -->
   <div class="modal-backdrop" id="clientModalBackdrop">
     <div class="modal">
@@ -1648,7 +1676,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <div class="form-section-title">2. Pets, Gate Safety &amp; Bagged Treat Protocol</div>
+          <div class="form-section-title">2. Pets, Notes &amp; Bagged Treat Protocol</div>
           <div class="form-grid">
             <div class="field">
               <label>Number of Dogs</label>
@@ -1672,7 +1700,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <input type="text" id="fDogNames" placeholder="e.g., Max &amp; Bella (friendly)">
             </div>
             <div class="field span-2">
-              <label>Gate Code / Latch / Yard Instructions</label>
+              <label>Notes</label>
               <input type="text" id="fGateNotes" placeholder="e.g., Left side wooden gate, code 4412, double-check bottom latch">
             </div>
           </div>
@@ -1824,7 +1852,73 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     </div>
   </div>
 
-  <!-- SQUARE QUICK CHARGE & SMS/EMAIL INVOICE MODAL -->
+  <!-- POTENTIAL CLIENT & "TRY US" FREE TRIAL MODAL -->
+  <div class="modal-backdrop" id="potentialModalBackdrop" onclick="if(event.target===this) closePotentialModal()">
+    <div class="modal" style="max-width: 640px;">
+      <div class="modal-hd">
+        <h3 id="potModalTitle">🎁 Potential Client &amp; "Try Us" Free Trial</h3>
+        <button class="modal-close" onclick="closePotentialModal()">&times;</button>
+      </div>
+      <form id="potentialForm" onsubmit="savePotentialClient(event)">
+        <input type="hidden" id="potLeadId">
+        <div class="modal-body">
+          <div style="background:var(--warn-bg); border:1.5px solid var(--warn-b); border-radius:9px; padding:8px 11px; font-size:12px; color:var(--warn-ink); font-weight:700;">
+            💡 <strong>"Try Us" Free Trial:</strong> Set a trial scoop date below (such as Tuesday) to automatically place this potential client onto your <strong>Schedule</strong> &amp; <strong>Map</strong> with a <strong>🎁 TRY US</strong> badge and all notes.
+          </div>
+
+          <div class="form-grid">
+            <div class="field">
+              <label>Name *</label>
+              <input type="text" id="pName" required placeholder="e.g., Amanda Miller">
+            </div>
+            <div class="field">
+              <label>Phone Number *</label>
+              <input type="tel" id="pPhone" required placeholder="(940) 555-0148">
+            </div>
+            <div class="field">
+              <label>Email (Optional)</label>
+              <input type="email" id="pEmail" placeholder="amanda@email.com">
+            </div>
+            <div class="field">
+              <label>Quoted Plan &amp; Rate</label>
+              <input type="text" id="pPlanSummary" placeholder="e.g., Weekly • $78/mo">
+            </div>
+            <div class="field span-2">
+              <label>Full Service Address *</label>
+              <input type="text" id="pAddress" required placeholder="e.g., 410 N Trinity St, Decatur, TX 76234">
+            </div>
+            <div class="field">
+              <label>Number of Dogs</label>
+              <input type="number" id="pDogs" min="0" value="1">
+            </div>
+            <div class="field">
+              <label>Number of Litter Boxes</label>
+              <input type="number" id="pCats" min="0" value="0">
+            </div>
+            <div class="field span-2">
+              <label>🎁 "Try Us" Free Scoop Day (Optional — adds to Schedule &amp; Map)</label>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <input type="date" id="pTrialDate">
+                <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('pTrialDate').value=''">Clear Date</button>
+              </div>
+            </div>
+            <div class="field span-2">
+              <label>Notes (Gate code, dog names, follow-up reminders, trial details)</label>
+              <textarea id="pNotes" rows="3" placeholder="e.g., Wants to try us for free on Tuesday before signing up. Side gate unlocked, 2 friendly labs."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-ft" style="justify-content:space-between; flex-wrap:wrap;">
+          <button type="button" class="btn btn-outline" onclick="closePotentialModal()">Cancel</button>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="submit" class="btn btn-dark">💾 Save Potential Client</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SQUARE QUICK CHARGE & EMAIL/LINK INVOICE MODAL -->
   <div class="modal-backdrop" id="squareModalBackdrop" onclick="if(event.target===this) closeSquareModal()">
     <div class="modal" style="max-width: 640px;">
       <div class="modal-hd">
@@ -1837,7 +1931,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         <!-- CARD-ON-FILE CHECKOUT ENCOURAGEMENT NOTE -->
         <div id="sqSaveCardPromptNote" style="background:var(--gt); border:1.5px solid var(--gm); border-radius:9px; padding:8px 11px; font-size:11.5px; color:var(--g); font-weight:700;">
-          💳 <strong>Card-on-File Checkout Prompt Included:</strong> Invoices automatically include a checkout note asking the customer to check <em>"Save card on file"</em> for hassle-free monthly billing.
+          💳 <strong>Card-on-File Prompt Included:</strong> Invoices encourage the customer to check <em>"Save card on file"</em> at checkout for automatic monthly billing.
         </div>
 
         <!-- PLAN & FIRST SCOOP FREE PROMO CONTROLS -->
@@ -1902,15 +1996,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         </div>
 
         <div class="form-section-title">3. Invoice Delivery Option (If Sending Invoice)</div>
-        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
           <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
-            <input type="radio" name="sqDelivery" value="SMS" checked> 📱 Text / SMS (Fastest)
+            <input type="radio" name="sqDelivery" value="EMAIL"> ✉️ Send via Email (Automatic)
           </label>
           <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
-            <input type="radio" name="sqDelivery" value="EMAIL"> ✉️ Email
-          </label>
-          <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
-            <input type="radio" name="sqDelivery" value="SHARE_MANUALLY"> 🔗 Copy Payment Link Only
+            <input type="radio" name="sqDelivery" value="SHARE_MANUALLY" checked> 🔗 Copy Payment Link (Paste to Text)
           </label>
         </div>
 
@@ -1924,7 +2015,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <div class="modal-ft" style="justify-content:space-between; flex-wrap:wrap;">
         <button type="button" class="btn btn-outline" onclick="closeSquareModal()">Close</button>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button type="button" class="btn btn-sage" id="btnSqSendInvoice" onclick="submitSquareInvoice()">📩 Send Invoice</button>
+          <button type="button" class="btn btn-sage" id="btnSqSendInvoice" onclick="submitSquareInvoice()">📩 Create / Send Invoice</button>
           <button type="button" class="btn btn-dark hidden" id="btnSqChargeCard" onclick="submitSquareCharge()">⚡ Charge Card Now</button>
         </div>
       </div>
@@ -2150,7 +2241,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div class="toast" id="toast"></div>
   <div id="toastArea"></div>
 <!-- ========================================================================
-       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + SQUARE + GPS MAP + WEATHER)
+       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + POTENTIAL + SQUARE + WEATHER)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -2223,7 +2314,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
 
       try {
-        // Blend Decatur (Central Wise), Alvord/Chico (North Wise), and Bowie/Sunset (Southern Montague)
         const url = "https://api.open-meteo.com/v1/forecast?latitude=33.2343,33.3587,33.5582&longitude=-97.5861,-97.6939,-97.8495&current=temperature_2m,weather_code,precipitation_probability&hourly=temperature_2m,precipitation_probability,weather_code&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=1";
         const res = await fetch(url);
         if (!res.ok) throw new Error("Weather service unavailable");
@@ -2241,7 +2331,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const sunriseIso = points[0]?.daily?.sunrise?.[0] || "";
         const sunsetIso = points[0]?.daily?.sunset?.[0] || "";
 
-        // Analyze hourly timeline across all 3 regional points
         const times = points[0]?.hourly?.time || [];
         const hourlySummary = times.map((t, idx) => {
           const tempsAtHour = points.map(p => Number(p.hourly?.temperature_2m?.[idx])).filter(n => !isNaN(n));
@@ -2280,7 +2369,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (srEl) srEl.textContent = `🌅 Sunrise: ${formatClockTime(sunriseIso)}`;
         if (ssEl) ssEl.textContent = `🌇 Sunset: ${formatClockTime(sunsetIso)}`;
 
-        // Show key 2-hour intervals across the work day (6 AM to 8 PM)
         const keySlots = hourlySummary.filter(h => h.hour >= 6 && h.hour <= 20 && h.hour % 2 === 0);
         if (slotsEl && keySlots.length > 0) {
           slotsEl.innerHTML = keySlots.map(s => `
@@ -2319,7 +2407,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const addr = String(c.address || "").trim();
       const city = String(c.city || "").trim();
       if (!addr) return city ? `${city}, TX` : "";
-      // If address already includes city or state/ZIP, return it directly without appending anything
       if ((city && addr.toLowerCase().includes(city.toLowerCase())) || /,\s*[A-Za-z]{2}\b/.test(addr)) {
         return addr;
       }
@@ -2424,7 +2511,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 if (upd.publicUrl) h.url = upd.publicUrl;
                 changed = true;
 
-                // If Square shows the invoice was just paid, advance nextCharge & set lastPaid automatically
                 if (wasNotPaid && upd.status === "PAID") {
                   newlyPaidCount++;
                   const today = todayStr(0);
@@ -2462,7 +2548,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // SYNC SQUARE CONTACTS -> CRM (CRM STAYS PRIMARY; NEVER OVERWRITES GATE/PET NOTES)
+    // SYNC SQUARE CONTACTS -> CRM
     window.syncSquareContacts = async function() {
       const btn = document.getElementById("btnSyncSquare");
       if (btn) {
@@ -2519,7 +2605,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               cats: 0,
               treatLoc: "Front Door",
               dogNames: "",
-              gateNotes: "Imported from Square — verify yard & gate details",
+              gateNotes: "Imported from Square — verify yard & pet details",
               startDate: today,
               freq: "Weekly",
               serviceType: "Dog Waste Removal",
@@ -2693,30 +2779,28 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         banner.className = "sq-status-banner has-card";
         banner.innerHTML = `<span>✅ <strong>Card on File Detected:</strong> ${escapeHtml(c.squareCardLabel || "Saved Card")}</span><span>Default: Charge Immediately</span>`;
         chargeBtn.classList.remove("hidden");
-        invBtn.textContent = "📩 Send Invoice Instead";
+        invBtn.textContent = "📩 Create Invoice Instead";
       } else {
         banner.className = "sq-status-banner no-card";
-        banner.innerHTML = `<span>⚠️ <strong>No Card on File</strong> in Square</span><span>Default: Send Invoice (Prompts Card Save)</span>`;
+        banner.innerHTML = `<span>⚠️ <strong>No Card on File</strong> in Square</span><span>Send via Email or Copy Link to Text</span>`;
         chargeBtn.classList.add("hidden");
-        invBtn.textContent = "📩 Send Square Invoice";
+        invBtn.textContent = "📩 Create / Send Invoice";
       }
 
-      // Default to Email if email exists on profile, otherwise SMS
+      // Default to Email if email exists on profile, otherwise Copy Payment Link
       const emailRadio = document.querySelector('input[name="sqDelivery"][value="EMAIL"]');
-      const smsRadio = document.querySelector('input[name="sqDelivery"][value="SMS"]');
+      const linkRadio = document.querySelector('input[name="sqDelivery"][value="SHARE_MANUALLY"]');
       if (c.email && c.email.trim() !== "" && emailRadio) {
         emailRadio.checked = true;
-      } else if (smsRadio) {
-        smsRadio.checked = true;
+      } else if (linkRadio) {
+        linkRadio.checked = true;
       }
 
-      // Match plan dropdown to client's current plan
       const planSelect = document.getElementById("sqServicePlanSelect");
       const matchVal = `${c.serviceType || "Dog Waste Removal"}|${c.freq || "Weekly"}|${Math.round(Number(c.netPrice || 78))}`;
       const hasOption = Array.from(planSelect.options).some(opt => opt.value === matchVal);
       planSelect.value = hasOption ? matchVal : "custom";
 
-      // Auto-check First Scoop Free if customer started within last 30 days & has no prior Square charges
       const daysSinceStart = c.startDate ? Math.abs(diffDaysFromToday(c.startDate)) : 0;
       const isRecurring = !String(c.freq || "").toLowerCase().includes("one-time");
       const hasPriorPaid = Array.isArray(c.squareHistory) && c.squareHistory.some(h => h.status === "PAID");
@@ -2780,7 +2864,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       syncFirstScoopPromoItem();
       renderSquareModalItems();
 
-      // Render Square billing history with PAID vs SENT badges
       const histSec = document.getElementById("sqHistorySection");
       const histList = document.getElementById("sqHistoryList");
       const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
@@ -2960,12 +3043,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
 
       const deliveryRadio = document.querySelector('input[name="sqDelivery"]:checked');
-      const deliveryMethod = deliveryRadio ? deliveryRadio.value : "SMS";
+      const deliveryMethod = deliveryRadio ? deliveryRadio.value : "SHARE_MANUALLY";
 
       const btn = document.getElementById("btnSqSendInvoice");
       const orig = btn.textContent;
       btn.disabled = true;
-      btn.textContent = "⏳ Sending Invoice...";
+      btn.textContent = "⏳ Creating Invoice...";
 
       try {
         const res = await callSquareApi({
@@ -2993,7 +3076,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           amount: total,
           invoiceId: res.invoiceId || "",
           invoiceNumber: res.invoiceNumber || "",
-          method: `Square Invoice (${res.deliveryUsed})`,
+          method: res.deliveryUsed === "EMAIL" ? "Square Invoice (Email)" : "Square Invoice (Link)",
           summary: selected.map(i => i.name).join(", "),
           status: "SENT",
           url: res.publicUrl || ""
@@ -3005,15 +3088,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         resBox.classList.remove("hidden");
         const amtFixed = total.toFixed(2);
         resBox.innerHTML = `
-          ✅ <strong>Square Invoice #${escapeHtml(res.invoiceNumber)} Created ($${amtFixed})!</strong><br>
-          ${res.fallbackNote ? `<span style="color:var(--warn-ink); font-weight:700;">${escapeHtml(res.fallbackNote)}</span><br>` : ""}
+          ✅ <strong>Square Invoice #${escapeHtml(res.invoiceNumber)} Ready ($${amtFixed})!</strong><br>
           ${res.publicUrl ? `<div style="margin-top:6px; display:flex; gap:6px; flex-wrap:wrap;">
             <a href="${escapeHtml(res.publicUrl)}" target="_blank" rel="noopener" class="btn btn-dark btn-sm">Open Invoice ↗</a>
             <button type="button" class="btn btn-green btn-sm" onclick="copyInvoiceSmsWithCardPrompt('${escapeHtml(c.name)}', '${amtFixed}', '${escapeHtml(res.publicUrl)}')">📱 Copy Text + Card-Save Tip</button>
             <button type="button" class="btn btn-sage btn-sm" onclick="navigator.clipboard.writeText('${escapeHtml(res.publicUrl)}'); showToast('Payment link copied!');">🔗 Copy Link Only</button>
           </div>` : ""}
         `;
-        showToast(`Square Invoice sent for ${c.name}!`);
+        showToast(res.deliveryUsed === "EMAIL" ? `Emailed Square Invoice to ${c.name}!` : `Square payment link ready for ${c.name}!`);
       } catch (err) {
         alert(err.message || "Invoice creation failed.");
       } finally {
@@ -3056,13 +3138,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.copyOnMyWayText = function(id) {
-      const c = clients.find(x => x.id === id);
-      if (!c) return;
-      const firstName = (c.name || "there").trim().split(' ')[0];
+      let person = clients.find(x => x.id === id) || leads.find(x => x.id === id);
+      if (!person) return;
+      const firstName = (person.name || "there").trim().split(' ')[0];
       const msg = currentOmwTemplate.replace(/\{firstName\}/gi, firstName);
 
       navigator.clipboard.writeText(msg).then(() => {
-        showToast(`Copied "On My Way" text for ${c.name}!`);
+        showToast(`Copied "On My Way" text for ${person.name}!`);
       }).catch(() => {
         prompt('Copy this "On My Way" text:', msg);
       });
@@ -3425,7 +3507,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           leads = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
           document.getElementById('leadCountBadge').textContent = leads.length;
           syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`;
-          renderLeadsCards();
+          renderAll();
         }, (error) => {
           console.error('Leads listener error:', error);
         });
@@ -3492,11 +3574,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       await deleteDoc(doc(db, "wise_scoopers_clients", id));
     }
 
+    async function saveLeadDoc(record) {
+      const cleanRecord = JSON.parse(JSON.stringify(record));
+      await setDoc(doc(db, "wise_scoopers_leads", cleanRecord.id), cleanRecord);
+    }
+
     async function removeLeadDoc(id) {
       await deleteDoc(doc(db, "wise_scoopers_leads", id));
     }
 
-    // PARSE CLEAN NOTES & BUSINESS REFERRAL DETAILS FROM LEAD FORMATS
+    // ========================================================================
+    // LEADS -> POTENTIAL CLIENTS ("TRY US") -> REGULAR CLIENTS WORKFLOW
+    // ========================================================================
     function parseLeadDetails(lead) {
       const rawNotes = String(lead.notes || '');
       let cleanUserNote = rawNotes;
@@ -3547,7 +3636,102 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       };
     }
 
-    // CONVERT WEBSITE LEAD TO ACTIVE CLIENT (INCLUDES FULL BUSINESS PARTNER REFERRAL INFO)
+    window.moveLeadToPotential = async function(leadId) {
+      const lead = leads.find(l => l.id === leadId);
+      if (!lead) return;
+      const parsed = parseLeadDetails(lead);
+      lead.stage = "potential";
+      if (!lead.notes || lead.notes.includes("---")) {
+        lead.notes = parsed.cleanNote;
+      }
+      await saveLeadDoc(lead);
+      showToast(`Moved ${lead.name} to Potential Clients! Add notes or set a "Try Us" scoop day.`);
+      openPotentialModal(leadId);
+    };
+
+    window.openPotentialModal = function(leadId = null) {
+      const form = document.getElementById("potentialForm");
+      form.reset();
+      document.getElementById("potLeadId").value = leadId || "";
+
+      if (leadId) {
+        const l = leads.find(x => x.id === leadId);
+        if (!l) return;
+        const parsed = parseLeadDetails(l);
+        document.getElementById("potModalTitle").textContent = `🎁 Potential Client — ${l.name}`;
+        document.getElementById("pName").value = l.name || "";
+        document.getElementById("pPhone").value = l.phone || "";
+        document.getElementById("pEmail").value = l.email || "";
+        document.getElementById("pPlanSummary").value = l.planSummary || `${l.freq || "Weekly"} • $${Number(l.netPrice || 78).toFixed(2)}/mo`;
+        document.getElementById("pAddress").value = formatClientFullAddress(l);
+        document.getElementById("pDogs").value = Number(l.dogs ?? 1);
+        document.getElementById("pCats").value = Number(l.cats ?? 0);
+        document.getElementById("pTrialDate").value = l.trialScoopDate || "";
+        document.getElementById("pNotes").value = parsed.cleanNote || "";
+      } else {
+        document.getElementById("potModalTitle").textContent = `🎁 Add Potential Client ("Try Us")`;
+        document.getElementById("pPlanSummary").value = "Weekly • $78.00/mo";
+      }
+
+      document.getElementById("potentialModalBackdrop").classList.add("open");
+    };
+
+    window.closePotentialModal = function() {
+      document.getElementById("potentialModalBackdrop").classList.remove("open");
+    };
+
+    window.savePotentialClient = async function(event) {
+      event.preventDefault();
+      const existingId = document.getElementById("potLeadId").value;
+      const existingLead = existingId ? leads.find(x => x.id === existingId) : null;
+
+      const fullAddr = document.getElementById("pAddress").value.trim();
+      const detectedCity = extractCityFromAddress(fullAddr, existingLead ? existingLead.city : "");
+      const trialDate = document.getElementById("pTrialDate").value;
+      const planText = document.getElementById("pPlanSummary").value.trim();
+      const priceMatch = planText.match(/\$?\s*(\d+(?:\.\d{1,2})?)/);
+      const parsedPrice = priceMatch ? parseFloat(priceMatch[1]) : (existingLead ? Number(existingLead.netPrice || 78) : 78.00);
+
+      const record = {
+        ...(existingLead || {}),
+        id: existingId || ("ws-pot-" + Date.now()),
+        stage: "potential",
+        name: document.getElementById("pName").value.trim(),
+        phone: document.getElementById("pPhone").value.trim(),
+        email: document.getElementById("pEmail").value.trim(),
+        address: fullAddr,
+        city: detectedCity,
+        dogs: Number(document.getElementById("pDogs").value) || 0,
+        cats: Number(document.getElementById("pCats").value) || 0,
+        planSummary: planText,
+        netPrice: parsedPrice,
+        freq: existingLead?.freq || (/twice/i.test(planText) ? "Twice Weekly" : /bi/i.test(planText) ? "Bi-Weekly" : "Weekly"),
+        serviceType: existingLead?.serviceType || "Dog Waste Removal",
+        trialScoopDate: trialDate,
+        trialCompleted: trialDate ? false : false,
+        notes: document.getElementById("pNotes").value.trim(),
+        submittedAt: existingLead?.submittedAt || todayStr(0)
+      };
+
+      await saveLeadDoc(record);
+      closePotentialModal();
+      showToast(
+        trialDate
+          ? `Saved ${record.name} & added "Try Us" scoop to Schedule for ${formatDisplayDate(trialDate)}!`
+          : `Saved ${record.name} in Potential Clients!`
+      );
+    };
+
+    window.completeTrialScoop = async function(leadId) {
+      const lead = leads.find(l => l.id === leadId);
+      if (!lead) return;
+      lead.trialCompleted = true;
+      lead.trialCompletedDate = todayStr(0);
+      await saveLeadDoc(lead);
+      showToast(`Marked "Try Us" free scoop completed for ${lead.name}!`);
+    };
+
+    // CONVERT WEBSITE LEAD OR POTENTIAL CLIENT TO REGULAR ACTIVE CLIENT
     window.convertLeadToClient = async function(leadId) {
       const lead = leads.find(l => l.id === leadId);
       if (!lead) return;
@@ -3576,14 +3760,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const fullAddr = formatClientFullAddress(lead);
       const detectedCity = extractCityFromAddress(fullAddr, lead.city || "");
 
-      // Business Partner Referral Program: only eligible for $20 when Business Referral/Partner is selected AND business/employee info is provided
       const isBusinessPartner = /business|partner/i.test(parsed.referralSource || "");
       const hasPartnerWriteup = Boolean((parsed.referralDetails || "").trim());
       const eligibleFor20 = isBusinessPartner && hasPartnerWriteup;
 
       const clientRecord = {
         id: newClientId,
-        name: lead.name || "Converted Lead",
+        name: lead.name || "Converted Client",
         phone: lead.phone || "",
         email: lead.email || "",
         city: detectedCity,
@@ -3614,20 +3797,20 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         refBy: eligibleFor20 ? parsed.referralDetails.trim() : (isBusinessPartner ? parsed.referralDetails.trim() : ""),
         refLoc: detectedCity,
         refStatus: eligibleFor20 ? "Pending" : "N/A",
-        geo: null
+        geo: lead.geo || null
       };
 
       await saveClientDoc(clientRecord);
       await removeLeadDoc(leadId);
-      showToast(`Converted ${lead.name} to Active Client!`);
+      showToast(`Converted ${lead.name} to Regular Active Client!`);
       switchTab('billing');
     };
 
     window.deleteLead = async function(leadId) {
       const lead = leads.find(l => l.id === leadId);
-      if (!confirm(`Dismiss and delete website quote lead from ${lead ? lead.name : 'this user'}?`)) return;
+      if (!confirm(`Dismiss and remove ${lead ? lead.name : 'this entry'}?`)) return;
       await removeLeadDoc(leadId);
-      showToast("Website lead dismissed.");
+      showToast("Removed entry.");
     };
 
     // DATE & SCHEDULE UTILITIES
@@ -3670,6 +3853,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (!dateStr) return '—';
       const dt = parseISODate(dateStr);
       return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function formatWeekdayAndDate(dateStr) {
+      if (!dateStr) return '—';
+      const dt = parseISODate(dateStr);
+      return dt.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
     function getOrdinal(n) {
@@ -3764,7 +3953,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         business: 'Wise Scoopers',
         exportedAt: new Date().toISOString(),
         clientCount: clients.length,
-        clients: clients
+        clients: clients,
+        leads: leads
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -3837,8 +4027,55 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       });
     }
 
+    // BUILD UNIFIED SCHEDULE LIST (REGULAR ACTIVE CLIENTS + POTENTIAL "TRY US" TRIALS)
+    function getScheduledStopsList() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const city = document.getElementById('cityFilter').value;
+
+      const regularStops = getFilteredClients()
+        .filter(c => c.status !== 'Paused')
+        .map(c => ({ ...c, isPotentialTrial: false }));
+
+      const trialStops = leads
+        .filter(l => l.stage === 'potential' && l.trialScoopDate)
+        .filter(l => {
+          const fullAddr = formatClientFullAddress(l);
+          if (city && !fullAddr.toLowerCase().includes(city.toLowerCase()) && (l.city || "").toLowerCase() !== city.toLowerCase()) {
+            return false;
+          }
+          if (!q) return true;
+          return `${l.name} ${fullAddr} ${l.phone} ${l.notes}`.toLowerCase().includes(q);
+        })
+        .map(l => {
+          const parsed = parseLeadDetails(l);
+          return {
+            id: l.id,
+            isPotentialTrial: true,
+            trialCompleted: !!l.trialCompleted,
+            name: l.name,
+            phone: l.phone,
+            email: l.email || "",
+            address: formatClientFullAddress(l),
+            city: l.city || extractCityFromAddress(l.address, ""),
+            dogs: Number(l.dogs || 1),
+            cats: Number(l.cats || 0),
+            dogNames: "",
+            treatLoc: "Front Door",
+            freq: "Try Us (Free Trial)",
+            serviceType: l.serviceType || "Dog Waste Removal",
+            startDate: l.trialScoopDate,
+            nextScoop: l.trialScoopDate,
+            gateNotes: parsed.cleanNote || l.notes || "",
+            addonsSummary: "",
+            geo: l.geo || null
+          };
+        });
+
+      return [...regularStops, ...trialStops];
+    }
+
     window.renderAll = function() {
-      renderLeadsCards();
+      renderLeadsAndPotentialCards();
       renderKPIs();
       renderBillingTable();
       renderRouteCards();
@@ -3849,29 +4086,108 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // RENDER COMPACT, CLEANLY SEPARATED WEBSITE LEAD CARDS
-    function renderLeadsCards() {
-      const container = document.getElementById('leadsCardsContainer');
+    // RENDER POTENTIAL CLIENTS ("TRY US") & NEW LEADS INBOX
+    function renderLeadsAndPotentialCards() {
+      const potContainer = document.getElementById('potentialLeadsContainer');
+      const newContainer = document.getElementById('leadsCardsContainer');
       const q = document.getElementById('searchInput').value.trim().toLowerCase();
       const city = document.getElementById('cityFilter').value;
 
-      const filteredLeads = leads.filter(l => {
+      const filterFn = (l) => {
         const fullAddr = formatClientFullAddress(l);
         if (city && !fullAddr.toLowerCase().includes(city.toLowerCase()) && (l.city || "").toLowerCase() !== city.toLowerCase()) {
           return false;
         }
         if (!q) return true;
         return `${l.name} ${fullAddr} ${l.phone} ${l.notes} ${l.referralDetails || ''}`.toLowerCase().includes(q);
-      }).sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+      };
 
-      if (!filteredLeads.length) {
-        container.innerHTML = `<div style="padding:28px; text-align:center; color:var(--m); font-weight:600; grid-column:1/-1;">No pending website quote leads right now. New quote submissions will appear here automatically!</div>`;
-        return;
-      }
+      const potentialList = leads
+        .filter(l => l.stage === 'potential')
+        .filter(filterFn)
+        .sort((a, b) => (a.trialScoopDate || '9999').localeCompare(b.trialScoopDate || '9999'));
+
+      const newLeadsList = leads
+        .filter(l => l.stage !== 'potential')
+        .filter(filterFn)
+        .sort((a, b) => (b.submittedAt || '').localeCompare(a.submittedAt || ''));
+
+      document.getElementById('potentialCountBadge').textContent = potentialList.length;
+      document.getElementById('newLeadsSubBadge').textContent = newLeadsList.length;
 
       const mapBtnLabel = getPreferredMapLabel();
 
-      container.innerHTML = filteredLeads.map(l => {
+      // 1. Render Potential Clients ("Try Us")
+      if (!potentialList.length) {
+        potContainer.innerHTML = `<div style="padding:20px; text-align:center; color:var(--m); font-weight:600; grid-column:1/-1;">No Potential Clients here yet. Click <strong>"🎁 Potential Client / Try Us"</strong> on any incoming lead (or <strong>"+ Add Potential Client"</strong>) to schedule a free trial scoop and keep notes!</div>`;
+      } else {
+        potContainer.innerHTML = potentialList.map(l => {
+          const parsed = parseLeadDetails(l);
+          const dogCount = Number(l.dogs || 0);
+          const catCount = Number(l.cats || 0);
+          const petText = `${dogCount} Dog${dogCount === 1 ? '' : 's'}${catCount > 0 ? ` • ${catCount} Litter` : ''}`;
+          const fullAddr = formatClientFullAddress(l);
+          const mapUrl = getPreferredSingleMapUrl(fullAddr);
+
+          let trialBadge = `<span class="badge badge-sage">No Trial Date Set</span>`;
+          if (l.trialScoopDate) {
+            trialBadge = l.trialCompleted
+              ? `<span class="badge badge-ok">✓ Trial Done (${formatWeekdayAndDate(l.trialScoopDate)})</span>`
+              : `<span class="badge badge-soon">🎁 Try Us Scheduled: ${formatWeekdayAndDate(l.trialScoopDate)}</span>`;
+          }
+
+          return `
+            <div class="lead-card potential-card">
+              <div class="lead-hd">
+                <div>
+                  <div style="margin-bottom:4px;">${trialBadge}</div>
+                  <div class="lead-name">${escapeHtml(l.name)}</div>
+                  <div class="lead-contact-line">
+                    <a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>
+                    ${l.email ? ` • <span>✉️ ${escapeHtml(l.email)}</span>` : ''}
+                  </div>
+                </div>
+                <div class="lead-price-box">
+                  <div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div>
+                  <div class="lead-price-sub">${escapeHtml(l.planSummary || l.freq || 'Weekly')}</div>
+                </div>
+              </div>
+
+              <div class="lead-info-grid">
+                <div class="lead-box">
+                  <div class="lead-box-lbl">📍 Service Address</div>
+                  <strong>${escapeHtml(fullAddr)}</strong>
+                </div>
+                <div class="lead-box">
+                  <div class="lead-box-lbl">🐾 Pets &amp; Plan</div>
+                  <strong>${petText}</strong><br>
+                  <span>${escapeHtml(l.serviceType || 'Dog Waste Removal')}</span>
+                </div>
+              </div>
+
+              <div class="lead-notes-box">
+                <div class="lead-box-lbl" style="color:#7A4B00;">📝 Notes</div>
+                ${parsed.cleanNote ? escapeHtml(parsed.cleanNote) : '<em style="color:var(--m);">No notes added yet — click Edit / Try Us to add notes.</em>'}
+              </div>
+
+              <div class="lead-actions">
+                <button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us Day</button>
+                <button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button>
+                <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a>
+                <button class="btn btn-danger btn-sm" onclick="deleteLead('${l.id}')">Remove</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 2. Render Incoming New Leads
+      if (!newLeadsList.length) {
+        newContainer.innerHTML = `<div style="padding:24px; text-align:center; color:var(--m); font-weight:600; grid-column:1/-1;">No new unreviewed website leads right now.</div>`;
+        return;
+      }
+
+      newContainer.innerHTML = newLeadsList.map(l => {
         const parsed = parseLeadDetails(l);
         const dogCount = Number(l.dogs || 0);
         const catCount = Number(l.cats || 0);
@@ -3934,13 +4250,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
             ${parsed.cleanNote ? `
               <div class="lead-notes-box">
-                <div class="lead-box-lbl" style="color:#7A4B00;">📝 Customer / Yard Notes</div>
+                <div class="lead-box-lbl" style="color:#7A4B00;">📝 Notes</div>
                 ${escapeHtml(parsed.cleanNote)}
               </div>
             ` : ''}
 
             <div class="lead-actions">
               <button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button>
+              <button class="btn btn-amber btn-sm" onclick="moveLeadToPotential('${l.id}')">🎁 Potential Client / Try Us</button>
               <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a>
               <button class="btn btn-danger btn-sm" onclick="deleteLead('${l.id}')">Dismiss</button>
             </div>
@@ -4022,10 +4339,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       return null;
     }
 
-    // PRINTABLE CLIPBOARD ROUTE SHEET
+    // PRINTABLE CLIPBOARD ROUTE SHEET (INCLUDES BOTH REGULAR YARDS & TRY US TRIALS)
     window.printRouteSheet = async function(source) {
-      let list = getFilteredClients().filter(c => c.status !== 'Paused');
-      let sheetSubtitle = 'All Active Yards — Optimized Route Order';
+      let list = getScheduledStopsList();
+      let sheetSubtitle = 'All Active Yards & Try Us Trials — Optimized Route Order';
 
       if (source === 'map') {
         if (currentMapMode === 'due') {
@@ -4037,6 +4354,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (filter === 'due') {
           list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
           sheetSubtitle = "Today's Scoop Route (Due Today / Overdue) — Optimized Order";
+        } else if (filter === 'trial') {
+          list = list.filter(c => c.isPotentialTrial);
+          sheetSubtitle = '"Try Us" Free Trial Yards — Optimized Route Order';
         } else if (filter !== 'all') {
           list = list.filter(c => c.freq === filter);
           sheetSubtitle = `${filter} Yards — Optimized Route Order`;
@@ -4078,6 +4398,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const catCount = Number(c.cats || 0);
         const petLine = `${dogCount} Dog${dogCount === 1 ? '' : 's'}${catCount > 0 ? ` + ${catCount} Litter Box${catCount === 1 ? '' : 'es'}` : ''}${c.dogNames ? ` (${escapeHtml(c.dogNames)})` : ''}`;
         const fullAddr = formatClientFullAddress(c);
+        const trialTag = c.isPotentialTrial ? ' <span style="background:#FFF6E5; color:#7A4B00; border:1px solid #E6A83A; padding:1px 6px; border-radius:4px; font-size:11px;">🎁 TRY US FREE TRIAL</span>' : '';
 
         return `
           <div class="stop-card">
@@ -4088,7 +4409,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="stop-main">
               <div class="stop-header">
                 <div>
-                  <div class="client-name">${escapeHtml(c.name)}</div>
+                  <div class="client-name">${escapeHtml(c.name)}${trialTag}</div>
                   <div class="client-addr">${escapeHtml(fullAddr)}</div>
                 </div>
                 <div class="client-phone">📞 ${escapeHtml(c.phone || 'No phone')}</div>
@@ -4097,10 +4418,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <div><strong>Pets:</strong> ${petLine}</div>
                 <div><strong>Plan:</strong> ${escapeHtml(c.freq)} (${escapeHtml(c.serviceType || 'Dog Waste')})</div>
                 <div><strong>Bagged Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div>
-                <div><strong>Next Scoop Date:</strong> ${formatDisplayDate(c.nextScoop)}</div>
+                <div><strong>Scoop Date:</strong> ${formatDisplayDate(c.nextScoop)}</div>
               </div>
               ${c.addonsSummary ? `<div class="addon-bar">Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}
-              ${c.gateNotes ? `<div class="gate-bar">Gate / Yard Notes: ${escapeHtml(c.gateNotes)}</div>` : ''}
+              ${c.gateNotes ? `<div class="gate-bar">Notes: ${escapeHtml(c.gateNotes)}</div>` : ''}
             </div>
           </div>
         `;
@@ -4295,7 +4616,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const exactCoords = await geocodeViaCensus(streetOnly, derivedCity);
       if (exactCoords) {
         client.geo = { lat: exactCoords[0], lng: exactCoords[1], query: fullQuery, approx: false, manual: false };
-        await saveClientDoc(client);
+        if (client.isPotentialTrial) {
+          const origLead = leads.find(l => l.id === client.id);
+          if (origLead) { origLead.geo = client.geo; await saveLeadDoc(origLead); }
+        } else {
+          await saveClientDoc(client);
+        }
         return [exactCoords[0], exactCoords[1], false, false];
       }
 
@@ -4304,7 +4630,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const lat = base[0] + ((hash % 15) - 7) * 0.0012;
       const lng = base[1] + (((hash * 7) % 15) - 7) * 0.0012;
       client.geo = { lat, lng, query: fullQuery, approx: true, manual: false };
-      await saveClientDoc(client);
+      if (client.isPotentialTrial) {
+        const origLead = leads.find(l => l.id === client.id);
+        if (origLead) { origLead.geo = client.geo; await saveLeadDoc(origLead); }
+      } else {
+        await saveClientDoc(client);
+      }
       return [lat, lng, true, false];
     }
 
@@ -4321,7 +4652,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const sidebar = document.getElementById('mapSidebarList');
       const statusEl = document.getElementById('mapGeocodeStatus');
 
-      let list = getFilteredClients().filter(c => c.status !== 'Paused');
+      let list = getScheduledStopsList();
       if (currentMapMode === 'due') {
         list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
       }
@@ -4387,12 +4718,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         const days = diffDaysFromToday(c.nextScoop);
         const isDue = days <= 0;
-        const pinClass = isDue ? 'pin-due' : 'pin-active';
+        const pinClass = c.isPotentialTrial ? 'pin-trial' : isDue ? 'pin-due' : 'pin-active';
 
         const orderBadgeHtml = bestRouteEnabled ? `<div class="ws-pin-order">${stopNumber}</div>` : '';
         const icon = L.divIcon({
           className: '',
-          html: `<div class="ws-pin ${pinClass}"><span>💩</span>${orderBadgeHtml}</div>`,
+          html: `<div class="ws-pin ${pinClass}"><span>${c.isPotentialTrial ? '🎁' : '💩'}</span>${orderBadgeHtml}</div>`,
           iconSize: [30, 30],
           iconAnchor: [15, 30],
           popupAnchor: [0, -30]
@@ -4402,18 +4733,20 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const appleUrl = getAppleMapsSingleUrl(destParam);
         const googleUrl = getGoogleMapsSingleUrl(destParam);
         const pinTag = item.isManual ? '<em>(Exact custom pin)</em>' : item.isApprox ? '<em>(Town pin — drag to exact house)</em>' : '';
+        const trialNotice = c.isPotentialTrial ? `<div style="background:#FFF6E5; color:#7A4B00; padding:3px 6px; border-radius:5px; font-size:11px; font-weight:800; margin-bottom:4px;">🎁 POTENTIAL CLIENT — TRY US FREE TRIAL</div>` : '';
 
         const popupHtml = `
           <div style="min-width:215px; font-family:inherit;">
+            ${trialNotice}
             <div style="font-weight:900; font-size:14px; color:#263A2D;">${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</div>
             <div style="font-size:12px; color:#536559; margin-bottom:5px;">${escapeHtml(fullAddr)} ${pinTag}</div>
             <div style="font-size:11.5px; background:#F4F7F4; padding:6px 8px; border-radius:6px; margin-bottom:6px; line-height:1.4;">
               <strong>Schedule:</strong> ${escapeHtml(c.freq)}<br>
-              <strong>Next Scoop:</strong> ${formatDisplayDate(c.nextScoop)}<br>
+              <strong>Scoop Date:</strong> ${formatDisplayDate(c.nextScoop)}<br>
               <strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}<br>
               ${c.addonsSummary ? `<strong>Add-Ons:</strong> ${escapeHtml(c.addonsSummary)}` : ''}
             </div>
-            ${c.gateNotes ? `<div style="font-size:11px; color:#7A4B00; margin-bottom:6px;"><strong>Gate:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
+            ${c.gateNotes ? `<div style="font-size:11px; color:#7A4B00; margin-bottom:6px;"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
             <div style="display:flex; gap:5px; flex-wrap:wrap;">
               <a href="${appleUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#263A2D; color:#fff; text-decoration:none; font-size:11px; font-weight:800; padding:5px 8px; border-radius:6px;">🍎 Apple Maps</a>
               <a href="${googleUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#E5EEE5; color:#263A2D; text-decoration:none; font-size:11px; font-weight:800; padding:5px 8px; border-radius:6px;">🧭 Google Maps</a>
@@ -4425,14 +4758,20 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         marker.on('dragend', async function(e) {
           const pos = e.target.getLatLng();
-          c.geo = {
+          const newGeo = {
             lat: Number(pos.lat.toFixed(6)),
             lng: Number(pos.lng.toFixed(6)),
             query: fullAddr,
             approx: false,
             manual: true
           };
-          await saveClientDoc(c);
+          if (c.isPotentialTrial) {
+            const origLead = leads.find(l => l.id === c.id);
+            if (origLead) { origLead.geo = newGeo; await saveLeadDoc(origLead); }
+          } else {
+            c.geo = newGeo;
+            await saveClientDoc(c);
+          }
           showToast(`Saved exact GPS pin to Cloud for ${c.name}!`);
         });
 
@@ -4440,18 +4779,22 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         bounds.push([item.lat, item.lng]);
         fallbackLatLngs.push([item.lat, item.lng]);
 
+        const badgeHtml = c.isPotentialTrial
+          ? `<span class="badge badge-soon">🎁 Try Us</span>`
+          : `<span class="badge ${isDue ? 'badge-due' : 'badge-sage'}">${isDue ? 'Due' : escapeHtml(derivedCity || 'Active')}</span>`;
+
         sidebarHtml.push(`
-          <div class="map-stop-item ${isDue ? 'is-due' : ''}" onclick="focusClientPin('${c.id}')">
+          <div class="map-stop-item ${c.isPotentialTrial ? 'is-trial' : isDue ? 'is-due' : ''}" onclick="focusClientPin('${c.id}')">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
               <div style="display:flex; align-items:center;">
-                ${bestRouteEnabled ? `<span class="stop-num-badge ${isDue ? 'due' : ''}">${stopNumber}</span>` : ''}
+                ${bestRouteEnabled ? `<span class="stop-num-badge ${c.isPotentialTrial ? 'trial' : isDue ? 'due' : ''}">${stopNumber}</span>` : ''}
                 <strong style="font-size:13px; color:var(--g);">${escapeHtml(c.name)}</strong>
               </div>
-              <span class="badge ${isDue ? 'badge-due' : 'badge-sage'}">${isDue ? 'Due' : escapeHtml(derivedCity || 'Active')}</span>
+              ${badgeHtml}
             </div>
             <div style="font-size:11.5px; color:var(--m); margin-top:2px;">${escapeHtml(fullAddr)}</div>
             <div style="font-size:11px; color:var(--ink); margin-top:3px; font-weight:600;">
-              ${escapeHtml(c.freq)} • Next: ${formatDisplayDate(c.nextScoop)}
+              ${escapeHtml(c.freq)} • ${formatWeekdayAndDate(c.nextScoop)}
             </div>
           </div>
         `);
@@ -4497,14 +4840,15 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
       const billingDueList = active.filter(c => diffDaysFromToday(c.nextCharge) <= 0);
       const billingDueAmt = billingDueList.reduce((sum, c) => sum + Number(c.netPrice || 0), 0);
-      const scoopsDueCount = active.filter(c => diffDaysFromToday(c.nextScoop) <= 0).length;
+      const regularScoopsDue = active.filter(c => diffDaysFromToday(c.nextScoop) <= 0).length;
+      const trialScoopsDue = leads.filter(l => l.stage === 'potential' && l.trialScoopDate && !l.trialCompleted && diffDaysFromToday(l.trialScoopDate) <= 0).length;
 
       document.getElementById('kpiActiveClients').textContent = active.length;
       document.getElementById('kpiTotalPets').textContent = `${totalDogs} dog${totalDogs === 1 ? '' : 's'} • ${totalCats} litter box${totalCats === 1 ? '' : 'es'}`;
       document.getElementById('kpiMonthlyRev').textContent = `$${estMonthly.toFixed(2)}`;
       document.getElementById('kpiBillingDue').textContent = billingDueList.length;
       document.getElementById('kpiBillingDueAmt').textContent = `$${billingDueAmt.toFixed(2)} ready to bill`;
-      document.getElementById('kpiScoopsDue').textContent = scoopsDueCount;
+      document.getElementById('kpiScoopsDue').textContent = regularScoopsDue + trialScoopsDue;
       document.getElementById('kpiTodayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
@@ -4532,7 +4876,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>`
           : `<span class="badge badge-amber">No Card on File</span>`;
 
-        // Latest Square payment/invoice status badge
         const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
         const latestSq = hist.length > 0 ? hist[hist.length - 1] : null;
         let sqPaymentBadge = "";
@@ -4586,14 +4929,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
+    // RENDER ROUTE CARDS (INCLUDES POTENTIAL "TRY US" TRIALS + REGULAR CLIENTS)
     function renderRouteCards() {
       const container = document.getElementById('routeCardsContainer');
       const filter = document.getElementById('routeFilter').value;
       const today = todayStr(0);
-      let list = getFilteredClients().filter(c => c.status !== 'Paused');
+      let list = getScheduledStopsList();
 
       if (filter === 'due') {
         list = list.filter(c => diffDaysFromToday(c.nextScoop) <= 0);
+      } else if (filter === 'trial') {
+        list = list.filter(c => c.isPotentialTrial);
       } else if (filter !== 'all') {
         list = list.filter(c => c.freq === filter);
       }
@@ -4610,9 +4956,51 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       container.innerHTML = list.map(c => {
         const days = diffDaysFromToday(c.nextScoop);
         const isDue = days <= 0;
+        const fullAddr = formatClientFullAddress(c);
+        const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : fullAddr;
+        const mapsDirUrl = getPreferredSingleMapUrl(destParam);
+
+        // POTENTIAL CLIENT ("TRY US" FREE TRIAL CARD)
+        if (c.isPotentialTrial) {
+          const trialStatusBadge = c.trialCompleted
+            ? `<span class="badge badge-ok">✓ Try Us Scoop Done (${formatWeekdayAndDate(c.nextScoop)})</span>`
+            : `<span class="badge badge-soon">🎁 POTENTIAL CLIENT • TRY US: ${formatWeekdayAndDate(c.nextScoop)}</span>`;
+
+          return `
+            <div class="route-card ${c.trialCompleted ? 'scooped-done' : 'trial-card'}">
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <div class="rc-top">
+                  <div>
+                    <div class="rc-name">${escapeHtml(c.name)}</div>
+                    <div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div>
+                  </div>
+                  ${trialStatusBadge}
+                </div>
+                <div class="rc-meta">
+                  <div><strong>Visit Type:</strong> 🎁 Try Us (Free Trial)</div>
+                  <div><strong>Scheduled Day:</strong> ${formatWeekdayAndDate(c.nextScoop)}</div>
+                  <div><strong>Pets:</strong> ${c.dogs} Dog(s)${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div>
+                  <div><strong>Status:</strong> Potential Client</div>
+                </div>
+                ${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
+              </div>
+
+              <div class="rc-actions">
+                ${!c.trialCompleted
+                  ? `<button class="btn btn-dark btn-sm" onclick="completeTrialScoop('${c.id}')">✓ Complete Try Us Scoop</button>`
+                  : `<button class="btn btn-done btn-sm" disabled>✓ Trial Scooped</button>`}
+                <button class="btn btn-green btn-sm" onclick="convertLeadToClient('${c.id}')">✓ Convert to Client</button>
+                <button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button>
+                <a href="${mapsDirUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapsLabel}</a>
+                <button class="btn btn-outline btn-sm" onclick="openPotentialModal('${c.id}')">Edit Notes</button>
+              </div>
+            </div>
+          `;
+        }
+
+        // REGULAR ACTIVE CLIENT CARD
         const isFirstDay = c.startDate && c.startDate === c.nextScoop;
         const scoopedToday = c.scoopedActionDate === today;
-        const fullAddr = formatClientFullAddress(c);
 
         let statusBadge = `<span class="badge badge-ok">Next: ${formatDisplayDate(c.nextScoop)}</span>`;
         if (scoopedToday) statusBadge = `<span class="badge badge-ok">✓ Scooped • Next: ${formatDisplayDate(c.nextScoop)}</span>`;
@@ -4622,8 +5010,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         else if (days === 1) statusBadge = `<span class="badge badge-soon">Tomorrow (${formatDisplayDate(c.nextScoop)})</span>`;
 
         const startDay = c.startDate ? parseISODate(c.startDate).getDate() : null;
-        const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : fullAddr;
-        const mapsDirUrl = getPreferredSingleMapUrl(destParam);
 
         const scoopBtnHtml = scoopedToday
           ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button>
@@ -4649,7 +5035,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <div><strong>Treats At:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div>
               </div>
               ${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}
-              ${c.gateNotes ? `<div class="rc-notes"><strong>Gate / Yard:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
+              ${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
             </div>
 
             <div class="rc-actions">
@@ -4694,7 +5080,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </td>
             <td data-label="Service Address"><strong>${escapeHtml(fullAddr)}</strong></td>
             <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
-            <td data-label="Gate & Yard Notes" style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
+            <td data-label="Notes" style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
             <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
             <td class="desktop-only-cell" data-label="Service & Monthly Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
             <td class="m-actions" data-label="Actions">
