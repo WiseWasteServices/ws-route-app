@@ -364,7 +364,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   }
   .sq-item-row {
     display: grid;
-    grid-template-columns: auto 1fr 96px;
+    grid-template-columns: auto 1fr 90px auto;
     align-items: center;
     gap: 10px;
     background: var(--cr);
@@ -1714,7 +1714,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   <!-- SQUARE QUICK CHARGE & SMS/EMAIL INVOICE MODAL -->
   <div class="modal-backdrop" id="squareModalBackdrop" onclick="if(event.target===this) closeSquareModal()">
-    <div class="modal" style="max-width: 600px;">
+    <div class="modal" style="max-width: 640px;">
       <div class="modal-hd">
         <h3 id="sqModalTitle">💳 Square Charge &amp; Invoice</h3>
         <button class="modal-close" onclick="closeSquareModal()">&times;</button>
@@ -1723,11 +1723,58 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <input type="hidden" id="sqClientId">
         <div id="sqCardBanner" class="sq-status-banner no-card"></div>
 
-        <div class="form-section-title">1. Select Items to Bill</div>
+        <!-- PLAN & FIRST SCOOP FREE PROMO CONTROLS -->
+        <div class="form-section-title">1. Service Plan &amp; First Scoop Free Promo</div>
+        <div style="background:var(--cr); border:1.5px solid var(--b); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div class="field">
+              <label>Service Plan</label>
+              <select id="sqServicePlanSelect" onchange="onSquarePlanChanged()">
+                <option value="Dog Waste Removal|Weekly|78">Weekly Dog ($78/mo)</option>
+                <option value="Dog Waste Removal|Twice Weekly|139">Twice Weekly Dog ($139/mo)</option>
+                <option value="Dog Waste Removal|Bi-Weekly|65">Bi-Weekly Dog ($65/mo)</option>
+                <option value="Dog + Cat Bundle|Weekly|112">Weekly Dog + Cat Bundle ($112/mo)</option>
+                <option value="Dog + Cat Bundle|Twice Weekly|206">Twice Weekly Dog + Cat ($206/mo)</option>
+                <option value="Dog + Cat Bundle|Bi-Weekly|90">Bi-Weekly Dog + Cat ($90/mo)</option>
+                <option value="Cat Litter Box Cleaning|Weekly|55">Weekly Cat Litter ($55/mo)</option>
+                <option value="Cat Litter Box Cleaning|Twice Weekly|95">Twice Weekly Cat ($95/mo)</option>
+                <option value="Cat Litter Box Cleaning|Bi-Weekly|40">Bi-Weekly Cat ($40/mo)</option>
+                <option value="Dog Waste Removal|One-Time|50">One-Time Dog Cleanup ($50 base)</option>
+                <option value="Cat Litter Box Cleaning|One-Time|35">One-Time Cat Cleanup ($35)</option>
+                <option value="Yard Fresh Only|One-Time|25">Standalone Yard Fresh ($25)</option>
+                <option value="custom">Keep Current Profile Rate</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>First Scoop Free Discount</label>
+              <label style="display:flex; align-items:center; gap:7px; background:#fff; border:1.5px solid var(--gm); border-radius:8px; padding:7px 10px; cursor:pointer; font-size:12px;">
+                <input type="checkbox" id="sqFirstScoopFreeCheck" onchange="onSquarePromoToggled()">
+                <span id="sqPromoLabel">🎁 Apply 1st Visit Free</span>
+              </label>
+            </div>
+          </div>
+
+          <label style="display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:var(--m); cursor:pointer;">
+            <input type="checkbox" id="sqSaveChangesToProfile" checked>
+            Also save any plan/add-on changes back to this customer's CRM profile
+          </label>
+        </div>
+
+        <!-- LINE ITEMS & QUICK ADD-ON BUTTONS -->
+        <div class="form-section-title">2. Line Items &amp; Quick Add-Ons</div>
+        <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:4px;">
+          <button type="button" class="btn btn-outline btn-sm" onclick="quickAddSquarePreset('Yard Fresh Treatment (1 section)', 10)">+ $10 Yard Fresh</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="quickAddSquarePreset('Extra Yard Section (Yard Fresh)', 7)">+ $7 Extra Section</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="quickAddSquarePreset('Waste Haul-Away (Per Visit)', 5)">+ $5 Haul-Away</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="quickAddSquarePreset('Clumping Litter Supply (1 box)', 10)">+ $10 Litter Supply</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="quickAddSquarePreset('Litter Box Deep Clean (1st box)', 25)">+ $25 Deep Clean</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="quickAddSquarePreset('Extra Yard Time (15 mins)', 12.50)">+ $12.50 Extra Time</button>
+        </div>
+
         <div class="sq-items-list" id="sqItemsContainer"></div>
 
         <div style="display:grid; grid-template-columns: 1fr 110px auto; gap:8px; align-items:center; margin-top:4px;">
-          <input type="text" id="sqCustomDesc" placeholder="Add custom item or discount (e.g., First Scoop Free)" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:8px; font-size:12.5px;">
+          <input type="text" id="sqCustomDesc" placeholder="Custom item or discount (use - for discount)" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:8px; font-size:12.5px;">
           <input type="number" id="sqCustomPrice" step="0.01" placeholder="10.00" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:8px; font-size:12.5px;">
           <button type="button" class="btn btn-sage btn-sm" onclick="addSquareCustomItem()">+ Add</button>
         </div>
@@ -1737,7 +1784,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <span id="sqTotalAmountDisplay">$0.00</span>
         </div>
 
-        <div class="form-section-title">2. Invoice Delivery Option (If Sending Invoice)</div>
+        <div class="form-section-title">3. Invoice Delivery Option (If Sending Invoice)</div>
         <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
           <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; cursor:pointer;">
             <input type="radio" name="sqDelivery" value="SMS" checked> 📱 Text / SMS (Fastest)
@@ -1817,7 +1864,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <option value="🛠️">🛠️</option>
               </select>
               <input type="text" id="newAppName" placeholder="App Name (e.g., Facebook Page)" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12.5px;">
-              <select id="newAppSection" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12.5px; background:#fff;">
+              <select id="newAppSection" style="padding:7px 9px; border:1.5px solid var(--b); border-radius:7px; font-size:12px; background:#fff;">
                 <option value="core">Daily Operations (Core)</option>
                 <option value="backend">Admin &amp; Backend</option>
               </select>
@@ -1985,8 +2032,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   <div class="toast" id="toast"></div>
   <div id="toastArea"></div>
-
-  <!-- ========================================================================
+<!-- ========================================================================
        UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + SQUARE + GPS MAP + FB SYNC)
        ======================================================================== -->
   <script type="module">
@@ -2135,7 +2181,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-// SQUARE QUICK CHARGE & INVOICE MODAL LOGIC
+    // SQUARE QUICK CHARGE & INVOICE MODAL LOGIC
     let sqModalItems = [];
 
     function calcFirstScoopCredit(freq, monthlyAmt) {
@@ -2384,7 +2430,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     function renderSquareModalItems() {
       const container = document.getElementById("sqItemsContainer");
       container.innerHTML = sqModalItems.map((it, idx) => `
-        <div class="sq-item-row ${it.checked ? "checked" : ""}" style="grid-template-columns: auto 1fr 90px auto;">
+        <div class="sq-item-row ${it.checked ? "checked" : ""}">
           <input type="checkbox" ${it.checked ? "checked" : ""} onchange="toggleSqItem(${idx}, this.checked)">
           <span style="font-size:12.5px; font-weight:700; ${it.price < 0 ? "color:var(--ok-ink);" : ""}">${escapeHtml(it.name)}</span>
           <input type="number" step="0.01" value="${Number(it.price).toFixed(2)}" onchange="updateSqItemPrice(${idx}, this.value)"
@@ -4534,6 +4580,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Saved ${record.name} to Cloud!`);
     };
   </script>
+
   <!-- ========================================================================
        SCRIPT 2: WISE SCOOPERS FACEBOOK GROUP POSTING MANAGER & AD GENERATOR
        ======================================================================== -->
