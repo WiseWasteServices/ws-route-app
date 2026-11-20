@@ -226,6 +226,94 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     font-weight: 600;
   }
 
+  .mobile-more-toggle {
+    display: none;
+  }
+
+  /* AI QUICK-NOTE BAR (DESKTOP TOP + PERSISTENT MOBILE BAR) */
+  .ai-quickbar {
+    background: var(--w);
+    border-bottom: 2px solid var(--gm);
+    box-shadow: 0 4px 14px rgba(24, 36, 28, 0.08);
+    padding: 9px 24px;
+    position: sticky;
+    top: 64px;
+    z-index: 450;
+  }
+  .ai-quickbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ai-qb-label {
+    font-size: 11.5px;
+    font-weight: 900;
+    color: var(--g);
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .ai-qb-input {
+    flex: 1;
+    min-width: 210px;
+    padding: 8px 12px;
+    border: 1.5px solid var(--gm);
+    border-radius: 9px;
+    font-size: 13px;
+    font-family: inherit;
+    background: #FAFDFB;
+    color: var(--ink);
+  }
+  .ai-qb-input:focus {
+    outline: none;
+    background: var(--w);
+    box-shadow: 0 0 0 3px rgba(70, 115, 83, 0.16);
+  }
+  .ai-qb-feedback {
+    width: 100%;
+    max-width: 1280px;
+    margin: 6px auto 0;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--ok-bg);
+    border: 1px solid var(--ok-b);
+    color: var(--ok-ink);
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .ai-qb-feedback.show { display: flex; }
+  .ai-qb-feedback.err {
+    background: var(--due-bg);
+    border-color: var(--due-b);
+    color: var(--due-ink);
+  }
+
+  /* IMPORTANT REMINDER BADGE ON CLIENT CARDS & ROWS */
+  .important-note-box {
+    background: #FFF4E5;
+    border: 1.5px solid #E6A83A;
+    border-left: 4px solid #D9534F;
+    border-radius: 8px;
+    padding: 6px 9px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: #7A3E00;
+    line-height: 1.35;
+    word-break: break-word;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+  }
+
   .btn {
     border: none;
     border-radius: 8px;
@@ -956,18 +1044,53 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   }
   .fb-toast.error { background-color: #7F1D1D; border-left-color: #FCA5A5; }
 
-  /* ULTRA-COMPACT IPHONE / MOBILE VIEWPORT OPTIMIZATIONS */
+  /* ULTRA-COMPACT IPHONE / MOBILE VIEWPORT OPTIMIZATIONS + CLEAN MOBILE TOGGLE */
   @media (max-width: 680px) {
-    .topbar { padding: 10px 12px; gap: 8px; }
+    .topbar { padding: 9px 12px; gap: 8px; }
     .brand-left { width: 100%; justify-content: space-between; gap: 8px; }
-    .brand-title { display: none; }
-    .workspace-switcher { flex: 1; justify-content: center; }
+    .brand-title h1 { font-size: 15.5px; }
+    .brand-title span { display: none; }
+    .mobile-more-toggle {
+      display: inline-flex;
+      margin-left: auto;
+    }
+
+    /* Hide FB Switcher, Backup & Import on mobile unless "☰ More" is toggled open */
+    .workspace-switcher,
+    .backup-bar {
+      display: none;
+      width: 100%;
+    }
+    .topbar.mobile-menu-open .workspace-switcher {
+      display: inline-flex;
+      justify-content: center;
+    }
+    .topbar.mobile-menu-open .backup-bar {
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+    }
     .ws-mode-btn { flex: 1; padding: 7px 8px; font-size: 12px; }
-    .backup-bar { width: 100%; justify-content: space-between; gap: 5px; }
     .backup-status { display: none; }
     .backup-bar .btn { padding: 6px 9px; font-size: 11px; flex: 1; }
 
-    .container { padding: 12px 10px 44px; }
+    /* Keep AI Quick-Note Bar always docked at bottom of mobile screen for thumb typing */
+    .ai-quickbar {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      border-top: 2px solid var(--gm);
+      border-bottom: none;
+      box-shadow: 0 -4px 16px rgba(24, 36, 28, 0.16);
+      z-index: 480;
+    }
+    .ai-qb-label { display: none; }
+    .ai-qb-input { min-width: 0; font-size: 13px; padding: 8px 10px; }
+
+    .container { padding: 12px 10px 88px; }
 
     .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .kpi-card { padding: 10px 12px; border-radius: 11px; }
@@ -1016,7 +1139,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   </div>
 
   <!-- TOP HEADER & WORKSPACE SWITCHER -->
-  <header class="topbar">
+  <header class="topbar" id="mainTopbar">
     <div class="brand-left">
       <div class="brand-logo-wrap">
         <img src="https://i.imgur.com/JpwvJtk.png" alt="Wise Scoopers">
@@ -1025,6 +1148,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <h1>Wise Scoopers</h1>
         <span>Cloud CRM &amp; Marketing Suite</span>
       </div>
+
+      <!-- MOBILE CLEANUP TOGGLE BUTTON (SHOWS/HIDES FB, BACKUP & IMPORT ON PHONE) -->
+      <button type="button" class="btn btn-sage btn-sm mobile-more-toggle" id="btnMobileMoreToggle" onclick="toggleMobileHeaderExtras()">
+        ☰ More
+      </button>
 
       <!-- MODE SWITCHER BETWEEN CRM & FACEBOOK MANAGER -->
       <div class="workspace-switcher" role="tablist" aria-label="Workspace Switcher">
@@ -1048,6 +1176,25 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <button class="btn btn-outline btn-sm" onclick="handleLogout()" title="Sign out">Sign Out</button>
     </div>
   </header>
+
+  <!-- PERSISTENT AI QUICK-NOTE & REMINDER BAR (TOP ON DESKTOP, DOCKED ON MOBILE) -->
+  <div class="ai-quickbar" id="aiQuickNoteBar">
+    <form class="ai-quickbar-inner" onsubmit="handleAiQuickNoteSubmit(event)">
+      <span class="ai-qb-label">✨ AI Quick Note:</span>
+      <input
+        type="text"
+        id="aiQuickNoteInput"
+        class="ai-qb-input"
+        placeholder='e.g. "Tiffany wants Yard Fresh next week" or "215 Mosley Ln wants waste haul away from now on"'
+        autocomplete="off"
+      />
+      <button type="submit" class="btn btn-dark btn-sm" id="btnAiQuickNoteSave">✨ Save Note</button>
+    </form>
+    <div class="ai-qb-feedback" id="aiQuickNoteFeedback">
+      <span id="aiQuickNoteFeedbackText"></span>
+      <button type="button" class="undo-link" onclick="document.getElementById('aiQuickNoteFeedback').classList.remove('show')">Dismiss</button>
+    </div>
+  </div>
 
   <!-- ========================================================================
        WORKSPACE 1: WISE SCOOPERS CRM & ROUTES
@@ -1296,7 +1443,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <th>Customer</th>
                 <th>Service Address</th>
                 <th>Pets &amp; Treat Location</th>
-                <th>Notes</th>
+                <th>Notes &amp; Reminders</th>
                 <th>Start Date &amp; Next Scoop</th>
                 <th>Service &amp; Monthly Rate</th>
                 <th>Actions</th>
@@ -1702,6 +1849,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="field span-2">
               <label>Notes</label>
               <input type="text" id="fGateNotes" placeholder="e.g., Left side wooden gate, code 4412, double-check bottom latch">
+            </div>
+            <div class="field span-2">
+              <label>📌 Important Reminder / AI Quick Note (Highlighted on Schedule &amp; Client List)</label>
+              <input type="text" id="fImportantNote" placeholder="e.g., Wants Yard Fresh added next week">
             </div>
           </div>
 
@@ -2241,7 +2392,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div class="toast" id="toast"></div>
   <div id="toastArea"></div>
 <!-- ========================================================================
-       UNIFIED FIREBASE CLOUD MODULE (CRM + LEADS + POTENTIAL + SQUARE + WEATHER)
+       UNIFIED FIREBASE CLOUD MODULE (CRM + AI QUICK NOTE + SQUARE + WEATHER)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -2276,6 +2427,258 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let unsubFb = null;
     let unsubOmw = null;
     let isAuthenticated = false;
+
+    // MOBILE HEADER CLEANUP TOGGLE ("☰ More")
+    window.toggleMobileHeaderExtras = function() {
+      const topbar = document.getElementById("mainTopbar");
+      const btn = document.getElementById("btnMobileMoreToggle");
+      if (!topbar) return;
+      const isOpen = topbar.classList.toggle("mobile-menu-open");
+      if (btn) btn.textContent = isOpen ? "✕ Close" : "☰ More";
+    };
+
+    // ========================================================================
+    // AI QUICK-NOTE & REMINDER PARSER (USES EXISTING CLOUD GEMINI API KEY)
+    // ========================================================================
+    function getStoredGeminiApiKey() {
+      if (typeof window.getWiseScoopersGeminiKey === "function") {
+        const k = window.getWiseScoopersGeminiKey();
+        if (k) return k;
+      }
+      try {
+        const raw = localStorage.getItem("wisescoopers_settings_v2");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.geminiApiKey) return String(parsed.geminiApiKey).trim();
+        }
+      } catch (e) {}
+      return "";
+    }
+
+    function rebuildAddonsSummaryFromFlags(addonsObj) {
+      const a = addonsObj || {};
+      const parts = [];
+      if (a.yardFresh) parts.push(`Yard Fresh (${Number(a.yfSections) || 1} sec)`);
+      if (a.haulAway) parts.push("Haul-Away");
+      if (a.litterSupply) parts.push(`Litter Supply (${Number(a.litterSupplyBoxes) || 1})`);
+      if (a.deepClean) parts.push(`Deep Clean (${Number(a.deepCleanBoxes) || 1})`);
+      if (a.extraTime) parts.push(`+${(Number(a.extraTimeBlocks) || 1) * 15}m Extra Time`);
+      return parts.join(" + ");
+    }
+
+    function fallbackParseQuickNote(rawText) {
+      const lower = rawText.toLowerCase();
+      const allRecords = [
+        ...clients.map(c => ({ id: c.id, type: "client", name: c.name, address: formatClientFullAddress(c), dogs: c.dogNames || "" })),
+        ...leads.map(l => ({ id: l.id, type: "lead", name: l.name, address: formatClientFullAddress(l), dogs: "" }))
+      ];
+
+      let matched = null;
+      for (const rec of allRecords) {
+        const first = (rec.name || "").trim().split(/\s+/)[0].toLowerCase();
+        const fullName = (rec.name || "").trim().toLowerCase();
+        const streetPart = (rec.address || "").split(",")[0].trim().toLowerCase();
+        if ((fullName && lower.includes(fullName)) || (first.length >= 3 && new RegExp(`\\b${first}\\b`, "i").test(lower))) {
+          matched = rec;
+          break;
+        }
+        if (streetPart && streetPart.length >= 5 && lower.includes(streetPart)) {
+          matched = rec;
+          break;
+        }
+      }
+
+      const permanent = /\b(from now on|every visit|every week|permanently|add .* to plan|recurring)\b/i.test(lower);
+      const addOns = [];
+      if (permanent) {
+        if (/haul[\s-]*away/i.test(lower)) addOns.push("haulAway");
+        if (/yard\s*fresh/i.test(lower)) addOns.push("yardFresh");
+        if (/litter\s*supply/i.test(lower)) addOns.push("litterSupply");
+        if (/deep\s*clean/i.test(lower)) addOns.push("deepClean");
+      }
+
+      return {
+        matchedId: matched ? matched.id : "",
+        matchedType: matched ? matched.type : "",
+        importantReminder: rawText.trim(),
+        permanentAddOns: addOns
+      };
+    }
+
+    window.handleAiQuickNoteSubmit = async function(event) {
+      event.preventDefault();
+      const inp = document.getElementById("aiQuickNoteInput");
+      const btn = document.getElementById("btnAiQuickNoteSave");
+      const fbBox = document.getElementById("aiQuickNoteFeedback");
+      const fbText = document.getElementById("aiQuickNoteFeedbackText");
+
+      const noteText = (inp.value || "").trim();
+      if (!noteText) return;
+
+      const allPeople = [
+        ...clients.map(c => ({
+          id: c.id,
+          type: "client",
+          name: c.name,
+          address: formatClientFullAddress(c),
+          dogs: c.dogNames || ""
+        })),
+        ...leads.map(l => ({
+          id: l.id,
+          type: "lead",
+          name: l.name,
+          address: formatClientFullAddress(l),
+          dogs: ""
+        }))
+      ];
+
+      if (!allPeople.length) {
+        fbBox.className = "ai-qb-feedback err show";
+        fbText.textContent = "No clients or leads in your CRM yet to attach this note to.";
+        return;
+      }
+
+      btn.disabled = true;
+      const origBtn = btn.textContent;
+      btn.textContent = "⏳ Thinking...";
+      fbBox.classList.remove("show");
+
+      const apiKey = getStoredGeminiApiKey();
+      let parsedAction = null;
+
+      if (apiKey) {
+        const rosterJson = JSON.stringify(allPeople);
+        const aiPrompt = `You are the smart assistant for Wise Scoopers CRM. Match the owner's quick voice/text note to the right customer from the roster below, write a clean Important Reminder note for the route/client card, and detect if any recurring add-on should be permanently turned ON ("from now on", "every week", "permanently").
+
+Roster:
+${rosterJson}
+
+Owner's note:
+"${noteText.replace(/"/g, '\\"')}"
+
+Return ONLY valid JSON with these exact keys:
+{
+  "matchedId": "exact id from roster or empty string if unclear",
+  "matchedType": "client or lead",
+  "importantReminder": "Clean, concise reminder note to show on their card (include date/timeframe if mentioned, e.g. 'Wants Yard Fresh next week (logged Nov 20)')",
+  "permanentAddOns": ["array containing any of: yardFresh, haulAway, litterSupply, deepClean ONLY if the owner explicitly asked to add it permanently / from now on; otherwise empty array []"]
+}`;
+
+        const candidateModels = [
+          "gemini-3.5-flash-lite",
+          "gemini-3-flash-preview",
+          "gemini-2.5-flash"
+        ];
+
+        for (const modelName of candidateModels) {
+          try {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            const res = await fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: aiPrompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+              })
+            });
+            if (!res.ok) continue;
+            const data = await res.json();
+            const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const cleanJson = rawText.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
+            parsedAction = JSON.parse(cleanJson);
+            break;
+          } catch (e) {}
+        }
+      }
+
+      if (!parsedAction) {
+        parsedAction = fallbackParseQuickNote(noteText);
+      }
+
+      try {
+        const targetId = String(parsedAction.matchedId || "").trim();
+        let targetClient = clients.find(c => c.id === targetId);
+        let targetLead = !targetClient ? leads.find(l => l.id === targetId) : null;
+
+        if (!targetClient && !targetLead) {
+          const fbFallback = fallbackParseQuickNote(noteText);
+          targetClient = clients.find(c => c.id === fbFallback.matchedId);
+          targetLead = !targetClient ? leads.find(l => l.id === fbFallback.matchedId) : null;
+        }
+
+        if (!targetClient && !targetLead) {
+          fbBox.className = "ai-qb-feedback err show";
+          fbText.textContent = `Could not tell which customer you meant in "${noteText}". Include their first name or street address.`;
+          return;
+        }
+
+        const cleanReminder = String(parsedAction.importantReminder || noteText).trim();
+        const addOnsToEnable = Array.isArray(parsedAction.permanentAddOns) ? parsedAction.permanentAddOns : [];
+
+        if (targetClient) {
+          targetClient.importantNote = targetClient.importantNote
+            ? `${targetClient.importantNote} • ${cleanReminder}`
+            : cleanReminder;
+
+          const appliedLabels = [];
+          if (addOnsToEnable.length > 0) {
+            if (!targetClient.addons) targetClient.addons = {};
+            if (addOnsToEnable.includes("haulAway")) {
+              targetClient.addons.haulAway = true;
+              appliedLabels.push("Waste Haul-Away");
+            }
+            if (addOnsToEnable.includes("yardFresh")) {
+              targetClient.addons.yardFresh = true;
+              if (!targetClient.addons.yfSections) targetClient.addons.yfSections = 1;
+              appliedLabels.push("Yard Fresh");
+            }
+            if (addOnsToEnable.includes("litterSupply")) {
+              targetClient.addons.litterSupply = true;
+              if (!targetClient.addons.litterSupplyBoxes) targetClient.addons.litterSupplyBoxes = 1;
+              appliedLabels.push("Litter Supply");
+            }
+            if (addOnsToEnable.includes("deepClean")) {
+              targetClient.addons.deepClean = true;
+              if (!targetClient.addons.deepCleanBoxes) targetClient.addons.deepCleanBoxes = 1;
+              appliedLabels.push("Deep Clean");
+            }
+            targetClient.addonsSummary = rebuildAddonsSummaryFromFlags(targetClient.addons);
+          }
+
+          await saveClientDoc(targetClient);
+          inp.value = "";
+          fbBox.className = "ai-qb-feedback show";
+          fbText.textContent = `✓ Saved reminder for ${targetClient.name}: "${cleanReminder}"${appliedLabels.length ? ` + Enabled ${appliedLabels.join(", ")}` : ""}`;
+          showToast(`Saved AI note for ${targetClient.name}!`);
+        } else if (targetLead) {
+          targetLead.importantNote = targetLead.importantNote
+            ? `${targetLead.importantNote} • ${cleanReminder}`
+            : cleanReminder;
+          targetLead.notes = targetLead.notes
+            ? `${targetLead.notes} | 📌 ${cleanReminder}`
+            : cleanReminder;
+          await saveLeadDoc(targetLead);
+          inp.value = "";
+          fbBox.className = "ai-qb-feedback show";
+          fbText.textContent = `✓ Saved reminder for ${targetLead.name} (Lead / Potential): "${cleanReminder}"`;
+          showToast(`Saved AI note for ${targetLead.name}!`);
+        }
+      } catch (err) {
+        fbBox.className = "ai-qb-feedback err show";
+        fbText.textContent = err.message || "Could not save note.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = origBtn;
+      }
+    };
+
+    window.clearImportantNote = async function(clientId) {
+      const c = clients.find(x => x.id === clientId);
+      if (!c) return;
+      c.importantNote = "";
+      await saveClientDoc(c);
+      showToast(`Cleared reminder for ${c.name}.`);
+    };
 
     // ========================================================================
     // WISE COUNTY & SOUTHERN MONTAGUE COUNTY WEATHER WIDGET (OPEN-METEO)
@@ -2440,7 +2843,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       return raw || "";
     }
 
-    // SYNC SQUARE INVOICE PAYMENT STATUSES & CARDS ON FILE
     window.syncSquareBillingStatuses = async function(silent = false) {
       const btn = document.getElementById("btnSyncSquareBilling");
       if (btn) {
@@ -2548,7 +2950,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // SYNC SQUARE CONTACTS -> CRM
     window.syncSquareContacts = async function() {
       const btn = document.getElementById("btnSyncSquare");
       if (btn) {
@@ -2606,6 +3007,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               treatLoc: "Front Door",
               dogNames: "",
               gateNotes: "Imported from Square — verify yard & pet details",
+              importantNote: "",
               startDate: today,
               freq: "Weekly",
               serviceType: "Dog Waste Removal",
@@ -2787,7 +3189,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         invBtn.textContent = "📩 Create / Send Invoice";
       }
 
-      // Default to Email if email exists on profile, otherwise Copy Payment Link
       const emailRadio = document.querySelector('input[name="sqDelivery"][value="EMAIL"]');
       const linkRadio = document.querySelector('input[name="sqDelivery"][value="SHARE_MANUALLY"]');
       if (c.email && c.email.trim() !== "" && emailRadio) {
@@ -3176,15 +3577,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const fbEl = document.getElementById('fbWorkspace');
       const btnCrm = document.getElementById('btnModeCrm');
       const btnFb = document.getElementById('btnModeFb');
+      const quickBar = document.getElementById('aiQuickNoteBar');
 
       if (mode === 'fb') {
         crmEl.classList.add('hidden');
+        if (quickBar) quickBar.classList.add('hidden');
         fbEl.classList.remove('hidden');
         btnCrm.classList.remove('active');
         btnFb.classList.add('active');
       } else {
         fbEl.classList.add('hidden');
         crmEl.classList.remove('hidden');
+        if (quickBar) quickBar.classList.remove('hidden');
         btnFb.classList.remove('active');
         btnCrm.classList.add('active');
         if (document.getElementById('tab-map').classList.contains('active') && leafletMap) {
@@ -3708,7 +4112,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         freq: existingLead?.freq || (/twice/i.test(planText) ? "Twice Weekly" : /bi/i.test(planText) ? "Bi-Weekly" : "Weekly"),
         serviceType: existingLead?.serviceType || "Dog Waste Removal",
         trialScoopDate: trialDate,
-        trialCompleted: trialDate ? false : false,
+        trialCompleted: false,
         notes: document.getElementById("pNotes").value.trim(),
         submittedAt: existingLead?.submittedAt || todayStr(0)
       };
@@ -3731,7 +4135,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Marked "Try Us" free scoop completed for ${lead.name}!`);
     };
 
-    // CONVERT WEBSITE LEAD OR POTENTIAL CLIENT TO REGULAR ACTIVE CLIENT
     window.convertLeadToClient = async function(leadId) {
       const lead = leads.find(l => l.id === leadId);
       if (!lead) return;
@@ -3777,6 +4180,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         treatLoc: treatsAllowed ? "Front Door" : "No Treats",
         dogNames: "",
         gateNotes: parsed.cleanNote || "",
+        importantNote: lead.importantNote || "",
         startDate: today,
         freq: lead.freq || "Weekly",
         serviceType: lead.serviceType || "Dog Waste Removal",
@@ -3946,7 +4350,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       renderCustomerMap(false);
     };
 
-    // BACKUP EXPORT & CLOUD IMPORT
     window.downloadBackup = function(isManual) {
       const today = todayStr(0);
       const payload = {
@@ -4022,12 +4425,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           return false;
         }
         if (!q) return true;
-        const hay = `${c.name} ${derivedCity} ${c.address} ${c.phone} ${c.dogNames} ${c.refBy} ${c.serviceType} ${c.addonsSummary}`.toLowerCase();
+        const hay = `${c.name} ${derivedCity} ${c.address} ${c.phone} ${c.dogNames} ${c.refBy} ${c.serviceType} ${c.addonsSummary} ${c.importantNote || ''}`.toLowerCase();
         return hay.includes(q);
       });
     }
 
-    // BUILD UNIFIED SCHEDULE LIST (REGULAR ACTIVE CLIENTS + POTENTIAL "TRY US" TRIALS)
     function getScheduledStopsList() {
       const q = document.getElementById('searchInput').value.trim().toLowerCase();
       const city = document.getElementById('cityFilter').value;
@@ -4044,7 +4446,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             return false;
           }
           if (!q) return true;
-          return `${l.name} ${fullAddr} ${l.phone} ${l.notes}`.toLowerCase().includes(q);
+          return `${l.name} ${fullAddr} ${l.phone} ${l.notes} ${l.importantNote || ''}`.toLowerCase().includes(q);
         })
         .map(l => {
           const parsed = parseLeadDetails(l);
@@ -4066,6 +4468,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             startDate: l.trialScoopDate,
             nextScoop: l.trialScoopDate,
             gateNotes: parsed.cleanNote || l.notes || "",
+            importantNote: l.importantNote || "",
             addonsSummary: "",
             geo: l.geo || null
           };
@@ -4086,7 +4489,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // RENDER POTENTIAL CLIENTS ("TRY US") & NEW LEADS INBOX
     function renderLeadsAndPotentialCards() {
       const potContainer = document.getElementById('potentialLeadsContainer');
       const newContainer = document.getElementById('leadsCardsContainer');
@@ -4099,7 +4501,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           return false;
         }
         if (!q) return true;
-        return `${l.name} ${fullAddr} ${l.phone} ${l.notes} ${l.referralDetails || ''}`.toLowerCase().includes(q);
+        return `${l.name} ${fullAddr} ${l.phone} ${l.notes} ${l.referralDetails || ''} ${l.importantNote || ''}`.toLowerCase().includes(q);
       };
 
       const potentialList = leads
@@ -4117,7 +4519,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
       const mapBtnLabel = getPreferredMapLabel();
 
-      // 1. Render Potential Clients ("Try Us")
       if (!potentialList.length) {
         potContainer.innerHTML = `<div style="padding:20px; text-align:center; color:var(--m); font-weight:600; grid-column:1/-1;">No Potential Clients here yet. Click <strong>"🎁 Potential Client / Try Us"</strong> on any incoming lead (or <strong>"+ Add Potential Client"</strong>) to schedule a free trial scoop and keep notes!</div>`;
       } else {
@@ -4165,6 +4566,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 </div>
               </div>
 
+              ${l.importantNote ? `
+                <div class="important-note-box">
+                  <span>📌 <strong>Important:</strong> ${escapeHtml(l.importantNote)}</span>
+                </div>
+              ` : ''}
+
               <div class="lead-notes-box">
                 <div class="lead-box-lbl" style="color:#7A4B00;">📝 Notes</div>
                 ${parsed.cleanNote ? escapeHtml(parsed.cleanNote) : '<em style="color:var(--m);">No notes added yet — click Edit / Try Us to add notes.</em>'}
@@ -4181,7 +4588,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         }).join('');
       }
 
-      // 2. Render Incoming New Leads
       if (!newLeadsList.length) {
         newContainer.innerHTML = `<div style="padding:24px; text-align:center; color:var(--m); font-weight:600; grid-column:1/-1;">No new unreviewed website leads right now.</div>`;
         return;
@@ -4248,6 +4654,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               </div>
             ` : ''}
 
+            ${l.importantNote ? `
+              <div class="important-note-box">
+                <span>📌 <strong>Important:</strong> ${escapeHtml(l.importantNote)}</span>
+              </div>
+            ` : ''}
+
             ${parsed.cleanNote ? `
               <div class="lead-notes-box">
                 <div class="lead-box-lbl" style="color:#7A4B00;">📝 Notes</div>
@@ -4266,7 +4678,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
-    // NEAREST-NEIGHBOR ROUTE OPTIMIZER + REAL OSRM DRIVING ROAD GEOMETRY
     function haversineMiles(lat1, lon1, lat2, lon2) {
       const R = 3958.8;
       const toRad = deg => deg * (Math.PI / 180);
@@ -4339,7 +4750,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       return null;
     }
 
-    // PRINTABLE CLIPBOARD ROUTE SHEET (INCLUDES BOTH REGULAR YARDS & TRY US TRIALS)
     window.printRouteSheet = async function(source) {
       let list = getScheduledStopsList();
       let sheetSubtitle = 'All Active Yards & Try Us Trials — Optimized Route Order';
@@ -4421,6 +4831,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <div><strong>Scoop Date:</strong> ${formatDisplayDate(c.nextScoop)}</div>
               </div>
               ${c.addonsSummary ? `<div class="addon-bar">Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}
+              ${c.importantNote ? `<div class="gate-bar" style="border-color:#D9534F; background:#FFF4E5;">📌 Important: ${escapeHtml(c.importantNote)}</div>` : ''}
               ${c.gateNotes ? `<div class="gate-bar">Notes: ${escapeHtml(c.gateNotes)}</div>` : ''}
             </div>
           </div>
@@ -4746,6 +5157,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}<br>
               ${c.addonsSummary ? `<strong>Add-Ons:</strong> ${escapeHtml(c.addonsSummary)}` : ''}
             </div>
+            ${c.importantNote ? `<div style="font-size:11px; color:#7A3E00; margin-bottom:5px;"><strong>📌 Important:</strong> ${escapeHtml(c.importantNote)}</div>` : ''}
             ${c.gateNotes ? `<div style="font-size:11px; color:#7A4B00; margin-bottom:6px;"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
             <div style="display:flex; gap:5px; flex-wrap:wrap;">
               <a href="${appleUrl}" target="_blank" rel="noopener" style="display:inline-block; background:#263A2D; color:#fff; text-decoration:none; font-size:11px; font-weight:800; padding:5px 8px; border-radius:6px;">🍎 Apple Maps</a>
@@ -4852,7 +5264,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       document.getElementById('kpiTodayDate').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
     }
 
-    // UPDATED BILLING TABLE: NO MANUAL "MARK PAID" BUTTON — SQUARE DRIVES PAID/UNPAID & CARD ON FILE
     function renderBillingTable() {
       const tbody = document.getElementById('billingTableBody');
       const list = getFilteredClients().sort((a, b) => (a.nextCharge || '9999').localeCompare(b.nextCharge || '9999'));
@@ -4929,7 +5340,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
-    // RENDER ROUTE CARDS (INCLUDES POTENTIAL "TRY US" TRIALS + REGULAR CLIENTS)
     function renderRouteCards() {
       const container = document.getElementById('routeCardsContainer');
       const filter = document.getElementById('routeFilter').value;
@@ -4960,7 +5370,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const destParam = (c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : fullAddr;
         const mapsDirUrl = getPreferredSingleMapUrl(destParam);
 
-        // POTENTIAL CLIENT ("TRY US" FREE TRIAL CARD)
         if (c.isPotentialTrial) {
           const trialStatusBadge = c.trialCompleted
             ? `<span class="badge badge-ok">✓ Try Us Scoop Done (${formatWeekdayAndDate(c.nextScoop)})</span>`
@@ -4982,6 +5391,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                   <div><strong>Pets:</strong> ${c.dogs} Dog(s)${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div>
                   <div><strong>Status:</strong> Potential Client</div>
                 </div>
+                ${c.importantNote ? `
+                  <div class="important-note-box">
+                    <span>📌 <strong>Important:</strong> ${escapeHtml(c.importantNote)}</span>
+                  </div>
+                ` : ''}
                 ${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
               </div>
 
@@ -4998,7 +5412,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           `;
         }
 
-        // REGULAR ACTIVE CLIENT CARD
         const isFirstDay = c.startDate && c.startDate === c.nextScoop;
         const scoopedToday = c.scoopedActionDate === today;
 
@@ -5035,6 +5448,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <div><strong>Treats At:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div>
               </div>
               ${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}
+              ${c.importantNote ? `
+                <div class="important-note-box">
+                  <span>📌 <strong>Important:</strong> ${escapeHtml(c.importantNote)}</span>
+                  <button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')" title="Dismiss reminder">Clear</button>
+                </div>
+              ` : ''}
               ${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}
             </div>
 
@@ -5065,6 +5484,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           : '';
         const fullAddr = formatClientFullAddress(c);
 
+        const importantHtml = c.importantNote
+          ? `<div class="important-note-box" style="margin-bottom:4px;">
+               <span>📌 ${escapeHtml(c.importantNote)}</span>
+               <button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button>
+             </div>`
+          : '';
+
         return `
           <tr class="mobile-card-row">
             <td class="m-header" data-label="Customer">
@@ -5080,7 +5506,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </td>
             <td data-label="Service Address"><strong>${escapeHtml(fullAddr)}</strong></td>
             <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage" style="margin-top:3px;">Treats: ${escapeHtml(c.treatLoc)}</span></td>
-            <td data-label="Notes" style="max-width:210px; font-size:12px;">${escapeHtml(c.gateNotes || '—')}</td>
+            <td data-label="Notes & Reminders" style="max-width:230px; font-size:12px;">${importantHtml}${escapeHtml(c.gateNotes || (c.importantNote ? '' : '—'))}</td>
             <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
             <td class="desktop-only-cell" data-label="Service & Monthly Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
             <td class="m-actions" data-label="Actions">
@@ -5095,7 +5521,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
-    // BUSINESS-ONLY PARTNER REFERRAL TABLE ($20 PAYOUT ONLY WHEN BUSINESS/EMPLOYEE IS NAMED)
     function renderReferralsTable() {
       const tbody = document.getElementById('referralsTableBody');
       const refs = getFilteredClients().filter(c => {
@@ -5192,7 +5617,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Removed ${c.name}.`);
     };
 
-    // BUSINESS REFERRAL FIELD VISIBILITY & $20 ELIGIBILITY LOGIC
     window.onHowHeardChanged = function() {
       const val = document.getElementById('fHowHeard').value;
       const isPartner = val === 'Business Referral / Partner';
@@ -5224,7 +5648,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // MODAL HANDLERS
     window.onStartDateOrFreqChange = function(autoSetDates) {
       const startVal = document.getElementById('fStartDate').value;
       const freq = document.getElementById('fFreq').value;
@@ -5290,6 +5713,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById('fTreatLoc').value = c.treatLoc || 'Front Door';
         document.getElementById('fDogNames').value = c.dogNames || '';
         document.getElementById('fGateNotes').value = c.gateNotes || '';
+        document.getElementById('fImportantNote').value = c.importantNote || '';
 
         document.getElementById('fStartDate').value = c.startDate || todayStr(0);
         document.getElementById('fFreq').value = c.freq || 'Weekly';
@@ -5397,6 +5821,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         treatLoc: document.getElementById('fTreatLoc').value,
         dogNames: document.getElementById('fDogNames').value.trim(),
         gateNotes: document.getElementById('fGateNotes').value.trim(),
+        importantNote: document.getElementById('fImportantNote').value.trim(),
         startDate: document.getElementById('fStartDate').value,
         freq: document.getElementById('fFreq').value,
         serviceType: document.getElementById('fServiceType').value,
@@ -5734,6 +6159,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         isVaryingCaption: false
       };
 
+      window.getWiseScoopersGeminiKey = function () {
+        return (state.settings.geminiApiKey || "").trim();
+      };
+
       let onConfirmAction = null;
 
       function getTodayDayName() {
@@ -5875,7 +6304,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         } catch (err) {}
       }
 
-      // CLOUD + LOCAL STORAGE PERSISTENCE
       function pushFbCloudSnapshot() {
         if (typeof window.syncFbStateToCloud === "function") {
           window.syncFbStateToCloud({
@@ -7787,7 +8215,6 @@ Return ONLY valid JSON: { "postText": "rewritten post here" }`;
           window.open("https://gemini.google.com/app", "_blank", "noopener,noreferrer");
         });
 
-        // SAVED POST IMAGE STASH EVENTS
         const stashDropzone = document.getElementById("postStashDropzone");
         const stashFileInp = document.getElementById("inputStashImageFile");
 
