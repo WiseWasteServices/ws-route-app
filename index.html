@@ -241,7 +241,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     z-index: 450;
   }
   .ai-quickbar-inner {
-    max-width: 1280px;
+    max-width: 1460px;
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -275,7 +275,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   }
   .ai-qb-feedback {
     width: 100%;
-    max-width: 1280px;
+    max-width: 1460px;
     margin: 6px auto 0;
     font-size: 12px;
     font-weight: 700;
@@ -351,8 +351,102 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   }
   .undo-link:hover { color: var(--due-ink); }
 
-  /* MAIN LAYOUT */
-  .container { max-width: 1280px; margin: 0 auto; padding: 18px 18px 50px; }
+  /* MAIN LAYOUT + GENERAL NOTES SIDEBAR */
+  .container { max-width: 1460px; margin: 0 auto; padding: 18px 18px 50px; }
+  .crm-shell-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 295px;
+    gap: 16px;
+    align-items: start;
+  }
+  .crm-main-col { min-width: 0; }
+  .general-notes-aside {
+    background: var(--w);
+    border: 1.5px solid var(--b);
+    border-top: 4px solid var(--gm);
+    border-radius: 15px;
+    box-shadow: 0 5px 16px rgba(38, 58, 45, 0.06);
+    overflow: hidden;
+    position: sticky;
+    top: 126px;
+  }
+  .gn-hd {
+    background: var(--cr);
+    border-bottom: 1.5px solid var(--b);
+    padding: 10px 13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .gn-hd h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--g);
+  }
+  .gn-add-drawer {
+    background: var(--gt);
+    border-bottom: 1.5px solid var(--b);
+    padding: 9px 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gn-add-drawer textarea {
+    width: 100%;
+    padding: 7px 9px;
+    border: 1.5px solid var(--gm);
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-family: inherit;
+    background: var(--w);
+    color: var(--ink);
+    resize: vertical;
+  }
+  .gn-list {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 68vh;
+    overflow-y: auto;
+  }
+  .gn-item {
+    background: #FFFDF7;
+    border: 1px solid #DFD2B0;
+    border-left: 4px solid var(--gm);
+    border-radius: 9px;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.38;
+    color: var(--ink);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    word-break: break-word;
+  }
+  .gn-item-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--m);
+  }
+  @media (max-width: 1024px) {
+    .crm-shell-grid {
+      grid-template-columns: 1fr;
+    }
+    .general-notes-aside {
+      position: static;
+      margin-top: 6px;
+    }
+    .gn-list {
+      max-height: none;
+    }
+  }
 
   /* WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (SLEEK + 6PM ROLLOVER + 7-DAY) */
   .weather-widget {
@@ -1243,7 +1337,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         type="text"
         id="aiQuickNoteInput"
         class="ai-qb-input"
-        placeholder='e.g. "Tiffany wants Yard Fresh next week" or "215 Mosley Ln wants waste haul away from now on"'
+        placeholder='e.g. "Tiffany wants Yard Fresh next week" or "g notes buy extra enzyme spray"'
         autocomplete="off"
       />
       <button type="submit" class="btn btn-dark btn-sm" id="btnAiQuickNoteSave">✨ Save Note</button>
@@ -1255,298 +1349,324 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   </div>
 
   <!-- ========================================================================
-       WORKSPACE 1: WISE SCOOPERS CRM & ROUTES
+       WORKSPACE 1: WISE SCOOPERS CRM & ROUTES + GENERAL NOTES SIDEBAR
        ======================================================================== -->
   <main class="container" id="crmWorkspace">
+    <div class="crm-shell-grid">
+      <div class="crm-main-col">
 
-    <!-- WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (SLEEK + 6PM AUTO-ROLLOVER + 7-DAY) -->
-    <section class="weather-widget" id="wiseWeatherWidget" aria-label="Wise County and Southern Montague Weather Forecast">
-      <div class="weather-top-row">
-        <div class="weather-main-info">
-          <div class="weather-temp-pill">
-            <span id="weatherMainIcon" style="font-size:20px;">🌤️</span>
-            <div>
-              <div style="display:flex; align-items:center; gap:4px;">
-                <span class="weather-big-temp" id="weatherCurrentTemp">--°F</span>
-                <span class="weather-day-tag" id="weatherDayModeBadge">Today</span>
+        <!-- WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (SLEEK + 6PM AUTO-ROLLOVER + 7-DAY) -->
+        <section class="weather-widget" id="wiseWeatherWidget" aria-label="Wise County and Southern Montague Weather Forecast">
+          <div class="weather-top-row">
+            <div class="weather-main-info">
+              <div class="weather-temp-pill">
+                <span id="weatherMainIcon" style="font-size:20px;">🌤️</span>
+                <div>
+                  <div style="display:flex; align-items:center; gap:4px;">
+                    <span class="weather-big-temp" id="weatherCurrentTemp">--°F</span>
+                    <span class="weather-day-tag" id="weatherDayModeBadge">Today</span>
+                  </div>
+                  <div style="font-size:10px; font-weight:700; color:var(--gt);" id="weatherSummaryLabel">Loading forecast...</div>
+                </div>
               </div>
-              <div style="font-size:10px; font-weight:700; color:var(--gt);" id="weatherSummaryLabel">Loading forecast...</div>
+              <div class="weather-range-box">
+                <div>📍 <strong>Wise &amp; S. Montague</strong> • <span id="weatherHighLowLine">High: --° • Low: --°</span></div>
+                <div id="weatherRainSummaryLine" style="font-size:10.5px; opacity:0.95;">Checking rain windows...</div>
+              </div>
+            </div>
+            <div class="weather-sun-row">
+              <span class="weather-chip" id="weatherSunriseChip">🌅 --:--</span>
+              <span class="weather-chip" id="weatherSunsetChip">🌇 --:--</span>
+              <button type="button" class="btn btn-sage btn-sm" style="padding:4px 8px; font-size:11px;" id="btnToggleWeekWeather" onclick="toggleWeatherWeekDrawer()">📅 7-Day ▾</button>
+              <button type="button" class="btn btn-sage btn-sm" style="padding:4px 7px; font-size:11px;" onclick="loadRegionalWeather(true)" title="Refresh forecast">↻</button>
             </div>
           </div>
-          <div class="weather-range-box">
-            <div>📍 <strong>Wise &amp; S. Montague</strong> • <span id="weatherHighLowLine">High: --° • Low: --°</span></div>
-            <div id="weatherRainSummaryLine" style="font-size:10.5px; opacity:0.95;">Checking rain windows...</div>
+
+          <div class="weather-timeline-bar" id="weatherHourlySlots">
+            <div class="weather-slot"><span class="weather-slot-time">Loading</span><span class="weather-slot-desc">Fetching hourly timeline...</span></div>
           </div>
-        </div>
-        <div class="weather-sun-row">
-          <span class="weather-chip" id="weatherSunriseChip">🌅 --:--</span>
-          <span class="weather-chip" id="weatherSunsetChip">🌇 --:--</span>
-          <button type="button" class="btn btn-sage btn-sm" style="padding:4px 8px; font-size:11px;" id="btnToggleWeekWeather" onclick="toggleWeatherWeekDrawer()">📅 7-Day ▾</button>
-          <button type="button" class="btn btn-sage btn-sm" style="padding:4px 7px; font-size:11px;" onclick="loadRegionalWeather(true)" title="Refresh forecast">↻</button>
-        </div>
-      </div>
 
-      <div class="weather-timeline-bar" id="weatherHourlySlots">
-        <div class="weather-slot"><span class="weather-slot-time">Loading</span><span class="weather-slot-desc">Fetching hourly timeline...</span></div>
-      </div>
+          <div class="weather-week-drawer" id="weatherWeekDrawer"></div>
+        </section>
 
-      <div class="weather-week-drawer" id="weatherWeekDrawer"></div>
-    </section>
-
-    <!-- KPI DASHBOARD -->
-    <section class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Active Clients</div>
-        <div class="kpi-val" id="kpiActiveClients">0</div>
-        <div class="kpi-sub" id="kpiTotalPets">0 dogs • 0 litter boxes</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-label">Monthly Recurring</div>
-        <div class="kpi-val" id="kpiMonthlyRev">$0</div>
-        <div class="kpi-sub">Active monthly plans</div>
-      </div>
-
-      <div class="kpi-card alert">
-        <div class="kpi-label">Billing Due</div>
-        <div class="kpi-val" id="kpiBillingDue">0</div>
-        <div class="kpi-sub" id="kpiBillingDueAmt">$0.00 ready to bill</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-label">Scoops Due</div>
-        <div class="kpi-val" id="kpiScoopsDue">0</div>
-        <div class="kpi-sub" id="kpiTodayDate">—</div>
-      </div>
-    </section>
-
-    <!-- TABS & SEARCH -->
-    <div class="nav-bar">
-      <div class="tabs">
-        <button class="tab-btn active" data-tab="leads" onclick="switchTab('leads')">🚀 Leads (<span id="leadCountBadge">0</span>)</button>
-        <button class="tab-btn" data-tab="billing" onclick="switchTab('billing')">💳 Billing</button>
-        <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">🗓️ Schedule</button>
-        <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Map</button>
-        <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 Clients</button>
-        <button class="tab-btn" data-tab="referrals" onclick="switchTab('referrals')">🤝 Referrals ($20)</button>
-      </div>
-
-      <div class="search-controls">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search name, city, dog, phone..." oninput="renderAll()">
-        <select id="cityFilter" class="filter-select" onchange="renderAll()">
-          <option value="">All Cities</option>
-          <option>Decatur</option>
-          <option>Alvord</option>
-          <option>Bridgeport</option>
-          <option>Bowie</option>
-          <option>Sunset</option>
-          <option>Rhome</option>
-          <option>Newark</option>
-          <option>Boyd</option>
-          <option>Chico</option>
-          <option>Aurora</option>
-          <option>New Fairview</option>
-          <option>Paradise</option>
-          <option>Runaway Bay</option>
-          <option>Lake Bridgeport</option>
-        </select>
-        <button class="btn btn-dark" onclick="openClientModal()">+ Add Client</button>
-      </div>
-    </div>
-
-    <!-- TAB 0: WEBSITE LEADS & POTENTIAL CLIENTS ("TRY US") PIPELINE -->
-    <section id="tab-leads" class="view-panel active">
-      <!-- SUB-SECTION A: POTENTIAL CLIENTS ("TRY US" FREE TRIAL & FOLLOW-UPS) -->
-      <div class="panel-card" style="border-color: var(--warn-b);">
-        <div class="panel-hd" style="background: var(--warn-bg);">
-          <h2>🎁 Potential Clients &amp; "Try Us" Free Trial List (<span id="potentialCountBadge">0</span>)</h2>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <span style="font-size:11.5px; color:var(--warn-ink); font-weight:700;">
-              Add notes, schedule a free <strong>"Try Us"</strong> scoop day, or convert to regular client
-            </span>
-            <button type="button" class="btn btn-dark btn-sm" onclick="openPotentialModal()">+ Add Potential Client</button>
+        <!-- KPI DASHBOARD -->
+        <section class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Active Clients</div>
+            <div class="kpi-val" id="kpiActiveClients">0</div>
+            <div class="kpi-sub" id="kpiTotalPets">0 dogs • 0 litter boxes</div>
           </div>
-        </div>
-        <div class="leads-grid" id="potentialLeadsContainer"></div>
-      </div>
 
-      <!-- SUB-SECTION B: INCOMING NEW LEADS -->
-      <div class="panel-card">
-        <div class="panel-hd">
-          <h2>🚀 New Website Quote Leads Inbox (<span id="newLeadsSubBadge">0</span>)</h2>
-          <div style="font-size:11.5px; color:var(--m); font-weight:700;">
-            Move to <strong>"🎁 Potential Client / Try Us"</strong> to nurture or <strong>"✓ Convert to Client"</strong> when ready
+          <div class="kpi-card">
+            <div class="kpi-label">Monthly Recurring</div>
+            <div class="kpi-val" id="kpiMonthlyRev">$0</div>
+            <div class="kpi-sub">Active monthly plans</div>
           </div>
-        </div>
-        <div class="leads-grid" id="leadsCardsContainer"></div>
-      </div>
-    </section>
 
-    <!-- TAB 1: ANNIVERSARY BILLING (SQUARE-SYNCED) -->
-    <section id="tab-billing" class="view-panel">
-      <div class="panel-card">
-        <div class="panel-hd">
-          <h2>💳 Monthly Anniversary Billing &amp; Square Payment Sync</h2>
-          <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-            <span style="font-size:11.5px; color:var(--m); font-weight:700;">Square syncs PAID / UNPAID invoices &amp; Cards on File</span>
-            <button type="button" class="btn btn-dark btn-sm" id="btnSyncSquareBilling" onclick="syncSquareBillingStatuses()">🔄 Refresh Square Payments</button>
-            <button type="button" class="btn btn-sage btn-sm" id="btnSyncSquare" onclick="syncSquareContacts()">👥 Sync Square Contacts</button>
+          <div class="kpi-card alert">
+            <div class="kpi-label">Billing Due</div>
+            <div class="kpi-val" id="kpiBillingDue">0</div>
+            <div class="kpi-sub" id="kpiBillingDueAmt">$0.00 ready to bill</div>
           </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Due &amp; Payment Status</th>
-                <th>Start Date / Anniversary</th>
-                <th>Next Charge Date</th>
-                <th>Last Paid Date</th>
-                <th>Customer &amp; Card Status</th>
-                <th>Service &amp; Add-Ons</th>
-                <th>Monthly Charge</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="billingTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
 
-    <!-- TAB 2: SCOOP SCHEDULE & ROUTE -->
-    <section id="tab-schedule" class="view-panel">
-      <div class="panel-card">
-        <div class="panel-hd">
-          <h2>🗓️ Yard Scoop Schedule &amp; Route Sheet</h2>
-          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-            <select id="routeFilter" class="filter-select" onchange="renderAll()">
-              <option value="all">All Active Yards + Try Us Trials</option>
-              <option value="due">Due Today or Overdue</option>
-              <option value="trial">🎁 "Try Us" Potential Trials Only</option>
-              <option value="Weekly">Weekly Plans Only</option>
-              <option value="Twice Weekly">Twice Weekly Plans Only</option>
-              <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
+          <div class="kpi-card">
+            <div class="kpi-label">Scoops Due</div>
+            <div class="kpi-val" id="kpiScoopsDue">0</div>
+            <div class="kpi-sub" id="kpiTodayDate">—</div>
+          </div>
+        </section>
+
+        <!-- TABS & SEARCH -->
+        <div class="nav-bar">
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="leads" onclick="switchTab('leads')">🚀 Leads (<span id="leadCountBadge">0</span>)</button>
+            <button class="tab-btn" data-tab="billing" onclick="switchTab('billing')">💳 Billing</button>
+            <button class="tab-btn" data-tab="schedule" onclick="switchTab('schedule')">🗓️ Schedule</button>
+            <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Map</button>
+            <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 Clients</button>
+            <button class="tab-btn" data-tab="referrals" onclick="switchTab('referrals')">🤝 Referrals ($20)</button>
+          </div>
+
+          <div class="search-controls">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search name, city, dog, phone..." oninput="renderAll()">
+            <select id="cityFilter" class="filter-select" onchange="renderAll()">
+              <option value="">All Cities</option>
+              <option>Decatur</option>
+              <option>Alvord</option>
+              <option>Bridgeport</option>
+              <option>Bowie</option>
+              <option>Sunset</option>
+              <option>Rhome</option>
+              <option>Newark</option>
+              <option>Boyd</option>
+              <option>Chico</option>
+              <option>Aurora</option>
+              <option>New Fairview</option>
+              <option>Paradise</option>
+              <option>Runaway Bay</option>
+              <option>Lake Bridgeport</option>
             </select>
-            <button type="button" class="btn btn-sage btn-sm" onclick="toggleOmwEditor()">✏️ Edit "On My Way" Text</button>
-            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route</button>
+            <button class="btn btn-dark" onclick="openClientModal()">+ Add Client</button>
           </div>
         </div>
 
-        <!-- INLINE EDITOR FOR "ON MY WAY" TEXT TEMPLATE -->
-        <div class="omw-drawer" id="omwTemplateDrawer">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <strong style="font-size:12.5px; color:var(--g);">🚗 Customize Your "On My Way" Text Message</strong>
-            <span style="font-size:11px; color:var(--m); font-weight:700;">Use <code>{firstName}</code> to insert customer's first name</span>
+        <!-- TAB 0: WEBSITE LEADS & POTENTIAL CLIENTS ("TRY US") PIPELINE -->
+        <section id="tab-leads" class="view-panel active">
+          <!-- SUB-SECTION A: POTENTIAL CLIENTS ("TRY US" FREE TRIAL & FOLLOW-UPS) -->
+          <div class="panel-card" style="border-color: var(--warn-b);">
+            <div class="panel-hd" style="background: var(--warn-bg);">
+              <h2>🎁 Potential Clients &amp; "Try Us" Free Trial List (<span id="potentialCountBadge">0</span>)</h2>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <span style="font-size:11.5px; color:var(--warn-ink); font-weight:700;">
+                  Add notes, schedule a free <strong>"Try Us"</strong> scoop day, or convert to regular client
+                </span>
+                <button type="button" class="btn btn-dark btn-sm" onclick="openPotentialModal()">+ Add Potential Client</button>
+              </div>
+            </div>
+            <div class="leads-grid" id="potentialLeadsContainer"></div>
           </div>
-          <textarea id="inputOmwTemplate" rows="2"></textarea>
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-            <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset to Default</button>
-            <div style="display:flex; gap:8px;">
-              <button type="button" class="btn btn-outline btn-sm" onclick="toggleOmwEditor()">Cancel</button>
-              <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Template</button>
+
+          <!-- SUB-SECTION B: INCOMING NEW LEADS -->
+          <div class="panel-card">
+            <div class="panel-hd">
+              <h2>🚀 New Website Quote Leads Inbox (<span id="newLeadsSubBadge">0</span>)</h2>
+              <div style="font-size:11.5px; color:var(--m); font-weight:700;">
+                Move to <strong>"🎁 Potential Client / Try Us"</strong> to nurture or <strong>"✓ Convert to Client"</strong> when ready
+              </div>
+            </div>
+            <div class="leads-grid" id="leadsCardsContainer"></div>
+          </div>
+        </section>
+
+        <!-- TAB 1: ANNIVERSARY BILLING (SQUARE-SYNCED) -->
+        <section id="tab-billing" class="view-panel">
+          <div class="panel-card">
+            <div class="panel-hd">
+              <h2>💳 Monthly Anniversary Billing &amp; Square Payment Sync</h2>
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <span style="font-size:11.5px; color:var(--m); font-weight:700;">Square syncs PAID / UNPAID invoices &amp; Cards on File</span>
+                <button type="button" class="btn btn-dark btn-sm" id="btnSyncSquareBilling" onclick="syncSquareBillingStatuses()">🔄 Refresh Square Payments</button>
+                <button type="button" class="btn btn-sage btn-sm" id="btnSyncSquare" onclick="syncSquareContacts()">👥 Sync Square Contacts</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Due &amp; Payment Status</th>
+                    <th>Start Date / Anniversary</th>
+                    <th>Next Charge Date</th>
+                    <th>Last Paid Date</th>
+                    <th>Customer &amp; Card Status</th>
+                    <th>Service &amp; Add-Ons</th>
+                    <th>Monthly Charge</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="billingTableBody"></tbody>
+              </table>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div class="route-grid" id="routeCardsContainer"></div>
-      </div>
-    </section>
-
-    <!-- TAB 3: INTERACTIVE CUSTOMER MAP & REAL ROAD ROUTE PLANNER -->
-    <section id="tab-map" class="view-panel">
-      <div class="panel-card">
-        <div class="panel-hd">
-          <h2>🗺️ Customer Route Map</h2>
-          <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
-            <span id="mapGeocodeStatus" style="font-size:11px; color:var(--m); font-weight:700;"></span>
-            <div class="map-toggle-group">
-              <button type="button" class="map-toggle-btn active" id="mapBtnAll" onclick="setMapMode('active')">All Active</button>
-              <button type="button" class="map-toggle-btn" id="mapBtnToday" onclick="setMapMode('due')">Today's Route</button>
+        <!-- TAB 2: SCOOP SCHEDULE & ROUTE -->
+        <section id="tab-schedule" class="view-panel">
+          <div class="panel-card">
+            <div class="panel-hd">
+              <h2>🗓️ Yard Scoop Schedule &amp; Route Sheet</h2>
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <select id="routeFilter" class="filter-select" onchange="renderAll()">
+                  <option value="all">All Active Yards + Try Us Trials</option>
+                  <option value="due">Due Today or Overdue</option>
+                  <option value="trial">🎁 "Try Us" Potential Trials Only</option>
+                  <option value="Weekly">Weekly Plans Only</option>
+                  <option value="Twice Weekly">Twice Weekly Plans Only</option>
+                  <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
+                </select>
+                <button type="button" class="btn btn-sage btn-sm" onclick="toggleOmwEditor()">✏️ Edit "On My Way" Text</button>
+                <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route</button>
+              </div>
             </div>
-            <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Route: ON</button>
-            <button type="button" class="btn btn-sage btn-sm" id="btnUseGps" onclick="toggleGpsStart()">📍 My GPS: ON</button>
-            <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print</button>
-            <button type="button" class="btn btn-green btn-sm" onclick="openAppleMapsRoute()">🍎 Apple Maps</button>
-            <button type="button" class="btn btn-outline btn-sm" onclick="openGoogleMapsRoute()">🧭 Google Maps</button>
-            <button type="button" class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh</button>
-          </div>
-        </div>
 
-        <div class="map-tip-bar">
-          <span><strong>Live GPS Routing:</strong> Numbered <strong>#1, #2, #3...</strong> from your current GPS. Switch to <em>Satellite View</em> and drag any 💩 pin onto the exact gate—it saves straight to the cloud!</span>
-        </div>
-
-        <div class="map-layout">
-          <div id="customerMap"></div>
-          <div class="map-sidebar">
-            <div class="map-legend">
-              <span class="legend-item"><span class="dot dot-gps"></span> Your GPS</span>
-              <span class="legend-item"><span class="dot dot-due"></span> Due Today</span>
-              <span class="legend-item"><span class="dot dot-trial"></span> Try Us Trial</span>
-              <span class="legend-item"><span class="dot dot-active"></span> Active Yard</span>
+            <!-- INLINE EDITOR FOR "ON MY WAY" TEXT TEMPLATE -->
+            <div class="omw-drawer" id="omwTemplateDrawer">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <strong style="font-size:12.5px; color:var(--g);">🚗 Customize Your "On My Way" Text Message</strong>
+                <span style="font-size:11px; color:var(--m); font-weight:700;">Use <code>{firstName}</code> to insert customer's first name</span>
+              </div>
+              <textarea id="inputOmwTemplate" rows="2"></textarea>
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset to Default</button>
+                <div style="display:flex; gap:8px;">
+                  <button type="button" class="btn btn-outline btn-sm" onclick="toggleOmwEditor()">Cancel</button>
+                  <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Template</button>
+                </div>
+              </div>
             </div>
-            <div class="map-list" id="mapSidebarList"></div>
+
+            <div class="route-grid" id="routeCardsContainer"></div>
+          </div>
+        </section>
+
+        <!-- TAB 3: INTERACTIVE CUSTOMER MAP & REAL ROAD ROUTE PLANNER -->
+        <section id="tab-map" class="view-panel">
+          <div class="panel-card">
+            <div class="panel-hd">
+              <h2>🗺️ Customer Route Map</h2>
+              <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                <span id="mapGeocodeStatus" style="font-size:11px; color:var(--m); font-weight:700;"></span>
+                <div class="map-toggle-group">
+                  <button type="button" class="map-toggle-btn active" id="mapBtnAll" onclick="setMapMode('active')">All Active</button>
+                  <button type="button" class="map-toggle-btn" id="mapBtnToday" onclick="setMapMode('due')">Today's Route</button>
+                </div>
+                <button type="button" class="btn btn-sage btn-sm" id="btnBestRoute" onclick="toggleBestRouteLine()">⚡ Route: ON</button>
+                <button type="button" class="btn btn-sage btn-sm" id="btnUseGps" onclick="toggleGpsStart()">📍 My GPS: ON</button>
+                <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('map')">🖨️ Print</button>
+                <button type="button" class="btn btn-green btn-sm" onclick="openAppleMapsRoute()">🍎 Apple Maps</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="openGoogleMapsRoute()">🧭 Google Maps</button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="renderCustomerMap(true)">🔄 Refresh</button>
+              </div>
+            </div>
+
+            <div class="map-tip-bar">
+              <span><strong>Live GPS Routing:</strong> Numbered <strong>#1, #2, #3...</strong> from your current GPS. Switch to <em>Satellite View</em> and drag any 💩 pin onto the exact gate—it saves straight to the cloud!</span>
+            </div>
+
+            <div class="map-layout">
+              <div id="customerMap"></div>
+              <div class="map-sidebar">
+                <div class="map-legend">
+                  <span class="legend-item"><span class="dot dot-gps"></span> Your GPS</span>
+                  <span class="legend-item"><span class="dot dot-due"></span> Due Today</span>
+                  <span class="legend-item"><span class="dot dot-trial"></span> Try Us Trial</span>
+                  <span class="legend-item"><span class="dot dot-active"></span> Active Yard</span>
+                </div>
+                <div class="map-list" id="mapSidebarList"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 4: ALL CLIENTS DIRECTORY -->
+        <section id="tab-clients" class="view-panel">
+          <div class="panel-card">
+            <div class="panel-hd">
+              <h2>🐾 Complete Client Directory</h2>
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-sage btn-sm" onclick="syncSquareContacts()">🔄 Sync Square</button>
+                <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Customer</th>
+                    <th>Service Address</th>
+                    <th>Pets &amp; Treat Location</th>
+                    <th>Notes &amp; Reminders</th>
+                    <th>Start Date &amp; Next Scoop</th>
+                    <th>Service &amp; Monthly Rate</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="clientsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB 5: BUSINESS PARTNER REFERRALS ($20) -->
+        <section id="tab-referrals" class="view-panel">
+          <div class="panel-card">
+            <div class="panel-hd">
+              <h2>🤝 Business Partner Referrals ($20 Rewards)</h2>
+              <div style="font-size:11.5px; color:var(--m); font-weight:700;">
+                Business Partner Program only • Requires a named referring business or employee for the $20 payout
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Referred Customer</th>
+                    <th>Referring Business &amp; Employee Details</th>
+                    <th>Partner Town</th>
+                    <th>Start Date</th>
+                    <th>$20 Reward Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="referralsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- GENERAL / SIDE NOTES PANEL (RIGHT SIDEBAR ON DESKTOP, VERY BOTTOM ON MOBILE) -->
+      <aside class="general-notes-aside" aria-label="General Notes">
+        <div class="gn-hd">
+          <h3>📌 General Notes (<span id="generalNotesCount">0</span>)</h3>
+          <button type="button" class="btn btn-dark btn-sm" style="padding:4px 10px; font-size:14px; line-height:1;" onclick="toggleGeneralNoteDrawer()" title="Add General Note">+</button>
+        </div>
+
+        <div class="gn-add-drawer hidden" id="generalNoteAddDrawer">
+          <textarea id="inputManualGeneralNote" rows="3" placeholder="Jot down a general business note, supply reminder, or to-do..."></textarea>
+          <div style="display:flex; justify-content:flex-end; gap:6px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleGeneralNoteDrawer(false)">Cancel</button>
+            <button type="button" class="btn btn-dark btn-sm" id="btnSaveManualGeneralNote" onclick="saveManualGeneralNote()">💾 Save Note</button>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- TAB 4: ALL CLIENTS DIRECTORY -->
-    <section id="tab-clients" class="view-panel">
-      <div class="panel-card">
-        <div class="panel-hd">
-          <h2>🐾 Complete Client Directory</h2>
-          <div style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button class="btn btn-sage btn-sm" onclick="syncSquareContacts()">🔄 Sync Square</button>
-            <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
+        <div class="gn-list" id="generalNotesList">
+          <div style="padding:14px; text-align:center; font-size:12px; color:var(--m); font-weight:600;">
+            No general notes yet. Click <strong>+</strong> above or type <em>"g notes ..."</em> in the AI Quick Note bar!
           </div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Service Address</th>
-                <th>Pets &amp; Treat Location</th>
-                <th>Notes &amp; Reminders</th>
-                <th>Start Date &amp; Next Scoop</th>
-                <th>Service &amp; Monthly Rate</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="clientsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 5: BUSINESS PARTNER REFERRALS ($20) -->
-    <section id="tab-referrals" class="view-panel">
-      <div class="panel-card">
-        <div class="panel-hd">
-          <h2>🤝 Business Partner Referrals ($20 Rewards)</h2>
-          <div style="font-size:11.5px; color:var(--m); font-weight:700;">
-            Business Partner Program only • Requires a named referring business or employee for the $20 payout
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Referred Customer</th>
-                <th>Referring Business &amp; Employee Details</th>
-                <th>Partner Town</th>
-                <th>Start Date</th>
-                <th>$20 Reward Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="referralsTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
+      </aside>
+    </div>
   </main>
 
   <!-- ========================================================================
@@ -2457,7 +2577,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div class="toast" id="toast"></div>
   <div id="toastArea"></div>
 <!-- ========================================================================
-       UNIFIED FIREBASE CLOUD MODULE (CRM + AI QUICK NOTE + SQUARE + WEATHER)
+       UNIFIED FIREBASE CLOUD MODULE (CRM + AI QUICK NOTE + GENERAL NOTES + WEATHER)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -2480,14 +2600,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     const db = getFirestore(app);
     const CLIENTS_COL = collection(db, "wise_scoopers_clients");
     const LEADS_COL = collection(db, "wise_scoopers_leads");
+    const GEN_NOTES_COL = collection(db, "wise_scoopers_general_notes");
     const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
     const FB_DOC_REF = doc(db, "wise_scoopers_settings", "fb_manager");
     const OMW_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template");
 
     let clients = [];
     let leads = [];
+    let generalNotes = [];
     let unsubscribeClients = null;
     let unsubscribeLeads = null;
+    let unsubscribeGenNotes = null;
     let unsubApps = null;
     let unsubFb = null;
     let unsubOmw = null;
@@ -2503,7 +2626,169 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     // ========================================================================
-    // AI QUICK-NOTE & REMINDER PARSER (USES EXISTING CLOUD GEMINI API KEY)
+    // GENERAL / SIDE NOTES (TIMESTAMPED + CLOUD SYNCED + AI CLEANUP)
+    // ========================================================================
+    function formatNowTimestamp() {
+      const now = new Date();
+      return now.toLocaleString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    async function saveGeneralNoteDoc(noteObj) {
+      const cleanObj = JSON.parse(JSON.stringify(noteObj));
+      await setDoc(doc(db, "wise_scoopers_general_notes", cleanObj.id), cleanObj);
+    }
+
+    async function removeGeneralNoteDoc(noteId) {
+      await deleteDoc(doc(db, "wise_scoopers_general_notes", noteId));
+    }
+
+    window.toggleGeneralNoteDrawer = function(forceState = null) {
+      const drawer = document.getElementById("generalNoteAddDrawer");
+      const inp = document.getElementById("inputManualGeneralNote");
+      if (!drawer) return;
+      const shouldOpen = forceState !== null ? forceState : drawer.classList.contains("hidden");
+      drawer.classList.toggle("hidden", !shouldOpen);
+      if (shouldOpen && inp) {
+        inp.value = "";
+        inp.focus();
+      }
+    };
+
+    async function cleanUpGeneralNoteWithAi(rawBody) {
+      const stripped = rawBody.trim();
+      const apiKey = getStoredGeminiApiKey();
+      if (!apiKey || stripped.length < 4) return stripped;
+
+      const prompt = `Clean up spelling, punctuation, and grammar in this quick personal business reminder note while staying 100% faithful to every single detail, name, number, and meaning the user wrote. Do NOT invent or add extra advice. Return ONLY the cleaned note text with no quotes or extra commentary.
+
+User note:
+"${stripped.replace(/"/g, '\\"')}"`;
+
+      const candidateModels = [
+        "gemini-3.5-flash-lite",
+        "gemini-3-flash-preview",
+        "gemini-2.5-flash"
+      ];
+
+      for (const modelName of candidateModels) {
+        const controller = new AbortController();
+        const timerId = setTimeout(() => controller.abort(), 7000);
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
+          const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }]
+            }),
+            signal: controller.signal
+          });
+          clearTimeout(timerId);
+          if (!res.ok) continue;
+          const data = await res.json();
+          const out = (data?.candidates?.[0]?.content?.parts?.[0]?.text || "").trim();
+          if (out) return out.replace(/^["']|["']$/g, "").trim();
+        } catch (e) {
+          clearTimeout(timerId);
+        }
+      }
+      return stripped;
+    }
+
+    window.saveManualGeneralNote = async function() {
+      const inp = document.getElementById("inputManualGeneralNote");
+      const btn = document.getElementById("btnSaveManualGeneralNote");
+      const rawText = (inp?.value || "").trim();
+      if (!rawText) {
+        showToast("Type a general note first.");
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "⏳ Saving...";
+      }
+
+      try {
+        const cleanedText = await cleanUpGeneralNoteWithAi(rawText);
+        const nowIso = new Date().toISOString();
+        const noteObj = {
+          id: "gn-" + Date.now(),
+          text: cleanedText,
+          createdAt: nowIso,
+          displayTime: formatNowTimestamp()
+        };
+        await saveGeneralNoteDoc(noteObj);
+        toggleGeneralNoteDrawer(false);
+        showToast("Saved General Note!");
+      } catch (err) {
+        alert(err.message || "Could not save general note.");
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = "💾 Save Note";
+        }
+      }
+    };
+
+    window.editGeneralNote = async function(noteId) {
+      const existing = generalNotes.find(n => n.id === noteId);
+      if (!existing) return;
+      const updated = prompt("Edit General Note:", existing.text);
+      if (updated === null) return;
+      const trimmed = updated.trim();
+      if (!trimmed) return;
+      existing.text = trimmed;
+      existing.editedTime = formatNowTimestamp();
+      await saveGeneralNoteDoc(existing);
+      showToast("Updated General Note!");
+    };
+
+    window.deleteGeneralNote = async function(noteId) {
+      await removeGeneralNoteDoc(noteId);
+      showToast("Removed General Note.");
+    };
+
+    function renderGeneralNotes() {
+      const listEl = document.getElementById("generalNotesList");
+      const countEl = document.getElementById("generalNotesCount");
+      if (!listEl) return;
+
+      const sorted = [...generalNotes].sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
+      if (countEl) countEl.textContent = sorted.length;
+
+      if (!sorted.length) {
+        listEl.innerHTML = `
+          <div style="padding:14px; text-align:center; font-size:12px; color:var(--m); font-weight:600;">
+            No general notes yet. Click <strong>+</strong> above or type <em>"g notes ..."</em> in the AI Quick Note bar!
+          </div>
+        `;
+        return;
+      }
+
+      listEl.innerHTML = sorted.map(n => `
+        <div class="gn-item">
+          <div class="gn-item-meta">
+            <span>🕒 ${escapeHtml(n.displayTime || "")}${n.editedTime ? ` (edited)` : ""}</span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" class="undo-link" onclick="editGeneralNote('${escapeHtml(n.id)}')">Edit</button>
+              <button type="button" class="undo-link" style="color:var(--due-ink);" onclick="deleteGeneralNote('${escapeHtml(n.id)}')">✕</button>
+            </div>
+          </div>
+          <div style="font-weight:600; white-space:pre-line;">${escapeHtml(n.text)}</div>
+        </div>
+      `).join("");
+    }
+
+    // ========================================================================
+    // AI QUICK-NOTE & REMINDER PARSER (ROUTES GENERAL NOTES VS CUSTOMER NOTES)
     // ========================================================================
     function getStoredGeminiApiKey() {
       if (typeof window.getWiseScoopersGeminiKey === "function") {
@@ -2518,6 +2803,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         }
       } catch (e) {}
       return "";
+    }
+
+    function isGeneralNoteTrigger(rawText) {
+      return /\b(gen(?:e|a)?ral\s*notes?|gen(?:e|a)?ral|g\s*notes?|side\s*notes?|note\s*to\s*self|personal\s*notes?)\b/i.test(rawText);
+    }
+
+    function stripGeneralTriggerPrefix(rawText) {
+      return rawText
+        .replace(/^\s*(?:for\s+|add\s+to\s+|put\s+(?:this\s+)?in\s+)?(?:gen(?:e|a)?ral\s*notes?|gen(?:e|a)?ral|g\s*notes?|side\s*notes?|note\s*to\s*self|personal\s*notes?)\s*[:\-–—,]?\s*/i, "")
+        .replace(/\b(?:in|under|to)\s+(?:gen(?:e|a)?ral\s*notes?|gen(?:e|a)?ral|g\s*notes?|side\s*notes?)\s*$/i, "")
+        .trim();
     }
 
     function rebuildAddonsSummaryFromFlags(addonsObj) {
@@ -2580,6 +2876,38 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const noteText = (inp.value || "").trim();
       if (!noteText) return;
 
+      btn.disabled = true;
+      const origBtn = btn.textContent;
+      btn.textContent = "⏳ Thinking...";
+      fbBox.classList.remove("show");
+
+      // ROUTE 1: GENERAL / SIDE NOTE TRIGGERED ("general", "general notes", "genral notes", "g notes", "side note")
+      if (isGeneralNoteTrigger(noteText)) {
+        try {
+          const coreBody = stripGeneralTriggerPrefix(noteText) || noteText;
+          const cleanedText = await cleanUpGeneralNoteWithAi(coreBody);
+          const noteObj = {
+            id: "gn-" + Date.now(),
+            text: cleanedText,
+            createdAt: new Date().toISOString(),
+            displayTime: formatNowTimestamp()
+          };
+          await saveGeneralNoteDoc(noteObj);
+          inp.value = "";
+          fbBox.className = "ai-qb-feedback show";
+          fbText.textContent = `📌 Saved to General Notes (${noteObj.displayTime}): "${cleanedText}"`;
+          showToast("Saved to General Notes!");
+        } catch (err) {
+          fbBox.className = "ai-qb-feedback err show";
+          fbText.textContent = err.message || "Could not save general note.";
+        } finally {
+          btn.disabled = false;
+          btn.textContent = origBtn;
+        }
+        return;
+      }
+
+      // ROUTE 2: CUSTOMER / LEAD IMPORTANT REMINDER
       const allPeople = [
         ...clients.map(c => ({
           id: c.id,
@@ -2598,15 +2926,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       ];
 
       if (!allPeople.length) {
+        btn.disabled = false;
+        btn.textContent = origBtn;
         fbBox.className = "ai-qb-feedback err show";
-        fbText.textContent = "No clients or leads in your CRM yet to attach this note to.";
+        fbText.textContent = "No clients or leads in your CRM yet. Start with 'g notes' to save a General Note instead!";
         return;
       }
-
-      btn.disabled = true;
-      const origBtn = btn.textContent;
-      btn.textContent = "⏳ Thinking...";
-      fbBox.classList.remove("show");
 
       const apiKey = getStoredGeminiApiKey();
       let parsedAction = null;
@@ -2636,6 +2961,8 @@ Return ONLY valid JSON with these exact keys:
         ];
 
         for (const modelName of candidateModels) {
+          const controller = new AbortController();
+          const timerId = setTimeout(() => controller.abort(), 8000);
           try {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(apiKey)}`;
             const res = await fetch(url, {
@@ -2644,15 +2971,19 @@ Return ONLY valid JSON with these exact keys:
               body: JSON.stringify({
                 contents: [{ parts: [{ text: aiPrompt }] }],
                 generationConfig: { responseMimeType: "application/json" }
-              })
+              }),
+              signal: controller.signal
             });
+            clearTimeout(timerId);
             if (!res.ok) continue;
             const data = await res.json();
             const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
             const cleanJson = rawText.replace(/^```json\s*/i, "").replace(/```\s*$/, "").trim();
             parsedAction = JSON.parse(cleanJson);
             break;
-          } catch (e) {}
+          } catch (e) {
+            clearTimeout(timerId);
+          }
         }
       }
 
@@ -2673,7 +3004,7 @@ Return ONLY valid JSON with these exact keys:
 
         if (!targetClient && !targetLead) {
           fbBox.className = "ai-qb-feedback err show";
-          fbText.textContent = `Could not tell which customer you meant in "${noteText}". Include their first name or street address.`;
+          fbText.textContent = `Could not match a customer for "${noteText}". Include their name/address, or type "g notes ..." for General Notes.`;
           return;
         }
 
@@ -2746,7 +3077,7 @@ Return ONLY valid JSON with these exact keys:
     };
 
     // ========================================================================
-    // WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (6PM ROLLOVER + 7-DAY)
+    // WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (FIXED SINGLE COORD + 6PM + 7-DAY)
     // ========================================================================
     let cachedRegionalForecast = null;
     let selectedWeatherDayIndex = 0;
@@ -2835,13 +3166,15 @@ Return ONLY valid JSON with these exact keys:
       if (srEl) srEl.textContent = `🌅 ${dayData.sunrise}`;
       if (ssEl) ssEl.textContent = `🌇 ${dayData.sunset}`;
 
-      if (slotsEl && dayData.slots.length > 0) {
-        slotsEl.innerHTML = dayData.slots.map(s => `
-          <div class="weather-slot ${s.isRain ? "is-rain" : ""}">
-            <span class="weather-slot-time">${s.hourLabel}</span>
-            <span class="weather-slot-desc">${s.icon} ${s.temp}°${s.isRain ? ` (${s.prob}%)` : ""}</span>
-          </div>
-        `).join("");
+      if (slotsEl) {
+        slotsEl.innerHTML = dayData.slots.length > 0
+          ? dayData.slots.map(s => `
+              <div class="weather-slot ${s.isRain ? "is-rain" : ""}">
+                <span class="weather-slot-time">${s.hourLabel}</span>
+                <span class="weather-slot-desc">${s.icon} ${s.temp}°${s.isRain ? ` (${s.prob}%)` : ""}</span>
+              </div>
+            `).join("")
+          : `<div class="weather-slot"><span class="weather-slot-desc">No daytime slots available</span></div>`;
       }
 
       if (weekEl) {
@@ -2862,36 +3195,56 @@ Return ONLY valid JSON with these exact keys:
 
     window.loadRegionalWeather = async function(manualRefresh = false) {
       const sumEl = document.getElementById("weatherSummaryLabel");
-      if (manualRefresh && sumEl) {
-        sumEl.textContent = "Refreshing forecast...";
+      const slotsEl = document.getElementById("weatherHourlySlots");
+      const rainEl = document.getElementById("weatherRainSummaryLine");
+
+      if (sumEl) {
+        sumEl.textContent = manualRefresh ? "Refreshing forecast..." : "Loading forecast...";
       }
 
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
       try {
-        const url = "https://api.open-meteo.com/v1/forecast?latitude=33.2343,33.3587,33.5582&longitude=-97.5861,-97.6939,-97.8495&current=temperature_2m,weather_code&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7";
-        const res = await fetch(url);
-        if (!res.ok) throw new Error("Weather service unavailable");
-        const raw = await res.json();
-        const points = Array.isArray(raw) ? raw : [raw];
+        const url =
+          "https://api.open-meteo.com/v1/forecast" +
+          "?latitude=33.33&longitude=-97.72" +
+          "&current=temperature_2m,weather_code" +
+          "&hourly=temperature_2m,precipitation_probability,weather_code" +
+          "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max" +
+          "&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7";
 
-        const curTemps = points.map(p => Number(p.current?.temperature_2m)).filter(n => !isNaN(n));
-        const avgCurTemp = curTemps.length ? Math.round(curTemps.reduce((a, b) => a + b, 0) / curTemps.length) : "--";
-        const curCode = Number(points[0]?.current?.weather_code || 0);
+        const res = await fetch(url, { signal: controller.signal });
+        if (!res.ok) {
+          throw new Error(`Open-Meteo HTTP ${res.status}`);
+        }
 
-        const dailyDates = points[0]?.daily?.time || [];
-        const hourlyTimes = points[0]?.hourly?.time || [];
+        const data = await res.json();
+        if (!data || !data.daily || !Array.isArray(data.daily.time)) {
+          throw new Error("Unexpected weather response structure");
+        }
+
+        const currentTemp = data.current && typeof data.current.temperature_2m === "number"
+          ? Math.round(data.current.temperature_2m)
+          : "--";
+        const currentCode = data.current ? Number(data.current.weather_code || 0) : 0;
+
+        const dailyDates = data.daily.time || [];
+        const hourlyTimes = (data.hourly && data.hourly.time) || [];
 
         const days = dailyDates.map((dateStr, dIdx) => {
-          const highs = points.map(p => Number(p.daily?.temperature_2m_max?.[dIdx])).filter(n => !isNaN(n));
-          const lows = points.map(p => Number(p.daily?.temperature_2m_min?.[dIdx])).filter(n => !isNaN(n));
-          const rainProbs = points.map(p => Number(p.daily?.precipitation_probability_max?.[dIdx] || 0));
-          const codes = points.map(p => Number(p.daily?.weather_code?.[dIdx] || 0));
-
-          const high = highs.length ? Math.round(Math.max(...highs)) : "--";
-          const low = lows.length ? Math.round(Math.min(...lows)) : "--";
-          const maxRainProb = rainProbs.length ? Math.max(...rainProbs) : 0;
-          const weatherCode = codes.length ? Math.max(...codes) : 0;
-          const sunrise = formatClockTime(points[0]?.daily?.sunrise?.[dIdx] || "");
-          const sunset = formatClockTime(points[0]?.daily?.sunset?.[dIdx] || "");
+          const rawHigh = data.daily.temperature_2m_max ? Number(data.daily.temperature_2m_max[dIdx]) : NaN;
+          const rawLow = data.daily.temperature_2m_min ? Number(data.daily.temperature_2m_min[dIdx]) : NaN;
+          const high = !isNaN(rawHigh) ? Math.round(rawHigh) : "--";
+          const low = !isNaN(rawLow) ? Math.round(rawLow) : "--";
+          const maxRainProb = data.daily.precipitation_probability_max
+            ? Number(data.daily.precipitation_probability_max[dIdx] || 0)
+            : 0;
+          const weatherCode = data.daily.weather_code
+            ? Number(data.daily.weather_code[dIdx] || 0)
+            : 0;
+          const sunrise = formatClockTime(data.daily.sunrise ? data.daily.sunrise[dIdx] : "");
+          const sunset = formatClockTime(data.daily.sunset ? data.daily.sunset[dIdx] : "");
 
           const dtObj = new Date(dateStr + "T12:00:00");
           const shortLabel = dtObj.toLocaleDateString("en-US", { weekday: "short", month: "numeric", day: "numeric" });
@@ -2900,15 +3253,11 @@ Return ONLY valid JSON with these exact keys:
           const dayHourly = [];
           hourlyTimes.forEach((t, hIdx) => {
             if (!t.startsWith(dateStr)) return;
-            const tempsAtHour = points.map(p => Number(p.hourly?.temperature_2m?.[hIdx])).filter(n => !isNaN(n));
-            const probsAtHour = points.map(p => Number(p.hourly?.precipitation_probability?.[hIdx] || 0));
-            const codesAtHour = points.map(p => Number(p.hourly?.weather_code?.[hIdx] || 0));
-
-            const avgTemp = tempsAtHour.length ? Math.round(tempsAtHour.reduce((a, b) => a + b, 0) / tempsAtHour.length) : "--";
-            const maxProb = probsAtHour.length ? Math.max(...probsAtHour) : 0;
-            const worstCode = codesAtHour.length ? Math.max(...codesAtHour) : 0;
-            const info = weatherCodeToTextAndIcon(worstCode);
-            const isRainHour = info.isRain || maxProb >= 35;
+            const rawT = data.hourly.temperature_2m ? Number(data.hourly.temperature_2m[hIdx]) : NaN;
+            const prob = data.hourly.precipitation_probability ? Number(data.hourly.precipitation_probability[hIdx] || 0) : 0;
+            const code = data.hourly.weather_code ? Number(data.hourly.weather_code[hIdx] || 0) : 0;
+            const info = weatherCodeToTextAndIcon(code);
+            const isRainHour = info.isRain || prob >= 35;
 
             const hDt = new Date(t);
             const hourNum = hDt.getHours();
@@ -2917,8 +3266,8 @@ Return ONLY valid JSON with these exact keys:
             dayHourly.push({
               hour: hourNum,
               hourLabel,
-              temp: avgTemp,
-              prob: maxProb,
+              temp: !isNaN(rawT) ? Math.round(rawT) : "--",
+              prob,
               icon: isRainHour ? "🌧️" : info.icon,
               isRain: isRainHour
             });
@@ -2947,7 +3296,7 @@ Return ONLY valid JSON with these exact keys:
 
         cachedRegionalForecast = {
           days,
-          currentTemp: avgCurTemp,
+          currentTemp,
           currentCode,
           isAfterSixPm
         };
@@ -2955,9 +3304,20 @@ Return ONLY valid JSON with these exact keys:
         selectedWeatherDayIndex = isAfterSixPm && days.length > 1 ? 1 : 0;
         renderRegionalWeatherDay();
 
-        if (manualRefresh) showToast("Updated Wise & S. Montague 7-day forecast!");
+        if (manualRefresh) {
+          showToast("Updated Wise & S. Montague 7-day forecast!");
+        }
       } catch (err) {
-        if (sumEl) sumEl.textContent = "Forecast unavailable";
+        const reason = err && err.name === "AbortError"
+          ? "Forecast timed out"
+          : (err && err.message ? err.message : "Forecast error");
+        if (sumEl) sumEl.textContent = "Forecast offline";
+        if (rainEl) rainEl.textContent = `${reason} — tap ↻ to retry`;
+        if (slotsEl) {
+          slotsEl.innerHTML = `<div class="weather-slot"><span class="weather-slot-desc">⚠️ ${escapeHtml(reason)} — click ↻ to retry</span></div>`;
+        }
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
 
@@ -4054,6 +4414,7 @@ Return ONLY valid JSON with these exact keys:
     window.handleLogout = async function() {
       if (unsubscribeClients) unsubscribeClients();
       if (unsubscribeLeads) unsubscribeLeads();
+      if (unsubscribeGenNotes) unsubscribeGenNotes();
       if (unsubApps) unsubApps();
       if (unsubFb) unsubFb();
       if (unsubOmw) unsubOmw();
@@ -4088,6 +4449,14 @@ Return ONLY valid JSON with these exact keys:
           renderAll();
         }, (error) => {
           console.error('Leads listener error:', error);
+        });
+
+        if (unsubscribeGenNotes) unsubscribeGenNotes();
+        unsubscribeGenNotes = onSnapshot(GEN_NOTES_COL, (snapshot) => {
+          generalNotes = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderGeneralNotes();
+        }, (error) => {
+          console.error('General notes listener error:', error);
         });
 
         if (unsubApps) unsubApps();
@@ -4531,7 +4900,8 @@ Return ONLY valid JSON with these exact keys:
         exportedAt: new Date().toISOString(),
         clientCount: clients.length,
         clients: clients,
-        leads: leads
+        leads: leads,
+        generalNotes: generalNotes
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -4557,6 +4927,12 @@ Return ONLY valid JSON with these exact keys:
           for (const item of restoredList) {
             if (!item.id) item.id = 'ws-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
             await saveClientDoc(item);
+          }
+          if (Array.isArray(parsed.generalNotes)) {
+            for (const gn of parsed.generalNotes) {
+              if (!gn.id) gn.id = 'gn-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+              await saveGeneralNoteDoc(gn);
+            }
           }
           showToast(`Imported ${restoredList.length} client profiles to Cloud!`);
         } catch (err) {
@@ -4658,6 +5034,7 @@ Return ONLY valid JSON with these exact keys:
       renderRouteCards();
       renderClientsTable();
       renderReferralsTable();
+      renderGeneralNotes();
       if (document.getElementById('tab-map').classList.contains('active')) {
         renderCustomerMap(false);
       }
