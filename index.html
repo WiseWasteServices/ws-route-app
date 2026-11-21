@@ -109,7 +109,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     --shadow-md: 0 6px 18px rgba(30, 44, 34, 0.12);
   }
 
-  * {
+- {
     box-sizing: border-box;
   }
 
@@ -2260,8 +2260,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 Graphic saved &amp; synced to Cloud!
               </div>
               <div style="font-size:0.78rem; color:var(--ws-muted); line-height:1.35;">
-                1. Click <strong>"Copy Post"</strong> above and paste text into Facebook.<br>
-                2. Click <strong>"📋 Copy Image for FB"</strong> below and press <strong>Ctrl+V</strong> in Facebook!
+1. Click <strong>"Copy Post"</strong> above and paste text into Facebook.<br>
+2. Click <strong>"📋 Copy Image for FB"</strong> below and press <strong>Ctrl+V</strong> in Facebook!
               </div>
               <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.15rem;">
                 <button type="button" class="btn btn-sm btn-green" id="btnCopyStashedImageBig">
@@ -3178,9 +3178,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       clients.forEach(c => {
         const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
         hist.forEach((h, idx) => {
-          const dedupeId = h.invoiceId
-            ? `inv:${h.invoiceId}`
-            : `tx:${c.id}:${h.date}:${Number(h.amount || 0).toFixed(2)}:${h.summary || ""}`;
+          const dedupeId = h.paymentId
+            ? `pay:${h.paymentId}`
+            : h.invoiceId
+              ? `inv:${h.invoiceId}`
+              : `tx:${c.id}:${h.date}:${Number(h.amount || 0).toFixed(2)}:${h.summary || ""}`;
           if (seenKeys.has(dedupeId)) return;
           seenKeys.add(dedupeId);
 
@@ -3232,8 +3234,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
       return ledger.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
     }
-
-    function computeAllDiscountsList() {
+function computeAllDiscountsList() {
       const today = todayStr(0);
       const list = [];
 
@@ -3934,7 +3935,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       await deleteDoc(doc(db, "wise_scoopers_discounts", id));
       showToast("Deleted discount record.");
     };
-// ========================================================================
+
+    // ========================================================================
     // GENERAL / SIDE NOTES (TIMESTAMPED + CLOUD SYNCED + AI CLEANUP)
     // ========================================================================
     function formatNowTimestamp() {
@@ -4448,7 +4450,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     // ========================================================================
-    // SQUARE BACKEND BRIDGE & AUTOMATIC BILLING STATUS SYNC
+    // SQUARE BACKEND BRIDGE & FULL PAYMENT / REFUND / INVOICE SYNC
     // ========================================================================
     async function callSquareApi(payloadObj) {
       const res = await fetch(SQUARE_ENDPOINT, {
@@ -4472,7 +4474,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     window.syncSquareBillingStatuses = async function(silent = false) {
       const btn = document.getElementById("btnSyncSquareBilling");
-      if (btn) { btn.disabled = true; btn.textContent = "⏳ Checking Square..."; }
+      if (btn) { btn.disabled = true; btn.textContent = "⏳ Syncing Square..."; }
       try {
         const invoiceIds = [], customerIds = [];
         clients.forEach(c => {
@@ -4481,49 +4483,144 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             c.squareHistory.forEach(h => { if (h.invoiceId && !invoiceIds.includes(h.invoiceId)) invoiceIds.push(h.invoiceId); });
           }
         });
-        if (!invoiceIds.length && !customerIds.length) {
-          if (!silent) showToast("No Square-linked clients or invoices to refresh yet.");
-          return;
-        }
-        const res = await callSquareApi({ action: "square_sync_billing", invoiceIds, customerIds });
-        const invUpdates = res.invoiceUpdates || {}, custUpdates = res.customerUpdates || {};
-        let newlyPaidCount = 0;
 
+        const res = await callSquareApi({ action: "square_sync_billing", invoiceIds, customerIds });
+        const allInvoices = Array.isArray(res.allInvoices) ? res.allInvoices : [];
+        const paymentsLedger = Array.isArray(res.paymentsLedger) ? res.paymentsLedger : [];
+        const custUpdates = res.customerUpdates || {};
+
+        let newlySyncedCount = 0;
+        const dirtyClientIds = new Set();
+
+        function findOrCreateClientForSquare(sqCustId, email, phone, name) {
+          let c = sqCustId ? clients.find(x => x.squareCustomerId === sqCustId) : null;
+          if (!c && phone) {
+            const p10 = normalizePhone10(phone);
+            if (p10.length === 10) c = clients.find(x => normalizePhone10(x.phone) === p10);
+          }
+          if (!c && email) {
+            const em = email.trim().toLowerCase();
+            c = clients.find(x => (x.email || "").trim().toLowerCase() === em);
+          }
+          if (!c) {
+            const newId = sqCustId ? ("ws-sq-" + sqCustId) : ("ws-sq-tx-" + Date.now() + "-" + Math.floor(Math.random() * 1000));
+            const today = todayStr(0);
+            c = {
+              id: newId, squareCustomerId: sqCustId || "", hasCardOnFile: false,
+              name: name || "Square Customer", phone: formatDisplayPhone(phone), email: email || "",
+              city: "", address: "Square Payment Customer", status: "Active",
+              dogs: 1, cats: 0, treatLoc: "Front Door", dogNames: "",
+              gateNotes: "Auto-linked from Square payment history", importantNote: "",
+              startDate: today, freq: "Weekly", serviceType: "Dog Waste Removal",
+              nextScoop: today, nextCharge: addOneAnniversaryMonth(today, parseISODate(today).getDate()),
+              lastPaid: "", netPrice: 78.00, recurringDiscount: 0, payMethod: "Invoice Link",
+              addons: {}, addonsSummary: "", squareHistory: []
+            };
+            clients.push(c);
+          }
+          if (sqCustId && !c.squareCustomerId) { c.squareCustomerId = sqCustId; dirtyClientIds.add(c.id); }
+          if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
+          return c;
+        }
+
+        // 1. Update Card-on-File statuses
         for (const c of clients) {
-          let changed = false;
           const custUpd = c.squareCustomerId ? custUpdates[c.squareCustomerId] : null;
           if (custUpd) {
-            if (Boolean(c.hasCardOnFile) !== Boolean(custUpd.hasCardOnFile)) { c.hasCardOnFile = !!custUpd.hasCardOnFile; changed = true; }
-            if ((c.squareCardId || "") !== (custUpd.cardId || "")) { c.squareCardId = custUpd.cardId || ""; changed = true; }
-            if ((c.squareCardLabel || "") !== (custUpd.cardLabel || "")) { c.squareCardLabel = custUpd.cardLabel || ""; changed = true; }
-            if (custUpd.hasCardOnFile && c.payMethod === "Invoice Link") { c.payMethod = "Card on File"; changed = true; }
-          }
-          if (Array.isArray(c.squareHistory)) {
-            for (const h of c.squareHistory) {
-              const upd = h.invoiceId ? invUpdates[h.invoiceId] : null;
-              if (upd && h.status !== upd.status) {
-                const wasNotPaid = h.status !== "PAID";
-                h.status = upd.status;
-                if (upd.publicUrl) h.url = upd.publicUrl;
-                changed = true;
-                if (wasNotPaid && upd.status === "PAID") {
-                  newlyPaidCount++;
-                  const today = todayStr(0);
-                  c.lastPaid = today;
-                  if (c.freq === "One-Time") c.status = "Paused";
-                  else {
-                    const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate();
-                    c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay);
-                  }
-                }
-              }
+            if (Boolean(c.hasCardOnFile) !== Boolean(custUpd.hasCardOnFile) || (c.squareCardLabel || "") !== (custUpd.cardLabel || "")) {
+              c.hasCardOnFile = !!custUpd.hasCardOnFile;
+              c.squareCardId = custUpd.cardId || "";
+              c.squareCardLabel = custUpd.cardLabel || "";
+              if (custUpd.hasCardOnFile && c.payMethod === "Invoice Link") c.payMethod = "Card on File";
+              dirtyClientIds.add(c.id);
             }
           }
-          if (changed) await saveClientDoc(c);
         }
-        if (!silent) showToast(newlyPaidCount > 0 ? `Square synced! ${newlyPaidCount} invoice(s) confirmed PAID.` : `Square billing & Card-on-File statuses up to date!`);
+
+        // 2. Sync all Square Payments & Refunds (CRM + POS + Dashboard + Autopay)
+        for (const pay of paymentsLedger) {
+          const c = findOrCreateClientForSquare(pay.squareCustomerId, pay.customerEmail, "", pay.customerName);
+          let existing = c.squareHistory.find(h => (pay.paymentId && h.paymentId === pay.paymentId) || (pay.invoiceId && h.invoiceId === pay.invoiceId));
+
+          if (existing) {
+            if (existing.status !== pay.status || Number(existing.refundAmount || 0) !== Number(pay.refundAmount || 0) || !existing.paymentId) {
+              existing.paymentId = pay.paymentId;
+              existing.status = pay.status;
+              existing.refundAmount = pay.refundAmount || 0;
+              if (pay.receiptUrl) existing.url = pay.receiptUrl;
+              dirtyClientIds.add(c.id);
+              newlySyncedCount++;
+            }
+          } else {
+            c.squareHistory.push({
+              date: pay.date,
+              amount: pay.amount,
+              refundAmount: pay.refundAmount || 0,
+              paymentId: pay.paymentId,
+              invoiceId: pay.invoiceId || "",
+              invoiceNumber: pay.invoiceNumber || "",
+              method: pay.method || "Square Payment",
+              summary: pay.summary || "Square Payment",
+              status: pay.status,
+              url: pay.receiptUrl || ""
+            });
+            if (pay.status === "PAID" && (!c.lastPaid || pay.date > c.lastPaid)) {
+              c.lastPaid = pay.date;
+            }
+            dirtyClientIds.add(c.id);
+            newlySyncedCount++;
+          }
+        }
+
+        // 3. Sync all Square Invoices (including unpaid/sent invoices created in Square Dashboard)
+        for (const inv of allInvoices) {
+          const c = findOrCreateClientForSquare(inv.squareCustomerId, inv.customerEmail, inv.customerPhone, inv.customerName);
+          let existing = c.squareHistory.find(h => h.invoiceId && h.invoiceId === inv.invoiceId);
+          if (existing) {
+            if (existing.status !== inv.status) {
+              const wasNotPaid = existing.status !== "PAID";
+              existing.status = inv.status;
+              if (inv.publicUrl) existing.url = inv.publicUrl;
+              if (wasNotPaid && inv.status === "PAID") {
+                c.lastPaid = todayStr(0);
+                if (c.freq !== "One-Time") {
+                  const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || todayStr(0)).getDate();
+                  c.nextCharge = addOneAnniversaryMonth(c.nextCharge || todayStr(0), anchorDay);
+                }
+              }
+              dirtyClientIds.add(c.id);
+              newlySyncedCount++;
+            }
+          } else if (inv.status !== "CANCELED") {
+            c.squareHistory.push({
+              date: inv.date,
+              amount: inv.amount,
+              invoiceId: inv.invoiceId,
+              invoiceNumber: inv.invoiceNumber || "",
+              method: "Square Invoice",
+              summary: inv.title || "Square Invoice",
+              status: inv.status,
+              url: inv.publicUrl || ""
+            });
+            dirtyClientIds.add(c.id);
+            newlySyncedCount++;
+          }
+        }
+
+        for (const cid of dirtyClientIds) {
+          const target = clients.find(x => x.id === cid);
+          if (target) await saveClientDoc(target);
+        }
+
+        if (!silent) {
+          showToast(
+            newlySyncedCount > 0
+              ? `Square synced! Updated ${newlySyncedCount} payment/invoice record(s).`
+              : `Square payments, refunds & invoices are 100% up to date!`
+          );
+        }
       } catch (err) {
-        if (!silent) alert(err.message || "Could not refresh Square payment statuses.");
+        if (!silent) alert(err.message || "Could not sync Square payments.");
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = "🔄 Refresh Square Payments"; }
       }
@@ -4738,7 +4835,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (c.freq === "One-Time") c.status = "Paused";
         else { const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate(); c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay); }
         if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
-        c.squareHistory.push({ date: today, amount: total, method: `Card on File (${res.cardLabel})`, summary: selected.map(i => i.name).join(", "), status: "PAID", url: res.receiptUrl || "" });
+        c.squareHistory.push({ date: today, amount: total, paymentId: res.paymentId || "", method: `Card on File (${res.cardLabel})`, summary: selected.map(i => i.name).join(", "), status: "PAID", url: res.receiptUrl || "" });
         await saveClientDoc(c);
         const resBox = document.getElementById("sqResultBox");
         resBox.classList.remove("hidden");
@@ -4937,7 +5034,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         isAuthenticated = false; gate.classList.remove('hidden'); syncEl.textContent = '🔒 Locked';
       }
     });
-// CLOUD SAVE / DELETE HELPERS
+
+    // CLOUD SAVE / DELETE HELPERS
     async function saveClientDoc(record) {
       const cleanRecord = JSON.parse(JSON.stringify(record));
       await setDoc(doc(db, "wise_scoopers_clients", cleanRecord.id), cleanRecord);
@@ -5810,7 +5908,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Saved ${record.name} to Cloud!`);
     };
   </script>
-<!-- ========================================================================
+  <!-- ========================================================================
        SCRIPT 2: WISE SCOOPERS FACEBOOK GROUP POSTING MANAGER & AD GENERATOR
        ======================================================================== -->
   <script>
