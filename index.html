@@ -354,97 +354,155 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   /* MAIN LAYOUT */
   .container { max-width: 1280px; margin: 0 auto; padding: 18px 18px 50px; }
 
-  /* WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET */
+  /* WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (SLEEK + 6PM ROLLOVER + 7-DAY) */
   .weather-widget {
-    background: linear-gradient(135deg, #263A2D 0%, #375742 100%);
+    background: linear-gradient(135deg, #263A2D 0%, #34523E 100%);
     color: var(--w);
     border: 1.5px solid var(--gm);
-    border-radius: 15px;
-    padding: 13px 16px;
-    margin-bottom: 14px;
-    box-shadow: 0 6px 18px rgba(24, 36, 28, 0.14);
+    border-radius: 12px;
+    padding: 8px 13px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(24, 36, 28, 0.12);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 7px;
   }
   .weather-top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
   .weather-main-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
   }
   .weather-temp-pill {
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(229, 238, 229, 0.35);
-    border-radius: 11px;
-    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.13);
+    border: 1px solid rgba(229, 238, 229, 0.3);
+    border-radius: 9px;
+    padding: 4px 10px;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
   }
   .weather-big-temp {
-    font-size: 24px;
+    font-size: 19px;
     font-weight: 900;
     line-height: 1;
   }
+  .weather-day-tag {
+    display: inline-block;
+    background: var(--gt);
+    color: var(--g);
+    font-size: 9.5px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
   .weather-range-box {
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 700;
     color: var(--gt);
-    line-height: 1.3;
+    line-height: 1.25;
   }
   .weather-sun-row {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
-    font-size: 11.5px;
+    font-size: 11px;
     font-weight: 800;
   }
   .weather-chip {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(229, 238, 229, 0.28);
-    border-radius: 8px;
-    padding: 5px 9px;
+    background: rgba(255, 255, 255, 0.11);
+    border: 1px solid rgba(229, 238, 229, 0.25);
+    border-radius: 7px;
+    padding: 3px 8px;
     color: #ffffff;
+    white-space: nowrap;
   }
   .weather-timeline-bar {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
-    gap: 6px;
-    background: rgba(0, 0, 0, 0.16);
-    border-radius: 10px;
-    padding: 7px 9px;
+    grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 5px 7px;
   }
   .weather-slot {
-    background: rgba(255, 255, 255, 0.09);
-    border-radius: 7px;
-    padding: 5px 7px;
-    font-size: 11px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 10.5px;
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
   }
   .weather-slot.is-rain {
-    background: rgba(230, 168, 58, 0.25);
-    border: 1px solid rgba(230, 168, 58, 0.6);
+    background: rgba(230, 168, 58, 0.26);
+    border: 1px solid rgba(230, 168, 58, 0.65);
   }
   .weather-slot-time {
     font-weight: 900;
     color: var(--gt);
-    font-size: 10.5px;
+    font-size: 10px;
   }
   .weather-slot-desc {
     font-weight: 700;
     color: #ffffff;
+    white-space: nowrap;
   }
+  /* SLEEK 7-DAY EXPANDABLE STRIP */
+  .weather-week-drawer {
+    display: none;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(229, 238, 229, 0.22);
+  }
+  .weather-week-drawer.open {
+    display: grid;
+  }
+  @media (max-width: 780px) {
+    .weather-week-drawer.open {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  @media (max-width: 460px) {
+    .weather-week-drawer.open {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  .weather-day-card {
+    background: rgba(255, 255, 255, 0.09);
+    border: 1px solid rgba(229, 238, 229, 0.22);
+    border-radius: 8px;
+    padding: 5px 7px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .weather-day-card:hover,
+  .weather-day-card.active-day {
+    background: rgba(229, 238, 229, 0.24);
+    border-color: var(--gt);
+  }
+  .wd-name { font-size: 10.5px; font-weight: 900; color: var(--gt); }
+  .wd-temps { font-size: 11px; font-weight: 800; }
+  .wd-meta { font-size: 9.5px; color: #E5EEE5; opacity: 0.9; }
 
   /* KPI SUMMARY CARDS */
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
@@ -1201,31 +1259,38 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
        ======================================================================== -->
   <main class="container" id="crmWorkspace">
 
-    <!-- WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET -->
+    <!-- WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (SLEEK + 6PM AUTO-ROLLOVER + 7-DAY) -->
     <section class="weather-widget" id="wiseWeatherWidget" aria-label="Wise County and Southern Montague Weather Forecast">
       <div class="weather-top-row">
         <div class="weather-main-info">
           <div class="weather-temp-pill">
-            <span id="weatherMainIcon" style="font-size:26px;">🌤️</span>
+            <span id="weatherMainIcon" style="font-size:20px;">🌤️</span>
             <div>
-              <div class="weather-big-temp" id="weatherCurrentTemp">--°F</div>
-              <div style="font-size:10.5px; font-weight:700; color:var(--gt);" id="weatherSummaryLabel">Loading Wise &amp; S. Montague forecast...</div>
+              <div style="display:flex; align-items:center; gap:4px;">
+                <span class="weather-big-temp" id="weatherCurrentTemp">--°F</span>
+                <span class="weather-day-tag" id="weatherDayModeBadge">Today</span>
+              </div>
+              <div style="font-size:10px; font-weight:700; color:var(--gt);" id="weatherSummaryLabel">Loading forecast...</div>
             </div>
           </div>
           <div class="weather-range-box">
-            <div>📍 <strong>Wise County &amp; Southern Montague County, TX</strong></div>
-            <div id="weatherHighLowLine">High: --°F • Low: --°F • Rain Windows: Checking...</div>
+            <div>📍 <strong>Wise &amp; S. Montague</strong> • <span id="weatherHighLowLine">High: --° • Low: --°</span></div>
+            <div id="weatherRainSummaryLine" style="font-size:10.5px; opacity:0.95;">Checking rain windows...</div>
           </div>
         </div>
         <div class="weather-sun-row">
-          <span class="weather-chip" id="weatherSunriseChip">🌅 Sunrise: --:-- AM</span>
-          <span class="weather-chip" id="weatherSunsetChip">🌇 Sunset: --:-- PM</span>
-          <button type="button" class="btn btn-sage btn-sm" onclick="loadRegionalWeather(true)" title="Refresh regional forecast">↻</button>
+          <span class="weather-chip" id="weatherSunriseChip">🌅 --:--</span>
+          <span class="weather-chip" id="weatherSunsetChip">🌇 --:--</span>
+          <button type="button" class="btn btn-sage btn-sm" style="padding:4px 8px; font-size:11px;" id="btnToggleWeekWeather" onclick="toggleWeatherWeekDrawer()">📅 7-Day ▾</button>
+          <button type="button" class="btn btn-sage btn-sm" style="padding:4px 7px; font-size:11px;" onclick="loadRegionalWeather(true)" title="Refresh forecast">↻</button>
         </div>
       </div>
+
       <div class="weather-timeline-bar" id="weatherHourlySlots">
         <div class="weather-slot"><span class="weather-slot-time">Loading</span><span class="weather-slot-desc">Fetching hourly timeline...</span></div>
       </div>
+
+      <div class="weather-week-drawer" id="weatherWeekDrawer"></div>
     </section>
 
     <!-- KPI DASHBOARD -->
@@ -2681,18 +2746,21 @@ Return ONLY valid JSON with these exact keys:
     };
 
     // ========================================================================
-    // WISE COUNTY & SOUTHERN MONTAGUE COUNTY WEATHER WIDGET (OPEN-METEO)
+    // WISE COUNTY & SOUTHERN MONTAGUE WEATHER WIDGET (6PM ROLLOVER + 7-DAY)
     // ========================================================================
+    let cachedRegionalForecast = null;
+    let selectedWeatherDayIndex = 0;
+
     function weatherCodeToTextAndIcon(code) {
       const c = Number(code);
-      if (c === 0) return { icon: "☀️", label: "Sunny / Clear", isRain: false };
+      if (c === 0) return { icon: "☀️", label: "Sunny", isRain: false };
       if (c === 1) return { icon: "🌤️", label: "Mostly Sunny", isRain: false };
       if (c === 2) return { icon: "⛅", label: "Partly Cloudy", isRain: false };
       if (c === 3) return { icon: "☁️", label: "Overcast", isRain: false };
       if (c === 45 || c === 48) return { icon: "🌫️", label: "Foggy", isRain: false };
-      if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return { icon: "🌧️", label: "Rain / Showers", isRain: true };
-      if (c >= 71 && c <= 77) return { icon: "❄️", label: "Wintry Mix / Snow", isRain: true };
-      if (c >= 95) return { icon: "⛈️", label: "Thunderstorms", isRain: true };
+      if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return { icon: "🌧️", label: "Rain", isRain: true };
+      if (c >= 71 && c <= 77) return { icon: "❄️", label: "Wintry", isRain: true };
+      if (c >= 95) return { icon: "⛈️", label: "Storms", isRain: true };
       return { icon: "🌤️", label: "Fair", isRain: false };
     }
 
@@ -2703,21 +2771,103 @@ Return ONLY valid JSON with these exact keys:
       return d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
     }
 
-    window.loadRegionalWeather = async function(manualRefresh = false) {
+    window.toggleWeatherWeekDrawer = function() {
+      const drawer = document.getElementById("weatherWeekDrawer");
+      const btn = document.getElementById("btnToggleWeekWeather");
+      if (!drawer) return;
+      const isOpen = drawer.classList.toggle("open");
+      if (btn) btn.textContent = isOpen ? "📅 7-Day ▴" : "📅 7-Day ▾";
+    };
+
+    window.selectWeatherDay = function(dayIdx) {
+      selectedWeatherDayIndex = Number(dayIdx) || 0;
+      renderRegionalWeatherDay();
+    };
+
+    function renderRegionalWeatherDay() {
+      if (!cachedRegionalForecast) return;
+      const { days, currentTemp, currentCode, isAfterSixPm } = cachedRegionalForecast;
+      const dayData = days[selectedWeatherDayIndex] || days[0];
+      if (!dayData) return;
+
       const tempEl = document.getElementById("weatherCurrentTemp");
       const iconEl = document.getElementById("weatherMainIcon");
+      const badgeEl = document.getElementById("weatherDayModeBadge");
       const sumEl = document.getElementById("weatherSummaryLabel");
       const hlEl = document.getElementById("weatherHighLowLine");
+      const rainEl = document.getElementById("weatherRainSummaryLine");
       const srEl = document.getElementById("weatherSunriseChip");
       const ssEl = document.getElementById("weatherSunsetChip");
       const slotsEl = document.getElementById("weatherHourlySlots");
+      const weekEl = document.getElementById("weatherWeekDrawer");
 
+      const isShowingLiveToday = selectedWeatherDayIndex === 0 && !isAfterSixPm;
+      const heroInfo = isShowingLiveToday
+        ? weatherCodeToTextAndIcon(currentCode)
+        : weatherCodeToTextAndIcon(dayData.weatherCode);
+
+      if (tempEl) {
+        tempEl.textContent = isShowingLiveToday ? `${currentTemp}°F` : `${dayData.high}°/${dayData.low}°`;
+      }
+      if (iconEl) iconEl.textContent = heroInfo.icon;
+      if (badgeEl) {
+        if (selectedWeatherDayIndex === 0) {
+          badgeEl.textContent = "Today";
+        } else if (selectedWeatherDayIndex === 1) {
+          badgeEl.textContent = isAfterSixPm ? "Tomorrow (Next Up)" : "Tomorrow";
+        } else {
+          badgeEl.textContent = dayData.shortLabel;
+        }
+      }
+      if (sumEl) {
+        sumEl.textContent = isShowingLiveToday
+          ? `Now: ${heroInfo.label}`
+          : `${dayData.fullDayLabel}: ${heroInfo.label}`;
+      }
+      if (hlEl) {
+        hlEl.innerHTML = `High: <strong>${dayData.high}°F</strong> • Low: <strong>${dayData.low}°F</strong>`;
+      }
+      if (rainEl) {
+        rainEl.textContent = dayData.rainHours.length > 0
+          ? `🌧️ Rain windows: ${dayData.rainHours.join(", ")}`
+          : `☀️ Dry / sunny windows (${dayData.maxRainProb}% max rain chance)`;
+      }
+      if (srEl) srEl.textContent = `🌅 ${dayData.sunrise}`;
+      if (ssEl) ssEl.textContent = `🌇 ${dayData.sunset}`;
+
+      if (slotsEl && dayData.slots.length > 0) {
+        slotsEl.innerHTML = dayData.slots.map(s => `
+          <div class="weather-slot ${s.isRain ? "is-rain" : ""}">
+            <span class="weather-slot-time">${s.hourLabel}</span>
+            <span class="weather-slot-desc">${s.icon} ${s.temp}°${s.isRain ? ` (${s.prob}%)` : ""}</span>
+          </div>
+        `).join("");
+      }
+
+      if (weekEl) {
+        weekEl.innerHTML = days.map((d, idx) => {
+          const dInfo = weatherCodeToTextAndIcon(d.weatherCode);
+          const activeCls = idx === selectedWeatherDayIndex ? "active-day" : "";
+          const dayTitle = idx === 0 ? "Today" : idx === 1 ? "Tomorrow" : d.shortLabel;
+          return `
+            <button type="button" class="weather-day-card ${activeCls}" onclick="selectWeatherDay(${idx})">
+              <span class="wd-name">${dayTitle}</span>
+              <span class="wd-temps">${dInfo.icon} ${d.high}° / ${d.low}°</span>
+              <span class="wd-meta">${d.maxRainProb >= 25 ? `🌧️ ${d.maxRainProb}%` : "☀️ Dry"} • 🌅${d.sunrise.replace(" AM", "")}</span>
+            </button>
+          `;
+        }).join("");
+      }
+    }
+
+    window.loadRegionalWeather = async function(manualRefresh = false) {
+      const sumEl = document.getElementById("weatherSummaryLabel");
       if (manualRefresh && sumEl) {
-        sumEl.textContent = "Refreshing Wise & S. Montague forecast...";
+        sumEl.textContent = "Refreshing forecast...";
       }
 
       try {
-        const url = "https://api.open-meteo.com/v1/forecast?latitude=33.2343,33.3587,33.5582&longitude=-97.5861,-97.6939,-97.8495&current=temperature_2m,weather_code,precipitation_probability&hourly=temperature_2m,precipitation_probability,weather_code&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=1";
+        const url = "https://api.open-meteo.com/v1/forecast?latitude=33.2343,33.3587,33.5582&longitude=-97.5861,-97.6939,-97.8495&current=temperature_2m,weather_code&hourly=temperature_2m,precipitation_probability,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&forecast_days=7";
         const res = await fetch(url);
         if (!res.ok) throw new Error("Weather service unavailable");
         const raw = await res.json();
@@ -2725,65 +2875,89 @@ Return ONLY valid JSON with these exact keys:
 
         const curTemps = points.map(p => Number(p.current?.temperature_2m)).filter(n => !isNaN(n));
         const avgCurTemp = curTemps.length ? Math.round(curTemps.reduce((a, b) => a + b, 0) / curTemps.length) : "--";
+        const curCode = Number(points[0]?.current?.weather_code || 0);
 
-        const allMax = points.map(p => Number(p.daily?.temperature_2m_max?.[0])).filter(n => !isNaN(n));
-        const allMin = points.map(p => Number(p.daily?.temperature_2m_min?.[0])).filter(n => !isNaN(n));
-        const regionalHigh = allMax.length ? Math.round(Math.max(...allMax)) : "--";
-        const regionalLow = allMin.length ? Math.round(Math.min(...allMin)) : "--";
+        const dailyDates = points[0]?.daily?.time || [];
+        const hourlyTimes = points[0]?.hourly?.time || [];
 
-        const sunriseIso = points[0]?.daily?.sunrise?.[0] || "";
-        const sunsetIso = points[0]?.daily?.sunset?.[0] || "";
+        const days = dailyDates.map((dateStr, dIdx) => {
+          const highs = points.map(p => Number(p.daily?.temperature_2m_max?.[dIdx])).filter(n => !isNaN(n));
+          const lows = points.map(p => Number(p.daily?.temperature_2m_min?.[dIdx])).filter(n => !isNaN(n));
+          const rainProbs = points.map(p => Number(p.daily?.precipitation_probability_max?.[dIdx] || 0));
+          const codes = points.map(p => Number(p.daily?.weather_code?.[dIdx] || 0));
 
-        const times = points[0]?.hourly?.time || [];
-        const hourlySummary = times.map((t, idx) => {
-          const tempsAtHour = points.map(p => Number(p.hourly?.temperature_2m?.[idx])).filter(n => !isNaN(n));
-          const probsAtHour = points.map(p => Number(p.hourly?.precipitation_probability?.[idx] || 0));
-          const codesAtHour = points.map(p => Number(p.hourly?.weather_code?.[idx] || 0));
+          const high = highs.length ? Math.round(Math.max(...highs)) : "--";
+          const low = lows.length ? Math.round(Math.min(...lows)) : "--";
+          const maxRainProb = rainProbs.length ? Math.max(...rainProbs) : 0;
+          const weatherCode = codes.length ? Math.max(...codes) : 0;
+          const sunrise = formatClockTime(points[0]?.daily?.sunrise?.[dIdx] || "");
+          const sunset = formatClockTime(points[0]?.daily?.sunset?.[dIdx] || "");
 
-          const avgTemp = tempsAtHour.length ? Math.round(tempsAtHour.reduce((a, b) => a + b, 0) / tempsAtHour.length) : "--";
-          const maxProb = probsAtHour.length ? Math.max(...probsAtHour) : 0;
-          const worstCode = codesAtHour.length ? Math.max(...codesAtHour) : 0;
-          const info = weatherCodeToTextAndIcon(worstCode);
-          const isRainHour = info.isRain || maxProb >= 35;
+          const dtObj = new Date(dateStr + "T12:00:00");
+          const shortLabel = dtObj.toLocaleDateString("en-US", { weekday: "short", month: "numeric", day: "numeric" });
+          const fullDayLabel = dtObj.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" });
 
-          const dt = new Date(t);
-          const hourLabel = dt.toLocaleTimeString("en-US", { hour: "numeric" });
+          const dayHourly = [];
+          hourlyTimes.forEach((t, hIdx) => {
+            if (!t.startsWith(dateStr)) return;
+            const tempsAtHour = points.map(p => Number(p.hourly?.temperature_2m?.[hIdx])).filter(n => !isNaN(n));
+            const probsAtHour = points.map(p => Number(p.hourly?.precipitation_probability?.[hIdx] || 0));
+            const codesAtHour = points.map(p => Number(p.hourly?.weather_code?.[hIdx] || 0));
+
+            const avgTemp = tempsAtHour.length ? Math.round(tempsAtHour.reduce((a, b) => a + b, 0) / tempsAtHour.length) : "--";
+            const maxProb = probsAtHour.length ? Math.max(...probsAtHour) : 0;
+            const worstCode = codesAtHour.length ? Math.max(...codesAtHour) : 0;
+            const info = weatherCodeToTextAndIcon(worstCode);
+            const isRainHour = info.isRain || maxProb >= 35;
+
+            const hDt = new Date(t);
+            const hourNum = hDt.getHours();
+            const hourLabel = hDt.toLocaleTimeString("en-US", { hour: "numeric" }).replace(" ", "");
+
+            dayHourly.push({
+              hour: hourNum,
+              hourLabel,
+              temp: avgTemp,
+              prob: maxProb,
+              icon: isRainHour ? "🌧️" : info.icon,
+              isRain: isRainHour
+            });
+          });
+
+          const rainHours = dayHourly.filter(h => h.isRain).map(h => h.hourLabel);
+          const slots = dayHourly.filter(h => h.hour >= 6 && h.hour <= 20 && h.hour % 2 === 0);
+
           return {
-            hour: dt.getHours(),
-            hourLabel,
-            temp: avgTemp,
-            prob: maxProb,
-            icon: isRainHour ? "🌧️" : info.icon,
-            label: isRainHour ? `Rain ${maxProb}%` : info.label,
-            isRain: isRainHour
+            dateStr,
+            shortLabel,
+            fullDayLabel,
+            high,
+            low,
+            maxRainProb,
+            weatherCode,
+            sunrise,
+            sunset,
+            rainHours,
+            slots
           };
         });
 
-        const rainHours = hourlySummary.filter(h => h.isRain).map(h => h.hourLabel);
-        const rainWindowText = rainHours.length > 0
-          ? `Rain expected around: ${rainHours.join(", ")}`
-          : "Dry / Sunny windows all day (0% major rain risk)";
+        const nowHour = new Date().getHours();
+        const isAfterSixPm = nowHour >= 18;
 
-        const curInfo = weatherCodeToTextAndIcon(points[0]?.current?.weather_code || 0);
-        if (tempEl) tempEl.textContent = `${avgCurTemp}°F`;
-        if (iconEl) iconEl.textContent = curInfo.icon;
-        if (sumEl) sumEl.textContent = `${curInfo.label} across Wise & S. Montague`;
-        if (hlEl) hlEl.innerHTML = `High: <strong>${regionalHigh}°F</strong> • Low: <strong>${regionalLow}°F</strong> • ${rainWindowText}`;
-        if (srEl) srEl.textContent = `🌅 Sunrise: ${formatClockTime(sunriseIso)}`;
-        if (ssEl) ssEl.textContent = `🌇 Sunset: ${formatClockTime(sunsetIso)}`;
+        cachedRegionalForecast = {
+          days,
+          currentTemp: avgCurTemp,
+          currentCode,
+          isAfterSixPm
+        };
 
-        const keySlots = hourlySummary.filter(h => h.hour >= 6 && h.hour <= 20 && h.hour % 2 === 0);
-        if (slotsEl && keySlots.length > 0) {
-          slotsEl.innerHTML = keySlots.map(s => `
-            <div class="weather-slot ${s.isRain ? "is-rain" : ""}">
-              <span class="weather-slot-time">${s.hourLabel} • ${s.temp}°F</span>
-              <span class="weather-slot-desc">${s.icon} ${s.label}</span>
-            </div>
-          `).join("");
-        }
-        if (manualRefresh) showToast("Regional Wise & S. Montague forecast updated!");
+        selectedWeatherDayIndex = isAfterSixPm && days.length > 1 ? 1 : 0;
+        renderRegionalWeatherDay();
+
+        if (manualRefresh) showToast("Updated Wise & S. Montague 7-day forecast!");
       } catch (err) {
-        if (sumEl) sumEl.textContent = "Forecast temporarily unavailable";
+        if (sumEl) sumEl.textContent = "Forecast unavailable";
       }
     };
 
