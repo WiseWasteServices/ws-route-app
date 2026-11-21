@@ -1621,8 +1621,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <div class="panel-card">
             <div class="panel-hd">
               <h2>🤝 Business Partner Referrals ($20 Rewards)</h2>
-              <div style="font-size:11.5px; color:var(--m); font-weight:700;">
-                Business Partner Program only • Requires a named referring business or employee for the $20 payout
+              <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                <span style="font-size:11.5px; color:var(--m); font-weight:700;">
+                  Log verbal or walk-up partner referrals manually anytime
+                </span>
+                <button type="button" class="btn btn-dark btn-sm" onclick="openReferralModal()">+ Add Partner Referral</button>
               </div>
             </div>
             <div class="table-wrap">
@@ -1632,8 +1635,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                     <th>Referred Customer</th>
                     <th>Referring Business &amp; Employee Details</th>
                     <th>Partner Town</th>
-                    <th>Start Date</th>
-                    <th>$20 Reward Status</th>
+                    <th>Date / Start</th>
+                    <th>Reward &amp; Status</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -1964,7 +1967,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   </div>
 
   <!-- ========================================================================
-       CRM MODALS (CLIENT EDITOR, POTENTIAL CLIENT "TRY US", SQUARE & APPS)
+       CRM MODALS (CLIENT EDITOR, MANUAL REFERRAL, POTENTIAL CLIENT, SQUARE & APPS)
        ======================================================================== -->
   <div class="modal-backdrop" id="clientModalBackdrop">
     <div class="modal">
@@ -2183,6 +2186,75 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="modal-ft">
           <button type="button" class="btn btn-outline" onclick="closeClientModal()">Cancel</button>
           <button type="submit" class="btn btn-dark">Save Client Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MANUAL PARTNER REFERRAL MODAL (+ ADD PARTNER REFERRAL) -->
+  <div class="modal-backdrop" id="referralModalBackdrop" onclick="if(event.target===this) closeReferralModal()">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-hd">
+        <h3 id="refModalTitle">🤝 Add Business Partner Referral ($20 Payout)</h3>
+        <button class="modal-close" onclick="closeReferralModal()">&times;</button>
+      </div>
+      <form id="referralForm" onsubmit="saveManualReferral(event)">
+        <input type="hidden" id="editReferralId">
+        <div class="modal-body">
+          <div style="background:var(--gt); border:1.5px solid var(--gm); border-radius:9px; padding:8px 11px; font-size:12px; color:var(--g); font-weight:700;">
+            💡 Link this referral to an existing client in your CRM <strong>or</strong> enter a new customer's name if they didn't fill out the online quote form.
+          </div>
+
+          <div class="form-grid">
+            <div class="field span-2">
+              <label>Link to Existing Client (Optional — auto-fills name, town &amp; profile)</label>
+              <select id="rExistingClientSelect" onchange="onReferralClientSelectChanged()">
+                <option value="">-- New / Unlisted Customer (Type Name Below) --</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Referred Customer Name *</label>
+              <input type="text" id="rCustomerName" required placeholder="e.g., Jessica Taylor">
+            </div>
+
+            <div class="field">
+              <label>Referral / Service Date *</label>
+              <input type="date" id="rDate" required>
+            </div>
+
+            <div class="field span-2">
+              <label>Referring Business &amp; Employee Name (Who Gets Paid) *</label>
+              <input type="text" id="rPartnerDetails" required placeholder="e.g., Wise County Vet Clinic — Sarah (or local groomer / shop name)">
+            </div>
+
+            <div class="field">
+              <label>Partner Town / City</label>
+              <input type="text" id="rPartnerTown" placeholder="e.g., Decatur">
+            </div>
+
+            <div class="field">
+              <label>Payout Amount ($)</label>
+              <input type="number" id="rRewardAmount" step="0.01" value="20.00" required>
+            </div>
+
+            <div class="field span-2">
+              <label>Payout Status</label>
+              <select id="rStatus">
+                <option value="Pending">Pending ($ Owed to Partner)</option>
+                <option value="Paid">Paid ($ Sent to Partner)</option>
+              </select>
+            </div>
+
+            <div class="field span-2">
+              <label>Notes (Optional — how they mentioned it, Venmo/cash payout info)</label>
+              <input type="text" id="rNotes" placeholder="e.g., Mentioned on phone call; pay via Venmo @sarah-vet">
+            </div>
+          </div>
+        </div>
+        <div class="modal-ft">
+          <button type="button" class="btn btn-outline" onclick="closeReferralModal()">Cancel</button>
+          <button type="submit" class="btn btn-dark">💾 Save Partner Referral</button>
         </div>
       </form>
     </div>
@@ -2577,7 +2649,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   <div class="toast" id="toast"></div>
   <div id="toastArea"></div>
 <!-- ========================================================================
-       UNIFIED FIREBASE CLOUD MODULE (CRM + AI QUICK NOTE + GENERAL NOTES + WEATHER)
+       UNIFIED FIREBASE CLOUD MODULE (CRM + REFERRALS + GENERAL NOTES + WEATHER)
        ======================================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -2601,6 +2673,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     const CLIENTS_COL = collection(db, "wise_scoopers_clients");
     const LEADS_COL = collection(db, "wise_scoopers_leads");
     const GEN_NOTES_COL = collection(db, "wise_scoopers_general_notes");
+    const MANUAL_REFS_COL = collection(db, "wise_scoopers_referrals");
     const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
     const FB_DOC_REF = doc(db, "wise_scoopers_settings", "fb_manager");
     const OMW_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template");
@@ -2608,9 +2681,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let clients = [];
     let leads = [];
     let generalNotes = [];
+    let manualReferrals = [];
     let unsubscribeClients = null;
     let unsubscribeLeads = null;
     let unsubscribeGenNotes = null;
+    let unsubscribeManualRefs = null;
     let unsubApps = null;
     let unsubFb = null;
     let unsubOmw = null;
@@ -4415,6 +4490,7 @@ Return ONLY valid JSON with these exact keys:
       if (unsubscribeClients) unsubscribeClients();
       if (unsubscribeLeads) unsubscribeLeads();
       if (unsubscribeGenNotes) unsubscribeGenNotes();
+      if (unsubscribeManualRefs) unsubscribeManualRefs();
       if (unsubApps) unsubApps();
       if (unsubFb) unsubFb();
       if (unsubOmw) unsubOmw();
@@ -4457,6 +4533,14 @@ Return ONLY valid JSON with these exact keys:
           renderGeneralNotes();
         }, (error) => {
           console.error('General notes listener error:', error);
+        });
+
+        if (unsubscribeManualRefs) unsubscribeManualRefs();
+        unsubscribeManualRefs = onSnapshot(MANUAL_REFS_COL, (snapshot) => {
+          manualReferrals = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderReferralsTable();
+        }, (error) => {
+          console.error('Manual referrals listener error:', error);
         });
 
         if (unsubApps) unsubApps();
@@ -4529,6 +4613,147 @@ Return ONLY valid JSON with these exact keys:
     async function removeLeadDoc(id) {
       await deleteDoc(doc(db, "wise_scoopers_leads", id));
     }
+
+    async function saveManualReferralDoc(record) {
+      const cleanRecord = JSON.parse(JSON.stringify(record));
+      await setDoc(doc(db, "wise_scoopers_referrals", cleanRecord.id), cleanRecord);
+    }
+
+    async function removeManualReferralDoc(id) {
+      await deleteDoc(doc(db, "wise_scoopers_referrals", id));
+    }
+
+    // ========================================================================
+    // MANUAL BUSINESS PARTNER REFERRALS (+ ADD PARTNER REFERRAL)
+    // ========================================================================
+    function populateReferralClientDropdown(selectedClientId = "") {
+      const sel = document.getElementById("rExistingClientSelect");
+      if (!sel) return;
+      const sorted = [...clients].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      sel.innerHTML = `<option value="">-- New / Unlisted Customer (Type Name Below) --</option>` +
+        sorted.map(c => {
+          const derivedCity = c.city || extractCityFromAddress(c.address, "");
+          return `<option value="${escapeHtml(c.id)}" ${c.id === selectedClientId ? "selected" : ""}>${escapeHtml(c.name)}${derivedCity ? ` (${escapeHtml(derivedCity)})` : ""}</option>`;
+        }).join("");
+    }
+
+    window.onReferralClientSelectChanged = function() {
+      const cid = document.getElementById("rExistingClientSelect").value;
+      if (!cid) return;
+      const c = clients.find(x => x.id === cid);
+      if (!c) return;
+      document.getElementById("rCustomerName").value = c.name || "";
+      const derivedCity = c.city || extractCityFromAddress(c.address, "");
+      if (derivedCity && !document.getElementById("rPartnerTown").value.trim()) {
+        document.getElementById("rPartnerTown").value = derivedCity;
+      }
+      if (c.startDate) {
+        document.getElementById("rDate").value = c.startDate;
+      }
+      if (c.refBy && !/website quote lead/i.test(c.refBy.trim())) {
+        document.getElementById("rPartnerDetails").value = c.refBy;
+      }
+    };
+
+    window.openReferralModal = function(manualRefId = null) {
+      const form = document.getElementById("referralForm");
+      form.reset();
+      document.getElementById("editReferralId").value = manualRefId || "";
+
+      if (manualRefId) {
+        const mr = manualReferrals.find(x => x.id === manualRefId);
+        if (!mr) return;
+        document.getElementById("refModalTitle").textContent = "✏️ Edit Business Partner Referral";
+        populateReferralClientDropdown(mr.linkedClientId || "");
+        document.getElementById("rCustomerName").value = mr.customerName || "";
+        document.getElementById("rDate").value = mr.date || todayStr(0);
+        document.getElementById("rPartnerDetails").value = mr.partnerDetails || "";
+        document.getElementById("rPartnerTown").value = mr.partnerTown || "";
+        document.getElementById("rRewardAmount").value = Number(mr.rewardAmount ?? 20).toFixed(2);
+        document.getElementById("rStatus").value = mr.status || "Pending";
+        document.getElementById("rNotes").value = mr.notes || "";
+      } else {
+        document.getElementById("refModalTitle").textContent = "🤝 Add Business Partner Referral ($20 Payout)";
+        populateReferralClientDropdown("");
+        document.getElementById("rDate").value = todayStr(0);
+        document.getElementById("rRewardAmount").value = "20.00";
+        document.getElementById("rStatus").value = "Pending";
+      }
+
+      document.getElementById("referralModalBackdrop").classList.add("open");
+    };
+
+    window.closeReferralModal = function() {
+      document.getElementById("referralModalBackdrop").classList.remove("open");
+    };
+
+    window.saveManualReferral = async function(event) {
+      event.preventDefault();
+      const existingManualId = document.getElementById("editReferralId").value.trim();
+      const linkedClientId = document.getElementById("rExistingClientSelect").value.trim();
+      const customerName = document.getElementById("rCustomerName").value.trim();
+      const dateVal = document.getElementById("rDate").value || todayStr(0);
+      const partnerDetails = document.getElementById("rPartnerDetails").value.trim();
+      const partnerTown = document.getElementById("rPartnerTown").value.trim();
+      const rewardAmount = parseFloat(document.getElementById("rRewardAmount").value) || 20.00;
+      const statusVal = document.getElementById("rStatus").value || "Pending";
+      const notesVal = document.getElementById("rNotes").value.trim();
+
+      if (!customerName || !partnerDetails) {
+        showToast("Enter both the referred customer's name and the referring partner/business.");
+        return;
+      }
+
+      // If linked to an existing CRM client (and not editing an already-standalone manual entry), update their client profile directly
+      if (linkedClientId && !existingManualId) {
+        const c = clients.find(x => x.id === linkedClientId);
+        if (c) {
+          c.howHeard = "Business Referral / Partner";
+          c.refBy = partnerDetails;
+          c.refLoc = partnerTown || c.city || extractCityFromAddress(c.address, "");
+          c.refStatus = statusVal;
+          c.refAmount = rewardAmount;
+          if (notesVal) {
+            c.gateNotes = c.gateNotes ? `${c.gateNotes} | Partner Referral: ${notesVal}` : `Partner Referral: ${notesVal}`;
+          }
+          await saveClientDoc(c);
+          closeReferralModal();
+          showToast(`Linked $${rewardAmount.toFixed(2)} partner referral to ${c.name}!`);
+          return;
+        }
+      }
+
+      const record = {
+        id: existingManualId || ("ws-ref-" + Date.now()),
+        linkedClientId: linkedClientId || "",
+        customerName,
+        date: dateVal,
+        partnerDetails,
+        partnerTown,
+        rewardAmount,
+        status: statusVal,
+        notes: notesVal
+      };
+
+      await saveManualReferralDoc(record);
+      closeReferralModal();
+      showToast(`Saved $${rewardAmount.toFixed(2)} partner referral for ${partnerDetails}!`);
+    };
+
+    window.markManualReferralPaid = async function(id) {
+      const mr = manualReferrals.find(x => x.id === id);
+      if (!mr) return;
+      mr.status = "Paid";
+      await saveManualReferralDoc(mr);
+      showToast(`Marked $${Number(mr.rewardAmount || 20).toFixed(2)} referral payout PAID for ${mr.partnerDetails}!`);
+    };
+
+    window.deleteManualReferral = async function(id) {
+      const mr = manualReferrals.find(x => x.id === id);
+      if (!confirm(`Remove this partner referral entry (${mr ? mr.partnerDetails : "entry"})?`)) return;
+      await removeManualReferralDoc(id);
+      showToast("Removed partner referral entry.");
+    };
 
     // ========================================================================
     // LEADS -> POTENTIAL CLIENTS ("TRY US") -> REGULAR CLIENTS WORKFLOW
@@ -4901,7 +5126,8 @@ Return ONLY valid JSON with these exact keys:
         clientCount: clients.length,
         clients: clients,
         leads: leads,
-        generalNotes: generalNotes
+        generalNotes: generalNotes,
+        manualReferrals: manualReferrals
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -4932,6 +5158,12 @@ Return ONLY valid JSON with these exact keys:
             for (const gn of parsed.generalNotes) {
               if (!gn.id) gn.id = 'gn-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
               await saveGeneralNoteDoc(gn);
+            }
+          }
+          if (Array.isArray(parsed.manualReferrals)) {
+            for (const mr of parsed.manualReferrals) {
+              if (!mr.id) mr.id = 'ws-ref-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+              await saveManualReferralDoc(mr);
             }
           }
           showToast(`Imported ${restoredList.length} client profiles to Cloud!`);
@@ -6074,42 +6306,96 @@ Return ONLY valid JSON with these exact keys:
 
     function renderReferralsTable() {
       const tbody = document.getElementById('referralsTableBody');
-      const refs = getFilteredClients().filter(c => {
-        const isBizProgram = /business|partner/i.test(c.howHeard || "") || (c.refStatus && c.refStatus !== "N/A");
-        const hasNamedPartner = Boolean((c.refBy || "").trim()) && !/website quote lead/i.test(c.refBy.trim());
-        return isBizProgram && hasNamedPartner;
-      });
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const city = document.getElementById('cityFilter').value;
 
-      if (!refs.length) {
-        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No eligible Business Partner Referrals logged yet. Select <strong>"Business Referral / Partner"</strong> under <em>How They Heard of Us</em> and enter the referring business/employee name to qualify for the $20 payout.</td></tr>`;
+      // 1. Referrals attached to existing CRM clients
+      const clientRefs = getFilteredClients()
+        .filter(c => {
+          const isBizProgram = /business|partner/i.test(c.howHeard || "") || (c.refStatus && c.refStatus !== "N/A");
+          const hasNamedPartner = Boolean((c.refBy || "").trim()) && !/website quote lead/i.test(c.refBy.trim());
+          return isBizProgram && hasNamedPartner;
+        })
+        .map(c => ({
+          sourceType: "client",
+          id: c.id,
+          customerName: c.name,
+          subLabel: `${c.city || extractCityFromAddress(c.address, "")} • ${c.freq}`,
+          partnerDetails: c.refBy,
+          partnerTown: c.refLoc || c.city || extractCityFromAddress(c.address, ""),
+          date: c.startDate || "",
+          rewardAmount: Number(c.refAmount ?? 20),
+          status: c.refStatus || "Pending",
+          notes: ""
+        }));
+
+      // 2. Standalone manually added partner referrals
+      const standaloneRefs = manualReferrals
+        .filter(mr => {
+          if (city && (mr.partnerTown || "").toLowerCase() !== city.toLowerCase()) return false;
+          if (!q) return true;
+          return `${mr.customerName} ${mr.partnerDetails} ${mr.partnerTown} ${mr.notes || ""}`.toLowerCase().includes(q);
+        })
+        .map(mr => ({
+          sourceType: "manual",
+          id: mr.id,
+          customerName: mr.customerName,
+          subLabel: mr.linkedClientId ? "Linked Client • Manual Entry" : "Manual Entry",
+          partnerDetails: mr.partnerDetails,
+          partnerTown: mr.partnerTown || "—",
+          date: mr.date || "",
+          rewardAmount: Number(mr.rewardAmount ?? 20),
+          status: mr.status || "Pending",
+          notes: mr.notes || ""
+        }));
+
+      const combined = [...standaloneRefs, ...clientRefs].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+      if (!combined.length) {
+        tbody.innerHTML = `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:24px; color:var(--m);">No Business Partner Referrals logged yet. Click <strong>"+ Add Partner Referral"</strong> above to manually add a partner who referred a customer!</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = refs.map(c => {
-        const derivedCity = c.city || extractCityFromAddress(c.address, "");
-        const statusBadge = c.refStatus === 'Paid'
-          ? `<span class="badge badge-ok">✓ Paid ($20)</span>`
-          : `<span class="badge badge-soon">Pending ($20 Owed)</span>`;
+      tbody.innerHTML = combined.map(item => {
+        const amtStr = `$${Number(item.rewardAmount).toFixed(2)}`;
+        const statusBadge = item.status === 'Paid'
+          ? `<span class="badge badge-ok">✓ Paid (${amtStr})</span>`
+          : `<span class="badge badge-soon">Pending (${amtStr} Owed)</span>`;
+
+        const actionsHtml = item.sourceType === "manual"
+          ? `
+            ${item.status !== 'Paid'
+              ? `<button class="btn btn-green btn-sm" onclick="markManualReferralPaid('${item.id}')">💵 Mark ${amtStr} Paid</button>`
+              : ''}
+            <button class="btn btn-outline btn-sm" onclick="openReferralModal('${item.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteManualReferral('${item.id}')">Delete</button>
+          `
+          : `
+            ${item.status !== 'Paid'
+              ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${item.id}')">💵 Mark ${amtStr} Paid</button>`
+              : ''}
+            <button class="btn btn-outline btn-sm" onclick="openClientModal('${item.id}')">View / Edit Client</button>
+          `;
 
         return `
           <tr class="mobile-card-row">
             <td class="m-header" data-label="Referred Customer">
               <div>
-                <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br>
-                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(derivedCity)} • ${escapeHtml(c.freq)}</span>
+                <strong style="font-size:14.5px; color:var(--g);">${escapeHtml(item.customerName)}</strong><br>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(item.subLabel)}</span>
               </div>
               <div class="mobile-only-inline">${statusBadge}</div>
             </td>
-            <td data-label="Referring Business & Employee"><strong>${escapeHtml(c.refBy)}</strong></td>
-            <td data-label="Partner Town">${escapeHtml(c.refLoc || derivedCity)}</td>
-            <td data-label="Start Date">${formatDisplayDate(c.startDate)}</td>
-            <td class="desktop-only-cell" data-label="$20 Reward Status">${statusBadge}</td>
+            <td data-label="Referring Business & Employee">
+              <strong>${escapeHtml(item.partnerDetails)}</strong>
+              ${item.notes ? `<div style="font-size:11px; color:var(--m); margin-top:2px;">📝 ${escapeHtml(item.notes)}</div>` : ''}
+            </td>
+            <td data-label="Partner Town">${escapeHtml(item.partnerTown)}</td>
+            <td data-label="Date / Start">${formatDisplayDate(item.date)}</td>
+            <td class="desktop-only-cell" data-label="Reward & Status">${statusBadge}</td>
             <td class="m-actions" data-label="Actions">
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                ${c.refStatus !== 'Paid'
-                  ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${c.id}')">💵 Mark $20 Paid</button>`
-                  : ''}
-                <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">View / Edit</button>
+                ${actionsHtml}
               </div>
             </td>
           </tr>
@@ -6157,7 +6443,7 @@ Return ONLY valid JSON with these exact keys:
       if (!c) return;
       c.refStatus = 'Paid';
       await saveClientDoc(c);
-      showToast(`Marked $20 referral payout PAID for ${c.refBy}!`);
+      showToast(`Marked $${Number(c.refAmount ?? 20).toFixed(2)} referral payout PAID for ${c.refBy}!`);
     };
 
     window.deleteClient = async function(id) {
@@ -6404,6 +6690,7 @@ Return ONLY valid JSON with these exact keys:
         if (existingObj.squareHistory) record.squareHistory = existingObj.squareHistory;
         if (existingObj.scoopedActionDate) record.scoopedActionDate = existingObj.scoopedActionDate;
         if (existingObj.prevScoopSnapshot) record.prevScoopSnapshot = existingObj.prevScoopSnapshot;
+        if (existingObj.refAmount !== undefined) record.refAmount = existingObj.refAmount;
       }
 
       await saveClientDoc(record);
