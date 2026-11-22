@@ -783,18 +783,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           </div>
         </section>
 
-        <!-- TAB 1: SIMPLIFIED MONEY, EXPENSES & P&L (MANUAL + PAYMENTS-ONLY SQUARE SYNC) -->
+        <!-- TAB 1: SIMPLE MONEY IN / MONEY OUT & P&L -->
         <section id="tab-performance" class="view-panel">
           <!-- 1. SIMPLE P&L OVERVIEW -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
-              <h3>💰 Simple Profit &amp; Loss Overview</h3>
+              <h3>💰 Money In vs. Money Out (Simple P&amp;L)</h3>
               <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                 <select id="perfPeriodFilter" class="filter-select" style="padding:5px 9px; font-size:12px;" onchange="renderPerformanceDashboard()">
+                  <option value="all_time">All-Time</option>
                   <option value="this_month">This Month</option>
                   <option value="last_month">Last Month</option>
                   <option value="this_year">This Year (YTD)</option>
-                  <option value="all_time">All-Time</option>
                 </select>
                 <button type="button" class="btn btn-green btn-sm" onclick="openManualPaymentModal()">+ Log Payment</button>
                 <button type="button" class="btn btn-dark btn-sm" onclick="openExpenseModal()">+ Log Expense</button>
@@ -805,26 +805,25 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <!-- 2. PAYMENTS COLLECTED (MANUAL + SQUARE SYNCED) -->
+          <!-- 2. MONEY IN (WHO PAID, HOW MUCH, DATE PAID) -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
-              <h3>💵 Payments &amp; Revenue Log (Manual + Square Synced)</h3>
+              <h3>💵 Money In — Payments Log (Square + Manual)</h3>
               <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <button type="button" class="btn btn-sage btn-sm" id="btnPerfSyncSquare" onclick="syncSquareBillingStatuses()">🔄 Sync Square Payments Only</button>
+                <button type="button" class="btn btn-sage btn-sm" id="btnPerfSyncSquare" onclick="syncSquareBillingStatuses()">🔄 Sync Square</button>
                 <button type="button" class="btn btn-dark btn-sm" onclick="openManualPaymentModal()">+ Log Payment</button>
               </div>
             </div>
             <div class="perf-section-body">
               <div style="font-size:11.5px; color:var(--m); font-weight:600; margin-bottom:10px;">
-                Syncing Square updates payment statuses for your existing CRM clients only (never creates new contacts). You can also log cash, Venmo/Zelle, or manual Square payments anytime.
+                Matches Square contacts &amp; payments against your CRM clients only (unmatched Square payments are ignored). Updates <strong>Last Paid Date</strong> &amp; <strong>Next Charge Date</strong> automatically across the CRM.
               </div>
               <div class="table-wrap">
                 <table>
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Customer</th>
-                      <th>Type</th>
+                      <th>Date Paid</th>
+                      <th>Who Paid</th>
                       <th>Method / Details</th>
                       <th>Status</th>
                       <th>Amount</th>
@@ -837,10 +836,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <!-- 3. BUSINESS EXPENSES -->
+          <!-- 3. MONEY OUT (BUSINESS EXPENSES) -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
-              <h3>🧾 Business Expenses</h3>
+              <h3>🧾 Money Out — Business Expenses</h3>
               <button type="button" class="btn btn-dark btn-sm" onclick="openExpenseModal()">+ Log Business Expense</button>
             </div>
             <div class="perf-section-body">
@@ -862,7 +861,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <!-- 4. SIMPLE DISCOUNTS LOG -->
+          <!-- 4. DISCOUNTS & PROMOS -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
               <h3>🏷️ Discounts &amp; Promos Given</h3>
@@ -894,9 +893,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="panel-hd">
               <h2>💳 Monthly Anniversary Billing &amp; Square Sync</h2>
               <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                <span style="font-size:11.5px; color:var(--m); font-weight:700;">Syncs payments &amp; cards on file for existing clients</span>
-                <button type="button" class="btn btn-dark btn-sm" id="btnSyncSquareBilling" onclick="syncSquareBillingStatuses()">🔄 Sync Square Payments</button>
-                <button type="button" class="btn btn-sage btn-sm" id="btnSyncSquare" onclick="syncSquareContacts()">👥 Sync Square Contacts</button>
+                <span style="font-size:11.5px; color:var(--m); font-weight:700;">Matches Square payments to your CRM clients</span>
+                <button type="button" class="btn btn-dark btn-sm" id="btnSyncSquareBilling" onclick="syncSquareBillingStatuses()">🔄 Sync Square</button>
               </div>
             </div>
             <div class="table-wrap">
@@ -1002,7 +1000,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="panel-hd">
               <h2>🐾 Complete Client Directory</h2>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <button class="btn btn-sage btn-sm" onclick="syncSquareContacts()">🔄 Sync Square</button>
                 <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
               </div>
             </div>
@@ -1459,24 +1456,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="modal-body">
           <div class="form-grid">
             <div class="field">
-              <label>Customer Name *</label>
-              <input type="text" id="mpCustomerName" required placeholder="e.g., Sarah Jenkins" list="mpClientsDatalist">
+              <label>Who Paid (Customer Name) *</label>
+              <input type="text" id="mpCustomerName" required placeholder="e.g., Tiffany McPherson" list="mpClientsDatalist">
               <datalist id="mpClientsDatalist"></datalist>
             </div>
-            <div class="field"><label>Date *</label><input type="date" id="mpDate" required></div>
-            <div class="field"><label>Amount ($) *</label><input type="number" id="mpAmount" step="0.01" min="0.01" required placeholder="78.00"></div>
-            <div class="field">
-              <label>Payment Type *</label>
-              <select id="mpType">
-                <option value="Monthly Recurring">Monthly Recurring</option>
-                <option value="One-Time Service">One-Time Service</option>
-                <option value="Add-On Service">Add-On Service</option>
-              </select>
-            </div>
+            <div class="field"><label>Date Paid *</label><input type="date" id="mpDate" required></div>
+            <div class="field"><label>Amount ($) *</label><input type="number" id="mpAmount" step="0.01" min="0.01" required placeholder="70.00"></div>
             <div class="field">
               <label>Payment Method</label>
               <select id="mpMethod">
-                <option value="Square (Manual / POS)">Square (Manual / POS)</option>
+                <option value="Square">Square</option>
                 <option value="Venmo / CashApp / Zelle">Venmo / CashApp / Zelle</option>
                 <option value="Cash / Check">Cash / Check</option>
               </select>
@@ -1489,7 +1478,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <option value="REFUNDED">Refunded</option>
               </select>
             </div>
-            <div class="field span-2"><label>Description / Service Notes</label><input type="text" id="mpDescription" placeholder="e.g., Weekly dog cleanup + Yard Fresh"></div>
+            <div class="field"><label>Notes (Optional)</label><input type="text" id="mpDescription" placeholder="e.g., Service payment"></div>
           </div>
         </div>
         <div class="modal-ft">
@@ -1931,6 +1920,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let unsubFb = null;
     let unsubOmw = null;
     let isAuthenticated = false;
+    let hasRunInitialSquareSync = false;
 
     window.toggleMobileHeaderExtras = function() {
       const topbar = document.getElementById("mainTopbar");
@@ -1941,7 +1931,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     // ========================================================================
-    // SIMPLIFIED MONEY, PAYMENTS & P&L ENGINE
+    // SIMPLE MONEY IN / MONEY OUT & P&L ENGINE
     // ========================================================================
     function getMonthKey(dateStr) {
       if (!dateStr || dateStr.length < 7) return "";
@@ -1955,23 +1945,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     }
 
-    function classifyPaymentType(summaryStr, clientObj = null) {
-      const text = String(summaryStr || "").trim();
-      const hasOneTime = /one-time|onetime|standalone/i.test(text) || (clientObj && clientObj.freq === "One-Time");
-      const hasRecurring = !hasOneTime && /weekly|bi-weekly|twice|monthly/i.test(text);
-      const hasAddon = /yard fresh|haul-away|litter supply|deep clean|extra yard time/i.test(text);
-
-      if (hasOneTime) return "One-Time Service";
-      if (hasRecurring) return "Monthly Recurring";
-      if (hasAddon) return "Add-On Service";
-      return "Square Payment";
-    }
-
     function buildCombinedPaymentsLedger() {
       const seenKeys = new Set();
       const ledger = [];
 
-      // 1. Manual Logged Payments (Cash, Venmo/Zelle, Manual Square)
+      // 1. Manual Logged Payments
       manualPayments.forEach(mp => {
         const rawStatus = String(mp.status || "PAID").toUpperCase();
         const gross = Number(mp.amount || 0);
@@ -1982,9 +1960,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           date: mp.date || "",
           monthKey: getMonthKey(mp.date || ""),
           customerName: mp.customerName || "Customer",
-          paymentType: mp.type || "Monthly Recurring",
           method: mp.method || "Manual Entry",
-          summary: mp.description || mp.type || "Manual Payment",
+          summary: mp.description || "Payment",
           status: rawStatus,
           grossAmount: gross,
           netCollected,
@@ -1992,7 +1969,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         });
       });
 
-      // 2. Square Synced Transactions (from existing CRM clients)
+      // 2. Square Synced Transactions (matched to CRM clients only)
       clients.forEach(c => {
         const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
         hist.forEach((h, idx) => {
@@ -2000,7 +1977,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             ? `pay:${h.paymentId}`
             : h.invoiceId
               ? `inv:${h.invoiceId}`
-              : `tx:${c.id}:${h.date}:${Number(h.amount || 0).toFixed(2)}:${h.summary || ""}`;
+              : `tx:${c.id}:${h.date}:${Number(h.amount || 0).toFixed(2)}`;
           if (seenKeys.has(dedupeId)) return;
           seenKeys.add(dedupeId);
 
@@ -2024,7 +2001,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             date: h.date || "",
             monthKey: getMonthKey(h.date || ""),
             customerName: c.name,
-            paymentType: classifyPaymentType(h.summary, c),
             method: h.method || "Square",
             summary: h.summary || "Square Payment",
             status: normStatus,
@@ -2050,11 +2026,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     window.renderPerformanceDashboard = function() {
-      const periodFilter = document.getElementById("perfPeriodFilter")?.value || "this_month";
+      const periodFilter = document.getElementById("perfPeriodFilter")?.value || "all_time";
       const allPayments = buildCombinedPaymentsLedger();
       const periodPayments = allPayments.filter(p => isDateInSelectedPeriod(p.date, periodFilter));
 
-      const collectedCash = periodPayments
+      const moneyIn = periodPayments
         .filter(p => p.status === "PAID")
         .reduce((sum, p) => sum + p.netCollected, 0);
 
@@ -2062,15 +2038,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         .filter(p => p.status === "PENDING")
         .reduce((sum, p) => sum + p.grossAmount, 0);
 
-      const periodExpenses = expensesList
+      const moneyOut = expensesList
         .filter(e => e.frequency === "Monthly Recurring" || isDateInSelectedPeriod(e.date, periodFilter))
         .reduce((sum, e) => sum + Number(e.amount || 0), 0);
 
-      const periodDiscounts = discountLogs
-        .filter(d => isDateInSelectedPeriod(d.date, periodFilter))
-        .reduce((sum, d) => sum + Number(d.discountAmount || 0), 0);
-
-      const netCashProfit = collectedCash - periodExpenses;
+      const netProfit = moneyIn - moneyOut;
 
       const activeClients = clients.filter(c => c.status === "Active");
       const estMrr = activeClients.reduce(
@@ -2078,39 +2050,39 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         0
       );
 
-      // 1. Render Simple P&L Summary Boxes
+      // 1. Simple P&L Overview Boxes
       const summaryGrid = document.getElementById("perfSummaryGrid");
       if (summaryGrid) {
         summaryGrid.innerHTML = `
           <div class="perf-stat-box highlight-cash">
-            <span class="perf-stat-lbl">Collected Revenue (Cash In)</span>
-            <span class="perf-stat-num">$${collectedCash.toFixed(2)}</span>
-            <span class="perf-stat-note">Paid Square + manual logged payments</span>
+            <span class="perf-stat-lbl">Money In (Paid)</span>
+            <span class="perf-stat-num">$${moneyIn.toFixed(2)}</span>
+            <span class="perf-stat-note">Square + manually logged payments</span>
           </div>
           <div class="perf-stat-box highlight-warn">
-            <span class="perf-stat-lbl">Total Expenses</span>
-            <span class="perf-stat-num">$${periodExpenses.toFixed(2)}</span>
-            <span class="perf-stat-note">Recurring monthly + logged expenses</span>
+            <span class="perf-stat-lbl">Money Out (Expenses)</span>
+            <span class="perf-stat-num">$${moneyOut.toFixed(2)}</span>
+            <span class="perf-stat-note">Logged business expenses</span>
           </div>
-          <div class="perf-stat-box ${netCashProfit >= 0 ? "highlight-cash" : "highlight-warn"}">
-            <span class="perf-stat-lbl">Net Profit (Collected − Expenses)</span>
-            <span class="perf-stat-num">$${netCashProfit.toFixed(2)}</span>
-            <span class="perf-stat-note">Actual cash profit for selected period</span>
+          <div class="perf-stat-box ${netProfit >= 0 ? "highlight-cash" : "highlight-warn"}">
+            <span class="perf-stat-lbl">Net Profit (In − Out)</span>
+            <span class="perf-stat-num">$${netProfit.toFixed(2)}</span>
+            <span class="perf-stat-note">Collected cash minus expenses</span>
           </div>
           <div class="perf-stat-box highlight-proj">
-            <span class="perf-stat-lbl">Est. Monthly Recurring (MRR)</span>
+            <span class="perf-stat-lbl">Est. Monthly Recurring</span>
             <span class="perf-stat-num">$${estMrr.toFixed(2)}</span>
-            <span class="perf-stat-note">${activeClients.length} active client(s) • $${pendingInvoices.toFixed(2)} unpaid invoices</span>
+            <span class="perf-stat-note">${activeClients.length} active client(s) • $${pendingInvoices.toFixed(2)} unpaid</span>
           </div>
         `;
       }
 
-      // 2. Render Payments Table
+      // 2. Money In Table (Who Paid, How Much, Date Paid)
       const payTbody = document.getElementById("paymentsLedgerTableBody");
       if (payTbody) {
         payTbody.innerHTML = periodPayments.length
           ? periodPayments.map(p => {
-              let badge = `<span class="badge badge-amber">Pending / Unpaid</span>`;
+              let badge = `<span class="badge badge-amber">Unpaid / Pending</span>`;
               if (p.status === "PAID") badge = `<span class="badge badge-ok">✓ Paid</span>`;
               else if (p.status === "FAILED") badge = `<span class="badge badge-red">✕ Failed</span>`;
               else if (p.status === "REFUNDED") badge = `<span class="badge badge-red">↩ Refunded</span>`;
@@ -2121,20 +2093,19 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
               return `
                 <tr class="mobile-card-row">
-                  <td class="m-header" data-label="Date"><strong>${formatDisplayDate(p.date)}</strong><span class="mobile-only-inline"><strong>$${p.grossAmount.toFixed(2)}</strong></span></td>
-                  <td data-label="Customer"><strong>${escapeHtml(p.customerName)}</strong></td>
-                  <td data-label="Type"><span class="badge badge-blue">${escapeHtml(p.paymentType)}</span></td>
-                  <td data-label="Method / Details">${escapeHtml(p.method)}<br><span style="font-size:11px; color:var(--m);">${escapeHtml(p.summary)}</span></td>
+                  <td class="m-header" data-label="Date Paid"><strong>${formatDisplayDate(p.date)}</strong><span class="mobile-only-inline"><strong>$${p.grossAmount.toFixed(2)}</strong></span></td>
+                  <td data-label="Who Paid"><strong>${escapeHtml(p.customerName)}</strong></td>
+                  <td data-label="Method / Details">${escapeHtml(p.method)}${p.summary && p.summary !== p.method ? `<br><span style="font-size:11px; color:var(--m);">${escapeHtml(p.summary)}</span>` : ""}</td>
                   <td data-label="Status">${badge}</td>
                   <td class="desktop-only-cell" data-label="Amount"><strong>$${p.grossAmount.toFixed(2)}</strong></td>
                   <td class="m-actions" data-label="Actions">${actions}</td>
                 </tr>
               `;
             }).join("")
-          : `<tr class="empty-table-row"><td colspan="7" style="text-align:center; padding:18px; color:var(--m);">No payments recorded for this period yet. Click <strong>"+ Log Payment"</strong> or <strong>"🔄 Sync Square Payments Only"</strong> above.</td></tr>`;
+          : `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:18px; color:var(--m);">No payments recorded yet. Click <strong>"🔄 Sync Square"</strong> or <strong>"+ Log Payment"</strong> above.</td></tr>`;
       }
 
-      // 3. Render Expenses Table
+      // 3. Money Out (Expenses Table)
       const expTbody = document.getElementById("expensesTableBody");
       if (expTbody) {
         const sortedExp = [...expensesList].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
@@ -2155,7 +2126,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           : `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:18px; color:var(--m);">No business expenses logged yet. Click <strong>"+ Log Business Expense"</strong> above to track fuel, ads, supplies, or software.</td></tr>`;
       }
 
-      // 4. Render Simple Discounts Log
+      // 4. Discounts Log
       const discTbody = document.getElementById("discountsTableBody");
       if (discTbody) {
         const sortedDisc = [...discountLogs].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
@@ -2173,7 +2144,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 </td>
               </tr>
             `).join("")
-          : `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:18px; color:var(--m);">No discounts logged yet${periodDiscounts > 0 ? "" : "."}</td></tr>`;
+          : `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:18px; color:var(--m);">No discounts logged yet.</td></tr>`;
       }
     };
 
@@ -2192,9 +2163,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         document.getElementById("mpCustomerName").value = mp.customerName || "";
         document.getElementById("mpDate").value = mp.date || todayStr(0);
         document.getElementById("mpAmount").value = Number(mp.amount || 0).toFixed(2);
-        document.getElementById("mpMethod").value = mp.method || "Square (Manual / POS)";
+        document.getElementById("mpMethod").value = mp.method || "Square";
         document.getElementById("mpStatus").value = mp.status || "PAID";
-        document.getElementById("mpType").value = mp.type || "Monthly Recurring";
         document.getElementById("mpDescription").value = mp.description || "";
       } else {
         document.getElementById("mpModalTitle").textContent = "💵 Log Customer Payment";
@@ -2211,17 +2181,29 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     window.saveManualPayment = async function(event) {
       event.preventDefault();
       const existingId = document.getElementById("editManualPaymentId").value.trim();
+      const custName = document.getElementById("mpCustomerName").value.trim();
+      const datePaid = document.getElementById("mpDate").value || todayStr(0);
+      const statusVal = document.getElementById("mpStatus").value;
       const record = {
         id: existingId || ("ws-mpay-" + Date.now()),
-        customerName: document.getElementById("mpCustomerName").value.trim(),
-        date: document.getElementById("mpDate").value || todayStr(0),
+        customerName: custName,
+        date: datePaid,
         amount: parseFloat(document.getElementById("mpAmount").value) || 0,
         method: document.getElementById("mpMethod").value,
-        status: document.getElementById("mpStatus").value,
-        type: document.getElementById("mpType").value,
+        status: statusVal,
         description: document.getElementById("mpDescription").value.trim()
       };
       await setDoc(doc(db, "wise_scoopers_manual_payments", record.id), JSON.parse(JSON.stringify(record)));
+
+      // Also update matching CRM client's Last Paid Date if marked PAID
+      if (statusVal === "PAID") {
+        const matchedClient = findLooseCrmClient({ name: custName });
+        if (matchedClient && (!matchedClient.lastPaid || datePaid >= matchedClient.lastPaid)) {
+          matchedClient.lastPaid = datePaid;
+          await saveClientDoc(matchedClient);
+        }
+      }
+
       closeManualPaymentModal();
       showToast(`Saved $${record.amount.toFixed(2)} payment for ${record.customerName}!`);
     };
@@ -2849,7 +2831,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     // ========================================================================
-    // SQUARE BACKEND BRIDGE (PAYMENTS-ONLY SYNC — NEVER CREATES CRM CLIENTS)
+    // SQUARE WHOLE-ACCOUNT PAYMENT SYNC (LOOSE CRM MATCHING ONLY)
     // ========================================================================
     async function callSquareApi(payloadObj) {
       const res = await fetch(SQUARE_ENDPOINT, {
@@ -2866,22 +2848,58 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       return (digits.length === 11 && digits.startsWith("1")) ? digits.slice(1) : digits;
     }
 
-    function formatDisplayPhone(raw) {
-      const d = normalizePhone10(raw);
-      return d.length === 10 ? `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}` : (raw || "");
-    }
+    // Loosely matches Square customer info to an EXISTING CRM client only.
+    // Returns null if no CRM client matches (so unmatched Square records are ignored).
+    function findLooseCrmClient(info) {
+      if (!info) return null;
+      const sqCustId = String(info.squareCustomerId || "").trim();
+      const phone10 = normalizePhone10(info.phone || "");
+      const emailLow = String(info.email || "").trim().toLowerCase();
+      const nameLow = String(info.name || "").trim().toLowerCase().replace(/\s+/g, " ");
 
-    function findExistingClientMatch(sqCustId, email, phone) {
-      let c = sqCustId ? clients.find(x => x.squareCustomerId === sqCustId) : null;
-      if (!c && phone) {
-        const p10 = normalizePhone10(phone);
-        if (p10.length === 10) c = clients.find(x => normalizePhone10(x.phone) === p10);
+      // 1. Exact Square Customer ID
+      if (sqCustId) {
+        const byId = clients.find(x => x.squareCustomerId === sqCustId);
+        if (byId) return byId;
       }
-      if (!c && email) {
-        const em = email.trim().toLowerCase();
-        c = clients.find(x => (x.email || "").trim().toLowerCase() === em);
+
+      // 2. Exact 10-digit Phone Number
+      if (phone10.length === 10) {
+        const byPhone = clients.find(x => normalizePhone10(x.phone) === phone10);
+        if (byPhone) return byPhone;
       }
-      return c || null;
+
+      // 3. Exact Email
+      if (emailLow) {
+        const byEmail = clients.find(x => (x.email || "").trim().toLowerCase() === emailLow);
+        if (byEmail) return byEmail;
+      }
+
+      // 4. Loose Name Match (Full name OR unique first name match)
+      if (nameLow) {
+        const byFullName = clients.find(x => (x.name || "").trim().toLowerCase().replace(/\s+/g, " ") === nameLow);
+        if (byFullName) return byFullName;
+
+        const sqParts = nameLow.split(" ");
+        const sqFirst = sqParts[0];
+        if (sqFirst && sqFirst.length >= 2) {
+          // Match first name + last initial if available
+          if (sqParts.length > 1) {
+            const sqLastInit = sqParts[sqParts.length - 1][0];
+            const byFirstLastInit = clients.find(x => {
+              const cParts = (x.name || "").trim().toLowerCase().replace(/\s+/g, " ").split(" ");
+              return cParts[0] === sqFirst && cParts.length > 1 && cParts[cParts.length - 1][0] === sqLastInit;
+            });
+            if (byFirstLastInit) return byFirstLastInit;
+          }
+
+          // Match unique first name across CRM clients
+          const firstMatches = clients.filter(x => (x.name || "").trim().toLowerCase().split(/\s+/)[0] === sqFirst);
+          if (firstMatches.length === 1) return firstMatches[0];
+        }
+      }
+
+      return null;
     }
 
     window.syncSquareBillingStatuses = async function(silent = false) {
@@ -2891,6 +2909,29 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (perfBtn) { perfBtn.disabled = true; perfBtn.textContent = "⏳ Syncing..."; }
 
       try {
+        // Step A: Pull Square Contact Directory to map squareCustomerId -> Name, Email, Phone
+        const sqDirectory = {};
+        try {
+          const contactsRes = await callSquareApi({ action: "square_sync_contacts" });
+          const sqContacts = Array.isArray(contactsRes.customers) ? contactsRes.customers : [];
+          sqContacts.forEach(sc => {
+            if (sc.squareCustomerId) {
+              sqDirectory[sc.squareCustomerId] = {
+                squareCustomerId: sc.squareCustomerId,
+                name: sc.name || "",
+                email: sc.email || "",
+                phone: sc.phone || "",
+                hasCardOnFile: !!sc.hasCardOnFile,
+                cardId: sc.cardId || "",
+                cardLabel: sc.cardLabel || ""
+              };
+            }
+          });
+        } catch (dirErr) {
+          // Continue even if contacts endpoint fails
+        }
+
+        // Step B: Pull all Square Payments & Invoices
         const invoiceIds = [], customerIds = [];
         clients.forEach(c => {
           if (c.squareCustomerId && !customerIds.includes(c.squareCustomerId)) customerIds.push(c.squareCustomerId);
@@ -2907,8 +2948,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         let newlySyncedCount = 0;
         const dirtyClientIds = new Set();
 
+        // Update Card-on-File & Square Customer IDs for existing CRM clients
         for (const c of clients) {
-          const custUpd = c.squareCustomerId ? custUpdates[c.squareCustomerId] : null;
+          const dirMatch = Object.values(sqDirectory).find(sc => findLooseCrmClient(sc)?.id === c.id);
+          if (dirMatch && !c.squareCustomerId) {
+            c.squareCustomerId = dirMatch.squareCustomerId;
+            dirtyClientIds.add(c.id);
+          }
+          const custUpd = (c.squareCustomerId && custUpdates[c.squareCustomerId]) || dirMatch;
           if (custUpd) {
             if (Boolean(c.hasCardOnFile) !== Boolean(custUpd.hasCardOnFile) || (c.squareCardLabel || "") !== (custUpd.cardLabel || "")) {
               c.hasCardOnFile = !!custUpd.hasCardOnFile;
@@ -2920,9 +2967,23 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
         }
 
+        // Step C: Process all Square Payments (Money In / Refunds) -> match to CRM clients only
         for (const pay of paymentsLedger) {
-          const c = findExistingClientMatch(pay.squareCustomerId, pay.customerEmail, "");
+          const dirInfo = pay.squareCustomerId ? (sqDirectory[pay.squareCustomerId] || {}) : {};
+          const c = findLooseCrmClient({
+            squareCustomerId: pay.squareCustomerId || "",
+            name: pay.customerName || dirInfo.name || "",
+            email: pay.customerEmail || dirInfo.email || "",
+            phone: dirInfo.phone || ""
+          });
+
+          // Ignore if no CRM client loosely matches
           if (!c) continue;
+
+          if (!c.squareCustomerId && pay.squareCustomerId) {
+            c.squareCustomerId = pay.squareCustomerId;
+            dirtyClientIds.add(c.id);
+          }
           if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
 
           let existing = c.squareHistory.find(h => (pay.paymentId && h.paymentId === pay.paymentId) || (pay.invoiceId && h.invoiceId === pay.invoiceId));
@@ -2943,22 +3004,38 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               paymentId: pay.paymentId,
               invoiceId: pay.invoiceId || "",
               invoiceNumber: pay.invoiceNumber || "",
-              method: pay.method || "Square Payment",
+              method: pay.method || "Square",
               summary: pay.summary || "Square Payment",
               status: pay.status,
               url: pay.receiptUrl || ""
             });
-            if (pay.status === "PAID" && (!c.lastPaid || pay.date > c.lastPaid)) {
-              c.lastPaid = pay.date;
-            }
             dirtyClientIds.add(c.id);
             newlySyncedCount++;
           }
+
+          if (pay.status === "PAID" && pay.date && (!c.lastPaid || pay.date > c.lastPaid)) {
+            c.lastPaid = pay.date;
+            dirtyClientIds.add(c.id);
+          }
         }
 
+        // Step D: Process all Square Invoices -> match to CRM clients only
         for (const inv of allInvoices) {
-          const c = findExistingClientMatch(inv.squareCustomerId, inv.customerEmail, inv.customerPhone);
+          const dirInfo = inv.squareCustomerId ? (sqDirectory[inv.squareCustomerId] || {}) : {};
+          const c = findLooseCrmClient({
+            squareCustomerId: inv.squareCustomerId || "",
+            name: inv.customerName || dirInfo.name || "",
+            email: inv.customerEmail || dirInfo.email || "",
+            phone: inv.customerPhone || dirInfo.phone || ""
+          });
+
+          // Ignore if no CRM client loosely matches
           if (!c) continue;
+
+          if (!c.squareCustomerId && inv.squareCustomerId) {
+            c.squareCustomerId = inv.squareCustomerId;
+            dirtyClientIds.add(c.id);
+          }
           if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
 
           let existing = c.squareHistory.find(h => h.invoiceId && h.invoiceId === inv.invoiceId);
@@ -2968,7 +3045,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               existing.status = inv.status;
               if (inv.publicUrl) existing.url = inv.publicUrl;
               if (wasNotPaid && inv.status === "PAID") {
-                c.lastPaid = todayStr(0);
+                const paidDt = inv.date || todayStr(0);
+                if (!c.lastPaid || paidDt >= c.lastPaid) c.lastPaid = paidDt;
                 if (c.freq !== "One-Time") {
                   const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || todayStr(0)).getDate();
                   c.nextCharge = addOneAnniversaryMonth(c.nextCharge || todayStr(0), anchorDay);
@@ -2988,11 +3066,15 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               status: inv.status,
               url: inv.publicUrl || ""
             });
+            if (inv.status === "PAID" && inv.date && (!c.lastPaid || inv.date > c.lastPaid)) {
+              c.lastPaid = inv.date;
+            }
             dirtyClientIds.add(c.id);
             newlySyncedCount++;
           }
         }
 
+        // Save all updated CRM clients to Firebase
         for (const cid of dirtyClientIds) {
           const target = clients.find(x => x.id === cid);
           if (target) await saveClientDoc(target);
@@ -3001,66 +3083,15 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (!silent) {
           showToast(
             newlySyncedCount > 0
-              ? `Payments synced! Updated ${newlySyncedCount} payment/invoice status(es).`
-              : `All existing client payments are up to date!`
+              ? `Square synced! Updated ${newlySyncedCount} payment(s) across your CRM.`
+              : `Square synced! All CRM client payments are up to date.`
           );
         }
       } catch (err) {
-        if (!silent) alert(err.message || "Could not sync Square payments.");
+        if (!silent) alert(err.message || "Could not sync Square.");
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = "🔄 Sync Square Payments"; }
-        if (perfBtn) { perfBtn.disabled = false; perfBtn.textContent = "🔄 Sync Square Payments Only"; }
-      }
-    };
-
-    window.syncSquareContacts = async function() {
-      const btn = document.getElementById("btnSyncSquare");
-      if (btn) { btn.disabled = true; btn.textContent = "⏳ Syncing Square..."; }
-      try {
-        const res = await callSquareApi({ action: "square_sync_contacts" });
-        const sqList = res.customers || [];
-        let matchedCount = 0, importedCount = 0;
-
-        for (const sq of sqList) {
-          const sqPhone10 = normalizePhone10(sq.phone), sqEmailLow = (sq.email || "").trim().toLowerCase();
-          let existing = clients.find(c => c.squareCustomerId && c.squareCustomerId === sq.squareCustomerId);
-          if (!existing && sqPhone10.length === 10) existing = clients.find(c => normalizePhone10(c.phone) === sqPhone10);
-          if (!existing && sqEmailLow) existing = clients.find(c => (c.email || "").trim().toLowerCase() === sqEmailLow);
-
-          if (existing) {
-            existing.squareCustomerId = sq.squareCustomerId;
-            existing.hasCardOnFile = !!sq.hasCardOnFile;
-            existing.squareCardId = sq.cardId || "";
-            existing.squareCardLabel = sq.cardLabel || "";
-            if (!existing.email && sq.email) existing.email = sq.email;
-            if (!existing.phone && sq.phone) existing.phone = formatDisplayPhone(sq.phone);
-            if (sq.hasCardOnFile && existing.payMethod === "Invoice Link") existing.payMethod = "Card on File";
-            await saveClientDoc(existing);
-            matchedCount++;
-          } else {
-            const today = todayStr(0), cleanAddr = sq.address || "Address Needed";
-            const newRec = {
-              id: "ws-sq-" + sq.squareCustomerId, squareCustomerId: sq.squareCustomerId,
-              hasCardOnFile: !!sq.hasCardOnFile, squareCardId: sq.cardId || "", squareCardLabel: sq.cardLabel || "",
-              name: sq.name || "Square Customer", phone: formatDisplayPhone(sq.phone), email: sq.email || "",
-              city: sq.city || extractCityFromAddress(cleanAddr, ""), address: cleanAddr, status: "Active",
-              dogs: 1, cats: 0, treatLoc: "Front Door", dogNames: "",
-              gateNotes: "Imported from Square — verify yard & pet details", importantNote: "",
-              startDate: today, freq: "Weekly", serviceType: "Dog Waste Removal", nextScoop: today,
-              nextCharge: addOneAnniversaryMonth(today, parseISODate(today).getDate()), lastPaid: "",
-              netPrice: 78.00, recurringDiscount: 0, payMethod: sq.hasCardOnFile ? "Card on File" : "Invoice Link",
-              addons: { yardFresh: false, yfSections: 1, haulAway: false, litterSupply: false, litterSupplyBoxes: 1, deepClean: false, deepCleanBoxes: 1, extraTime: false, extraTimeBlocks: 1 },
-              addonsSummary: "", howHeard: "Google Search / Website", refBy: "", refLoc: "", refStatus: "N/A", geo: null
-            };
-            await saveClientDoc(newRec);
-            importedCount++;
-          }
-        }
-        showToast(`Square (${res.env}) synced: ${matchedCount} linked, ${importedCount} imported!`);
-      } catch (err) {
-        alert(err.message || "Could not sync Square contacts.");
-      } finally {
-        if (btn) { btn.disabled = false; btn.textContent = "👥 Sync Square Contacts"; }
+        if (btn) { btn.disabled = false; btn.textContent = "🔄 Sync Square"; }
+        if (perfBtn) { perfBtn.disabled = false; perfBtn.textContent = "🔄 Sync Square"; }
       }
     };
 
@@ -3382,7 +3413,15 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         loadRegionalWeather(false);
 
         if (unsubscribeClients) unsubscribeClients();
-        unsubscribeClients = onSnapshot(CLIENTS_COL, s => { clients = s.docs.map(d => ({ id: d.id, ...d.data() })); syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`; renderAll(); });
+        unsubscribeClients = onSnapshot(CLIENTS_COL, s => {
+          clients = s.docs.map(d => ({ id: d.id, ...d.data() }));
+          syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`;
+          renderAll();
+          if (!hasRunInitialSquareSync && clients.length > 0) {
+            hasRunInitialSquareSync = true;
+            syncSquareBillingStatuses(true);
+          }
+        });
 
         if (unsubscribeLeads) unsubscribeLeads();
         unsubscribeLeads = onSnapshot(LEADS_COL, s => { leads = s.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('leadCountBadge').textContent = leads.length; syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`; renderAll(); });
@@ -3418,7 +3457,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           } else if (typeof window.pushCurrentFbStateToCloud === 'function') { window.pushCurrentFbStateToCloud(); }
         });
       } else {
-        isAuthenticated = false; gate.classList.remove('hidden'); syncEl.textContent = '🔒 Locked';
+        isAuthenticated = false; hasRunInitialSquareSync = false; gate.classList.remove('hidden'); syncEl.textContent = '🔒 Locked';
       }
     });
 
