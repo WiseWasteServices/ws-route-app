@@ -316,6 +316,100 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .panel-hd { background: var(--cr); border-bottom: 1.5px solid var(--b); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
   .panel-hd h2 { margin: 0; font-size: 15.5px; font-weight: 900; color: var(--g); }
 
+  /* EXPANDABLE CLIENT PROFILE DROPDOWN, ACTIVITY FEED & PROPERTY PHOTOS */
+  tr.client-main-row { cursor: pointer; transition: background 0.12s ease; }
+  tr.client-main-row:hover td { background: #F2F7F2 !important; }
+  tr.client-main-row.is-expanded td { background: #EDF5EE !important; border-bottom-color: transparent; }
+  .client-chevron { display: inline-block; font-size: 11px; color: var(--gm); margin-right: 5px; transition: transform 0.18s ease; }
+  tr.client-main-row.is-expanded .client-chevron { transform: rotate(90deg); }
+
+  .addr-photo-inline {
+    display: flex; align-items: center; gap: 9px;
+  }
+  .addr-thumb-btn {
+    width: 48px; height: 48px; border-radius: 9px; border: 2px solid var(--gm);
+    padding: 0; overflow: hidden; cursor: zoom-in; flex-shrink: 0; background: var(--cr);
+    position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  }
+  .addr-thumb-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .addr-thumb-badge {
+    position: absolute; bottom: 0; right: 0; background: rgba(38, 58, 45, 0.88);
+    color: #fff; font-size: 9px; font-weight: 900; padding: 1px 4px; border-top-left-radius: 5px;
+  }
+
+  tr.client-drawer-row td {
+    background: #F6FAF6 !important;
+    padding: 0 !important;
+    border-bottom: 2px solid var(--gm);
+  }
+  .client-profile-drawer {
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 14px;
+    border-top: 1px dashed var(--b);
+  }
+  @media (max-width: 900px) {
+    .client-profile-drawer { grid-template-columns: 1fr; }
+  }
+  .cpd-card {
+    background: var(--w); border: 1.5px solid var(--b); border-radius: 12px;
+    padding: 11px 13px; display: flex; flex-direction: column; gap: 9px;
+  }
+  .cpd-title {
+    font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--g); border-bottom: 1px solid #E6EDE7; padding-bottom: 6px;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  }
+  .cpd-photo-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px;
+  }
+  .cpd-photo-item {
+    border: 1.5px solid var(--b); border-radius: 9px; overflow: hidden; background: var(--cr);
+    display: flex; flex-direction: column;
+  }
+  .cpd-photo-item img {
+    width: 100%; height: 86px; object-fit: cover; cursor: zoom-in; display: block;
+  }
+  .cpd-photo-cap {
+    padding: 4px 6px; font-size: 10.5px; font-weight: 700; color: var(--ink);
+    display: flex; align-items: center; justify-content: space-between; gap: 4px;
+  }
+  .cpd-activity-list {
+    display: flex; flex-direction: column; gap: 6px; max-height: 290px; overflow-y: auto;
+  }
+  .cpd-act-item {
+    background: var(--cr); border: 1px solid #DCE6DA; border-left: 4px solid var(--gm);
+    border-radius: 8px; padding: 7px 10px; font-size: 12px; line-height: 1.35;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+  }
+  .cpd-act-item.act-paid { border-left-color: #2E7D4F; background: #F1F9F3; }
+  .cpd-act-item.act-invoice { border-left-color: #2B6CB0; background: #F3F8FD; }
+  .cpd-act-item.act-scoop { border-left-color: #D48817; background: #FFFDF6; }
+  .cpd-note-editor textarea, .cpd-note-editor input {
+    width: 100%; padding: 7px 9px; border: 1.5px solid var(--b); border-radius: 8px;
+    font-size: 12.5px; font-family: inherit; background: #FAFDFB;
+  }
+
+  /* FULLSCREEN PHOTO LIGHTBOX MODAL */
+  .photo-lightbox {
+    position: fixed; inset: 0; background: rgba(14, 22, 17, 0.92);
+    display: none; align-items: center; justify-content: center; flex-direction: column;
+    padding: 18px; z-index: 4000;
+  }
+  .photo-lightbox.open { display: flex; }
+  .photo-lightbox-inner {
+    max-width: 92vw; max-height: 84vh; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+  .photo-lightbox-inner img {
+    max-width: 100%; max-height: 74vh; border-radius: 14px; border: 3px solid var(--gt);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6); object-fit: contain; background: #000;
+  }
+  .photo-lightbox-caption {
+    background: var(--w); color: var(--ink); padding: 9px 15px; border-radius: 10px;
+    font-size: 13px; font-weight: 800; text-align: center; max-width: 640px;
+  }
+
   /* LEADS & POTENTIAL CLIENTS GRID */
   .leads-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 12px; }
   .lead-card { background: var(--w); border: 1.5px solid var(--b); border-left: 5px solid var(--gm); border-radius: 12px; padding: 12px 13px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 2px 8px rgba(38, 58, 45, 0.04); }
@@ -394,6 +488,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     tr.mobile-card-row td.m-header::before { display: none; }
     tr.mobile-card-row td.m-actions { grid-column: 1 / -1; background: transparent; padding: 4px 0 0; }
     tr.mobile-card-row td.m-actions::before { display: none; }
+    tr.client-drawer-row { display: block; margin-top: -6px; margin-bottom: 12px; }
+    tr.client-drawer-row td { display: block; border-radius: 0 0 12px 12px; border: 1.5px solid var(--gm); border-top: none; }
     tr.empty-table-row td { background: transparent; padding: 20px 10px; }
   }
 
@@ -785,7 +881,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         <!-- TAB 1: SIMPLE MONEY IN / MONEY OUT & P&L -->
         <section id="tab-performance" class="view-panel">
-          <!-- 1. SIMPLE P&L OVERVIEW -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
               <h3>💰 Money In vs. Money Out (Simple P&amp;L)</h3>
@@ -805,7 +900,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <!-- 2. MONEY IN (WHO PAID, HOW MUCH, DATE PAID) -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
               <h3>💵 Money In — Payments Log (Square + Manual)</h3>
@@ -836,7 +930,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <!-- 3. MONEY OUT (BUSINESS EXPENSES) -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
               <h3>🧾 Money Out — Business Expenses</h3>
@@ -861,7 +954,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
           </div>
 
-          <!-- 4. DISCOUNTS & PROMOS -->
           <div class="perf-section-card">
             <div class="perf-section-hd">
               <h3>🏷️ Discounts &amp; Promos Given</h3>
@@ -994,12 +1086,16 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           </div>
         </section>
 
-        <!-- TAB 5: ALL CLIENTS DIRECTORY -->
+        <!-- TAB 5: ALL CLIENTS DIRECTORY (CLICK ANY CLIENT TO EXPAND PROFILE, PHOTOS & ACTIVITY) -->
         <section id="tab-clients" class="view-panel">
           <div class="panel-card">
             <div class="panel-hd">
-              <h2>🐾 Complete Client Directory</h2>
+              <div>
+                <h2>🐾 Complete Client Directory</h2>
+                <span style="font-size:11px; color:var(--m); font-weight:700;">Tap any client to expand their activity feed, invoices, gate photos &amp; notes</span>
+              </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-sage btn-sm" onclick="syncSquareBillingStatuses()">🔄 Sync Square</button>
                 <button class="btn btn-green btn-sm" onclick="openClientModal()">+ Add Client</button>
               </div>
             </div>
@@ -1008,7 +1104,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <thead>
                   <tr>
                     <th>Customer</th>
-                    <th>Service Address</th>
+                    <th>Service Address &amp; Gate Photo</th>
                     <th>Pets &amp; Treat Location</th>
                     <th>Notes &amp; Reminders</th>
                     <th>Start Date &amp; Next Scoop</th>
@@ -1311,6 +1407,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </div>
       <div class="card-stack" id="dailyCardsContainer"></div>
     </section>
+  </div>
+
+  <!-- ========================================================================
+       HOUSE / GATE PHOTO BLOWN-UP LIGHTBOX MODAL
+       ======================================================================== -->
+  <div class="photo-lightbox" id="photoLightbox" onclick="if(event.target===this) closePhotoLightbox()">
+    <div class="photo-lightbox-inner">
+      <img id="lightboxImg" src="" alt="Property or Gate Photo">
+      <div class="photo-lightbox-caption" id="lightboxCaption"></div>
+      <button type="button" class="btn btn-sage" onclick="closePhotoLightbox()">✕ Close Photo</button>
+    </div>
   </div>
 
   <!-- ========================================================================
@@ -1921,6 +2028,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let unsubOmw = null;
     let isAuthenticated = false;
     let hasRunInitialSquareSync = false;
+    let expandedClientId = null;
 
     window.toggleMobileHeaderExtras = function() {
       const topbar = document.getElementById("mainTopbar");
@@ -1929,6 +2037,227 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const isOpen = topbar.classList.toggle("mobile-menu-open");
       if (btn) btn.textContent = isOpen ? "✕ Close" : "☰ More";
     };
+
+    // ========================================================================
+    // EXPANDABLE CLIENT DRAWER, ACTIVITY FEED & HOUSE/GATE PHOTO LIGHTBOX
+    // ========================================================================
+    window.toggleClientDrawer = function(clientId, event) {
+      if (event && event.target && event.target.closest("button, a, input, textarea, select, label, .addr-thumb-btn")) {
+        return;
+      }
+      expandedClientId = expandedClientId === clientId ? null : clientId;
+      renderClientsTable();
+    };
+
+    window.openPhotoLightbox = function(imgSrc, captionText, event) {
+      if (event) event.stopPropagation();
+      const box = document.getElementById("photoLightbox");
+      const img = document.getElementById("lightboxImg");
+      const cap = document.getElementById("lightboxCaption");
+      if (!box || !img) return;
+      img.src = imgSrc;
+      cap.textContent = captionText || "Customer Property / Gate Photo";
+      box.classList.add("open");
+    };
+
+    window.closePhotoLightbox = function() {
+      const box = document.getElementById("photoLightbox");
+      if (box) box.classList.remove("open");
+    };
+
+    function compressClientPhotoFile(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const maxDim = 900;
+            let w = img.naturalWidth, h = img.naturalHeight;
+            if (w > maxDim || h > maxDim) {
+              if (w >= h) { h = Math.round((h * maxDim) / w); w = maxDim; }
+              else { w = Math.round((w * maxDim) / h); h = maxDim; }
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+            let dataUrl = canvas.toDataURL("image/jpeg", 0.78);
+            if (dataUrl.length > 350000) dataUrl = canvas.toDataURL("image/jpeg", 0.62);
+            resolve(dataUrl);
+          };
+          img.onerror = () => reject(new Error("Could not read image."));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error("Could not load file."));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.handleClientPhotoUpload = async function(clientId, event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const c = clients.find(x => x.id === clientId);
+      if (!c) return;
+      const labelInp = document.getElementById(`newPhotoLabel-${clientId}`);
+      const customLabel = (labelInp?.value || "").trim() || "House / Gate";
+
+      showToast("Compressing & saving property photo...");
+      try {
+        const dataUrl = await compressClientPhotoFile(file);
+        if (!Array.isArray(c.propertyPhotos)) c.propertyPhotos = [];
+        c.propertyPhotos.push({
+          id: "photo-" + Date.now(),
+          label: customLabel,
+          url: dataUrl,
+          addedAt: todayStr(0)
+        });
+        await saveClientDoc(c);
+        showToast(`Saved "${customLabel}" photo for ${c.name}!`);
+      } catch (err) {
+        alert(err.message || "Could not upload photo.");
+      }
+      event.target.value = "";
+    };
+
+    window.addClientPhotoUrl = async function(clientId) {
+      const c = clients.find(x => x.id === clientId);
+      if (!c) return;
+      const urlInp = document.getElementById(`newPhotoUrl-${clientId}`);
+      const labelInp = document.getElementById(`newPhotoLabel-${clientId}`);
+      const url = (urlInp?.value || "").trim();
+      if (!url) { showToast("Paste an image link or choose a file to upload."); return; }
+      const customLabel = (labelInp?.value || "").trim() || "House / Gate";
+
+      if (!Array.isArray(c.propertyPhotos)) c.propertyPhotos = [];
+      c.propertyPhotos.push({
+        id: "photo-" + Date.now(),
+        label: customLabel,
+        url,
+        addedAt: todayStr(0)
+      });
+      await saveClientDoc(c);
+      showToast(`Added "${customLabel}" photo for ${c.name}!`);
+    };
+
+    window.deleteClientPhoto = async function(clientId, photoId) {
+      const c = clients.find(x => x.id === clientId);
+      if (!c || !Array.isArray(c.propertyPhotos)) return;
+      if (!confirm("Remove this property photo?")) return;
+      c.propertyPhotos = c.propertyPhotos.filter(p => p.id !== photoId);
+      await saveClientDoc(c);
+      showToast("Removed property photo.");
+    };
+
+    window.saveInlineClientNotes = async function(clientId) {
+      const c = clients.find(x => x.id === clientId);
+      if (!c) return;
+      const impEl = document.getElementById(`inlineImpNote-${clientId}`);
+      const gateEl = document.getElementById(`inlineGateNote-${clientId}`);
+      const treatEl = document.getElementById(`inlineTreatLoc-${clientId}`);
+      if (impEl) c.importantNote = impEl.value.trim();
+      if (gateEl) c.gateNotes = gateEl.value.trim();
+      if (treatEl) c.treatLoc = treatEl.value;
+      await saveClientDoc(c);
+      showToast(`Saved notes & gate info for ${c.name}!`);
+    };
+
+    function buildClientActivityFeed(c) {
+      const events = [];
+
+      // 1. Yard Visits ("Complete Scoop" history)
+      const visits = Array.isArray(c.visitHistory) ? c.visitHistory : [];
+      visits.forEach(v => {
+        events.push({
+          sortKey: `${v.date || ""}T${v.time || "12:00"}`,
+          kind: "act-scoop",
+          icon: "💩",
+          title: "Yard Service Completed",
+          subtitle: `${v.plan || c.freq || "Service"}${v.addons ? ` • Add-ons: ${v.addons}` : ""}`,
+          dateLabel: formatDisplayDate(v.date),
+          badgeHtml: `<span class="badge badge-soon">✓ Scooped</span>`
+        });
+      });
+
+      // 2. Square Invoices & Payments (Separate entry for Invoice Sent/Viewed vs Payment Received)
+      const sqHist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
+      sqHist.forEach(h => {
+        const amtStr = `$${Number(h.amount || 0).toFixed(2)}`;
+        const isInvoice = Boolean(h.invoiceId) || /invoice/i.test(h.method || "");
+        const st = String(h.status || "SENT").toUpperCase();
+
+        if (isInvoice) {
+          const viewedBadge = h.viewed
+            ? `<span class="badge badge-blue">👁️ Viewed by Client</span>`
+            : st === "PAID"
+              ? `<span class="badge badge-blue">👁️ Opened &amp; Paid</span>`
+              : `<span class="badge badge-amber">⏳ Sent (Not Viewed Yet)</span>`;
+
+          events.push({
+            sortKey: `${h.date || ""}T09:00`,
+            kind: "act-invoice",
+            icon: "📩",
+            title: `Invoice Sent${h.invoiceNumber ? ` (#${h.invoiceNumber})` : ""} — ${amtStr}`,
+            subtitle: `${h.summary || "Service Invoice"}${h.url ? ` • <a href="${escapeHtml(h.url)}" target="_blank" rel="noopener" style="color:var(--gm); font-weight:800;">Open Link ↗</a>` : ""}`,
+            dateLabel: formatDisplayDate(h.date),
+            badgeHtml: viewedBadge
+          });
+        }
+
+        // Separate log entry when the invoice or card was actually PAID
+        if (st === "PAID" || st === "COMPLETED") {
+          const paidDate = h.paidDate || h.date || "";
+          events.push({
+            sortKey: `${paidDate}T14:00`,
+            kind: "act-paid",
+            icon: "💵",
+            title: `Payment Received — ${amtStr}`,
+            subtitle: `${h.method || "Square"}${h.invoiceNumber ? ` (Paid Invoice #${h.invoiceNumber})` : ""}`,
+            dateLabel: formatDisplayDate(paidDate),
+            badgeHtml: `<span class="badge badge-ok">✓ Paid</span>`
+          });
+        } else if (st === "REFUNDED") {
+          events.push({
+            sortKey: `${h.date || ""}T15:00`,
+            kind: "act-invoice",
+            icon: "↩️",
+            title: `Payment Refunded — ${amtStr}`,
+            subtitle: h.summary || "Square Refund",
+            dateLabel: formatDisplayDate(h.date),
+            badgeHtml: `<span class="badge badge-red">Refunded</span>`
+          });
+        }
+      });
+
+      // 3. Manual Logged Payments matching this client
+      manualPayments.forEach(mp => {
+        if (findLooseCrmClient({ name: mp.customerName })?.id !== c.id) return;
+        const st = String(mp.status || "PAID").toUpperCase();
+        events.push({
+          sortKey: `${mp.date || ""}T13:00`,
+          kind: st === "PAID" ? "act-paid" : "act-invoice",
+          icon: "💵",
+          title: `Logged Payment — $${Number(mp.amount || 0).toFixed(2)}`,
+          subtitle: `${mp.method || "Manual"}${mp.description ? ` • ${mp.description}` : ""}`,
+          dateLabel: formatDisplayDate(mp.date),
+          badgeHtml: st === "PAID" ? `<span class="badge badge-ok">✓ Paid</span>` : `<span class="badge badge-amber">${escapeHtml(st)}</span>`
+        });
+      });
+
+      // 4. Account Started Milestone
+      if (c.startDate) {
+        events.push({
+          sortKey: `${c.startDate}T08:00`,
+          kind: "act-scoop",
+          icon: "🎉",
+          title: "Started Service with Wise Scoopers",
+          subtitle: `${c.serviceType || "Dog Waste Removal"} (${c.freq || "Weekly"})`,
+          dateLabel: formatDisplayDate(c.startDate),
+          badgeHtml: `<span class="badge badge-sage">Joined</span>`
+        });
+      }
+
+      return events.sort((a, b) => (b.sortKey || "").localeCompare(a.sortKey || ""));
+    }
 
     // ========================================================================
     // SIMPLE MONEY IN / MONEY OUT & P&L ENGINE
@@ -1949,7 +2278,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const seenKeys = new Set();
       const ledger = [];
 
-      // 1. Manual Logged Payments
       manualPayments.forEach(mp => {
         const rawStatus = String(mp.status || "PAID").toUpperCase();
         const gross = Number(mp.amount || 0);
@@ -1969,7 +2297,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         });
       });
 
-      // 2. Square Synced Transactions (matched to CRM clients only)
       clients.forEach(c => {
         const hist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
         hist.forEach((h, idx) => {
@@ -1998,8 +2325,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             source: "square",
             clientId: c.id,
             histIndex: idx,
-            date: h.date || "",
-            monthKey: getMonthKey(h.date || ""),
+            date: h.paidDate || h.date || "",
+            monthKey: getMonthKey(h.paidDate || h.date || ""),
             customerName: c.name,
             method: h.method || "Square",
             summary: h.summary || "Square Payment",
@@ -2050,7 +2377,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         0
       );
 
-      // 1. Simple P&L Overview Boxes
       const summaryGrid = document.getElementById("perfSummaryGrid");
       if (summaryGrid) {
         summaryGrid.innerHTML = `
@@ -2077,7 +2403,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         `;
       }
 
-      // 2. Money In Table (Who Paid, How Much, Date Paid)
       const payTbody = document.getElementById("paymentsLedgerTableBody");
       if (payTbody) {
         payTbody.innerHTML = periodPayments.length
@@ -2105,7 +2430,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           : `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:18px; color:var(--m);">No payments recorded yet. Click <strong>"🔄 Sync Square"</strong> or <strong>"+ Log Payment"</strong> above.</td></tr>`;
       }
 
-      // 3. Money Out (Expenses Table)
       const expTbody = document.getElementById("expensesTableBody");
       if (expTbody) {
         const sortedExp = [...expensesList].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
@@ -2126,7 +2450,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           : `<tr class="empty-table-row"><td colspan="6" style="text-align:center; padding:18px; color:var(--m);">No business expenses logged yet. Click <strong>"+ Log Business Expense"</strong> above to track fuel, ads, supplies, or software.</td></tr>`;
       }
 
-      // 4. Discounts Log
       const discTbody = document.getElementById("discountsTableBody");
       if (discTbody) {
         const sortedDisc = [...discountLogs].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
@@ -2148,7 +2471,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
-    // MANUAL PAYMENT MODAL & CRUD
+    // MANUAL PAYMENT, EXPENSE & DISCOUNT CRUD
     window.openManualPaymentModal = function(paymentId = null) {
       const form = document.getElementById("manualPaymentForm");
       form.reset();
@@ -2174,9 +2497,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       document.getElementById("manualPaymentModalBackdrop").classList.add("open");
     };
 
-    window.closeManualPaymentModal = function() {
-      document.getElementById("manualPaymentModalBackdrop").classList.remove("open");
-    };
+    window.closeManualPaymentModal = function() { document.getElementById("manualPaymentModalBackdrop").classList.remove("open"); };
 
     window.saveManualPayment = async function(event) {
       event.preventDefault();
@@ -2195,7 +2516,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       };
       await setDoc(doc(db, "wise_scoopers_manual_payments", record.id), JSON.parse(JSON.stringify(record)));
 
-      // Also update matching CRM client's Last Paid Date if marked PAID
       if (statusVal === "PAID") {
         const matchedClient = findLooseCrmClient({ name: custName });
         if (matchedClient && (!matchedClient.lastPaid || datePaid >= matchedClient.lastPaid)) {
@@ -2228,7 +2548,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Recorded $${rAmt.toFixed(2)} refund for ${c.name}.`);
     };
 
-    // EXPENSE & DISCOUNT CRUD HANDLERS
     window.openExpenseModal = function(expenseId = null) {
       const form = document.getElementById("expenseForm");
       form.reset();
@@ -2831,7 +3150,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     // ========================================================================
-    // SQUARE WHOLE-ACCOUNT PAYMENT SYNC (LOOSE CRM MATCHING ONLY)
+    // SQUARE WHOLE-ACCOUNT PAYMENT SYNC (LOOSE CRM MATCHING + VIEWED STATUS)
     // ========================================================================
     async function callSquareApi(payloadObj) {
       const res = await fetch(SQUARE_ENDPOINT, {
@@ -2848,8 +3167,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       return (digits.length === 11 && digits.startsWith("1")) ? digits.slice(1) : digits;
     }
 
-    // Loosely matches Square customer info to an EXISTING CRM client only.
-    // Returns null if no CRM client matches (so unmatched Square records are ignored).
     function findLooseCrmClient(info) {
       if (!info) return null;
       const sqCustId = String(info.squareCustomerId || "").trim();
@@ -2857,25 +3174,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const emailLow = String(info.email || "").trim().toLowerCase();
       const nameLow = String(info.name || "").trim().toLowerCase().replace(/\s+/g, " ");
 
-      // 1. Exact Square Customer ID
       if (sqCustId) {
         const byId = clients.find(x => x.squareCustomerId === sqCustId);
         if (byId) return byId;
       }
-
-      // 2. Exact 10-digit Phone Number
       if (phone10.length === 10) {
         const byPhone = clients.find(x => normalizePhone10(x.phone) === phone10);
         if (byPhone) return byPhone;
       }
-
-      // 3. Exact Email
       if (emailLow) {
         const byEmail = clients.find(x => (x.email || "").trim().toLowerCase() === emailLow);
         if (byEmail) return byEmail;
       }
-
-      // 4. Loose Name Match (Full name OR unique first name match)
       if (nameLow) {
         const byFullName = clients.find(x => (x.name || "").trim().toLowerCase().replace(/\s+/g, " ") === nameLow);
         if (byFullName) return byFullName;
@@ -2883,7 +3193,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const sqParts = nameLow.split(" ");
         const sqFirst = sqParts[0];
         if (sqFirst && sqFirst.length >= 2) {
-          // Match first name + last initial if available
           if (sqParts.length > 1) {
             const sqLastInit = sqParts[sqParts.length - 1][0];
             const byFirstLastInit = clients.find(x => {
@@ -2892,13 +3201,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             });
             if (byFirstLastInit) return byFirstLastInit;
           }
-
-          // Match unique first name across CRM clients
           const firstMatches = clients.filter(x => (x.name || "").trim().toLowerCase().split(/\s+/)[0] === sqFirst);
           if (firstMatches.length === 1) return firstMatches[0];
         }
       }
-
       return null;
     }
 
@@ -2909,7 +3215,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       if (perfBtn) { perfBtn.disabled = true; perfBtn.textContent = "⏳ Syncing..."; }
 
       try {
-        // Step A: Pull Square Contact Directory to map squareCustomerId -> Name, Email, Phone
         const sqDirectory = {};
         try {
           const contactsRes = await callSquareApi({ action: "square_sync_contacts" });
@@ -2927,11 +3232,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               };
             }
           });
-        } catch (dirErr) {
-          // Continue even if contacts endpoint fails
-        }
+        } catch (dirErr) {}
 
-        // Step B: Pull all Square Payments & Invoices
         const invoiceIds = [], customerIds = [];
         clients.forEach(c => {
           if (c.squareCustomerId && !customerIds.includes(c.squareCustomerId)) customerIds.push(c.squareCustomerId);
@@ -2948,7 +3250,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         let newlySyncedCount = 0;
         const dirtyClientIds = new Set();
 
-        // Update Card-on-File & Square Customer IDs for existing CRM clients
         for (const c of clients) {
           const dirMatch = Object.values(sqDirectory).find(sc => findLooseCrmClient(sc)?.id === c.id);
           if (dirMatch && !c.squareCustomerId) {
@@ -2967,7 +3268,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
         }
 
-        // Step C: Process all Square Payments (Money In / Refunds) -> match to CRM clients only
         for (const pay of paymentsLedger) {
           const dirInfo = pay.squareCustomerId ? (sqDirectory[pay.squareCustomerId] || {}) : {};
           const c = findLooseCrmClient({
@@ -2976,8 +3276,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             email: pay.customerEmail || dirInfo.email || "",
             phone: dirInfo.phone || ""
           });
-
-          // Ignore if no CRM client loosely matches
           if (!c) continue;
 
           if (!c.squareCustomerId && pay.squareCustomerId) {
@@ -2991,6 +3289,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             if (existing.status !== pay.status || Number(existing.refundAmount || 0) !== Number(pay.refundAmount || 0) || !existing.paymentId) {
               existing.paymentId = pay.paymentId;
               existing.status = pay.status;
+              if (pay.status === "PAID" && pay.date) existing.paidDate = pay.date;
               existing.refundAmount = pay.refundAmount || 0;
               if (pay.receiptUrl) existing.url = pay.receiptUrl;
               dirtyClientIds.add(c.id);
@@ -2999,6 +3298,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           } else {
             c.squareHistory.push({
               date: pay.date,
+              paidDate: pay.status === "PAID" ? pay.date : "",
               amount: pay.amount,
               refundAmount: pay.refundAmount || 0,
               paymentId: pay.paymentId,
@@ -3019,7 +3319,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
         }
 
-        // Step D: Process all Square Invoices -> match to CRM clients only
         for (const inv of allInvoices) {
           const dirInfo = inv.squareCustomerId ? (sqDirectory[inv.squareCustomerId] || {}) : {};
           const c = findLooseCrmClient({
@@ -3028,8 +3327,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             email: inv.customerEmail || dirInfo.email || "",
             phone: inv.customerPhone || dirInfo.phone || ""
           });
-
-          // Ignore if no CRM client loosely matches
           if (!c) continue;
 
           if (!c.squareCustomerId && inv.squareCustomerId) {
@@ -3038,14 +3335,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           }
           if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
 
+          const isViewedFlag = Boolean(inv.viewed || inv.viewedAt || inv.isViewed || /viewed/i.test(String(inv.rawStatus || inv.statusLabel || "")));
           let existing = c.squareHistory.find(h => h.invoiceId && h.invoiceId === inv.invoiceId);
           if (existing) {
-            if (existing.status !== inv.status) {
+            if (existing.status !== inv.status || (isViewedFlag && !existing.viewed)) {
               const wasNotPaid = existing.status !== "PAID";
               existing.status = inv.status;
+              if (isViewedFlag) existing.viewed = true;
               if (inv.publicUrl) existing.url = inv.publicUrl;
               if (wasNotPaid && inv.status === "PAID") {
-                const paidDt = inv.date || todayStr(0);
+                const paidDt = inv.paidDate || inv.date || todayStr(0);
+                existing.paidDate = paidDt;
                 if (!c.lastPaid || paidDt >= c.lastPaid) c.lastPaid = paidDt;
                 if (c.freq !== "One-Time") {
                   const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || todayStr(0)).getDate();
@@ -3056,8 +3356,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               newlySyncedCount++;
             }
           } else if (inv.status !== "CANCELED") {
+            const paidDt = inv.status === "PAID" ? (inv.paidDate || inv.date || todayStr(0)) : "";
             c.squareHistory.push({
               date: inv.date,
+              paidDate: paidDt,
+              viewed: isViewedFlag,
               amount: inv.amount,
               invoiceId: inv.invoiceId,
               invoiceNumber: inv.invoiceNumber || "",
@@ -3066,15 +3369,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               status: inv.status,
               url: inv.publicUrl || ""
             });
-            if (inv.status === "PAID" && inv.date && (!c.lastPaid || inv.date > c.lastPaid)) {
-              c.lastPaid = inv.date;
+            if (paidDt && (!c.lastPaid || paidDt > c.lastPaid)) {
+              c.lastPaid = paidDt;
             }
             dirtyClientIds.add(c.id);
             newlySyncedCount++;
           }
         }
 
-        // Save all updated CRM clients to Firebase
         for (const cid of dirtyClientIds) {
           const target = clients.find(x => x.id === cid);
           if (target) await saveClientDoc(target);
@@ -3253,7 +3555,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (c.freq === "One-Time") c.status = "Paused";
         else { const anchorDay = c.startDate ? parseISODate(c.startDate).getDate() : parseISODate(c.nextCharge || today).getDate(); c.nextCharge = addOneAnniversaryMonth(c.nextCharge || today, anchorDay); }
         if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
-        c.squareHistory.push({ date: today, amount: total, paymentId: res.paymentId || "", method: `Card on File (${res.cardLabel})`, summary: selected.map(i => i.name).join(", "), status: "PAID", url: res.receiptUrl || "" });
+        c.squareHistory.push({ date: today, paidDate: today, amount: total, paymentId: res.paymentId || "", method: `Card on File (${res.cardLabel})`, summary: selected.map(i => i.name).join(", "), status: "PAID", url: res.receiptUrl || "" });
         await saveClientDoc(c);
         const resBox = document.getElementById("sqResultBox");
         resBox.classList.remove("hidden");
@@ -3286,7 +3588,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         await persistSquareModalEditsToClient(c);
         c.squareCustomerId = res.squareCustomerId; c.hasCardOnFile = !!res.hasCardOnFile; c.squareCardId = res.cardId || ""; c.squareCardLabel = res.cardLabel || "";
         if (!Array.isArray(c.squareHistory)) c.squareHistory = [];
-        c.squareHistory.push({ date: todayStr(0), amount: total, invoiceId: res.invoiceId || "", invoiceNumber: res.invoiceNumber || "", method: res.deliveryUsed === "EMAIL" ? "Square Invoice (Email)" : "Square Invoice (Link)", summary: selected.map(i => i.name).join(", "), status: "SENT", url: res.publicUrl || "" });
+        c.squareHistory.push({ date: todayStr(0), viewed: false, amount: total, invoiceId: res.invoiceId || "", invoiceNumber: res.invoiceNumber || "", method: res.deliveryUsed === "EMAIL" ? "Square Invoice (Email)" : "Square Invoice (Link)", summary: selected.map(i => i.name).join(", "), status: "SENT", url: res.publicUrl || "" });
         await saveClientDoc(c);
         const resBox = document.getElementById("sqResultBox"), amtFixed = total.toFixed(2);
         resBox.classList.remove("hidden");
@@ -4152,7 +4454,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         const cardBadge = c.hasCardOnFile ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>` : `<span class="badge badge-amber">No Card on File</span>`;
         const latestSq = Array.isArray(c.squareHistory) && c.squareHistory.length > 0 ? c.squareHistory[c.squareHistory.length - 1] : null;
-        const sqBadge = latestSq ? (latestSq.status === "PAID" ? `<span class="badge badge-ok">✓ Paid (${formatDisplayDate(latestSq.date)})</span>` : `<span class="badge badge-amber">⏳ Unpaid Invoice</span>`) : "";
+        const sqBadge = latestSq
+          ? (latestSq.status === "PAID"
+              ? `<span class="badge badge-ok">✓ Paid (${formatDisplayDate(latestSq.paidDate || latestSq.date)})</span>`
+              : latestSq.viewed
+                ? `<span class="badge badge-blue">👁️ Viewed (Unpaid)</span>`
+                : `<span class="badge badge-amber">⏳ Unpaid Invoice</span>`)
+          : "";
         const derivedCity = c.city || extractCityFromAddress(c.address, ""), recDisc = Number(c.recurringDiscount || 0);
 
         return `<tr class="mobile-card-row ${isDue ? 'is-due' : ''}">
@@ -4192,23 +4500,167 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
+    // ========================================================================
+    // COMPLETE CLIENT DIRECTORY WITH INLINE GATE PHOTO & EXPANDABLE PROFILE
+    // ========================================================================
     function renderClientsTable() {
       const tbody = document.getElementById('clientsTableBody'), list = getFilteredClients().sort((a, b) => a.name.localeCompare(b.name));
       if (!list.length) { tbody.innerHTML = `<tr class="empty-table-row"><td colspan="7" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients added yet.</td></tr>`; return; }
 
       tbody.innerHTML = list.map(c => {
+        const isExpanded = expandedClientId === c.id;
         const cardBadge = c.hasCardOnFile ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>` : '';
         const cancelBadge = c.status === 'Canceled' ? `<span class="badge badge-red">Canceled${c.canceledDate ? ` (${formatDisplayDate(c.canceledDate)})` : ''}</span>` : '';
         const importantHtml = c.importantNote ? `<div class="important-note-box" style="margin-bottom:4px;"><span>📌 ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : '';
-        return `<tr class="mobile-card-row">
-          <td class="m-header" data-label="Customer"><div><strong style="font-size:14.5px; color:var(--g);">${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}</span><div>${cardBadge} ${cancelBadge}</div></div><div class="mobile-only-inline" style="text-align:right;"><strong style="color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span class="badge badge-sage">${escapeHtml(c.status)}</span></div></td>
-          <td data-label="Service Address"><strong>${escapeHtml(formatClientFullAddress(c))}</strong></td>
-          <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage">Treats: ${escapeHtml(c.treatLoc)}</span></td>
-          <td data-label="Notes & Reminders" style="max-width:230px; font-size:12px;">${importantHtml}${escapeHtml(c.gateNotes || (c.importantNote ? '' : '—'))}</td>
-          <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
-          <td class="desktop-only-cell" data-label="Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
-          <td class="m-actions" data-label="Actions"><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">💳 Square</button><button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Delete</button></div></td>
-        </tr>`;
+
+        const photos = Array.isArray(c.propertyPhotos) ? c.propertyPhotos : [];
+        const primaryPhoto = photos[0] || null;
+        const fullAddr = formatClientFullAddress(c);
+        const lightboxCaption = `${c.name} — ${fullAddr}${primaryPhoto ? ` (${primaryPhoto.label})` : ''}${c.gateNotes ? ` • Notes: ${c.gateNotes}` : ''}`;
+
+        const addrWithThumbHtml = `
+          <div class="addr-photo-inline">
+            ${primaryPhoto ? `
+              <button type="button" class="addr-thumb-btn" onclick="openPhotoLightbox('${escapeHtml(primaryPhoto.url)}', '${escapeHtml(lightboxCaption)}', event)" title="Click to enlarge house/gate photo">
+                <img src="${escapeHtml(primaryPhoto.url)}" alt="Gate / House">
+                ${photos.length > 1 ? `<span class="addr-thumb-badge">+${photos.length - 1}</span>` : ''}
+              </button>
+            ` : ''}
+            <div>
+              <strong>${escapeHtml(fullAddr)}</strong>
+              ${primaryPhoto ? `<div style="font-size:10.5px; color:var(--gm); font-weight:700;">📷 Tap photo to zoom</div>` : ''}
+            </div>
+          </div>
+        `;
+
+        let drawerRowHtml = "";
+        if (isExpanded) {
+          const activityItems = buildClientActivityFeed(c);
+          const photosGridHtml = photos.length
+            ? photos.map(p => {
+                const cap = `${c.name} — ${fullAddr} (${p.label})${c.gateNotes ? ` • ${c.gateNotes}` : ''}`;
+                return `
+                  <div class="cpd-photo-item">
+                    <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.label)}" onclick="openPhotoLightbox('${escapeHtml(p.url)}', '${escapeHtml(cap)}', event)">
+                    <div class="cpd-photo-cap">
+                      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.label)}</span>
+                      <button type="button" class="undo-link" style="color:var(--due-ink); padding:0;" onclick="deleteClientPhoto('${c.id}', '${escapeHtml(p.id)}')" title="Delete photo">✕</button>
+                    </div>
+                  </div>
+                `;
+              }).join("")
+            : `<div style="font-size:12px; color:var(--m); padding:6px 0;">No house or gate photos uploaded yet. Add one below so you or an employee always know the exact property &amp; gate!</div>`;
+
+          const activityHtml = activityItems.length
+            ? activityItems.map(act => `
+                <div class="cpd-act-item ${act.kind}">
+                  <div>
+                    <div style="font-weight:800; color:var(--g);">${act.icon} ${act.title}</div>
+                    <div style="font-size:11px; color:var(--m); margin-top:2px;">${act.subtitle}</div>
+                  </div>
+                  <div style="text-align:right; flex-shrink:0;">
+                    <div style="font-size:10.5px; font-weight:800; color:var(--m); margin-bottom:2px;">${escapeHtml(act.dateLabel)}</div>
+                    ${act.badgeHtml}
+                  </div>
+                </div>
+              `).join("")
+            : `<div style="font-size:12px; color:var(--m);">No activity logged for this client yet.</div>`;
+
+          drawerRowHtml = `
+            <tr class="client-drawer-row">
+              <td colspan="7">
+                <div class="client-profile-drawer">
+                  <!-- LEFT COLUMN: GATE / HOUSE PHOTOS + INLINE NOTES EDITOR -->
+                  <div style="display:flex; flex-direction:column; gap:10px;">
+                    <div class="cpd-card">
+                      <div class="cpd-title">
+                        <span>📷 House &amp; Gate Verification Photos (${photos.length})</span>
+                        <label class="btn btn-dark btn-sm" style="cursor:pointer;">
+                          + Upload Photo
+                          <input type="file" accept="image/*" style="display:none;" onchange="handleClientPhotoUpload('${c.id}', event)">
+                        </label>
+                      </div>
+                      <div style="display:grid; grid-template-columns: 120px 1fr auto; gap:6px; align-items:center;">
+                        <input type="text" id="newPhotoLabel-${c.id}" placeholder="Label (e.g. Side Gate)" style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px;">
+                        <input type="url" id="newPhotoUrl-${c.id}" placeholder="Or paste image link (https://...)" style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px;">
+                        <button type="button" class="btn btn-sage btn-sm" onclick="addClientPhotoUrl('${c.id}')">Add Link</button>
+                      </div>
+                      <div class="cpd-photo-grid">${photosGridHtml}</div>
+                    </div>
+
+                    <div class="cpd-card cpd-note-editor">
+                      <div class="cpd-title">
+                        <span>📝 Quick-Edit Client Notes &amp; Gate Info</span>
+                        <button type="button" class="btn btn-green btn-sm" onclick="saveInlineClientNotes('${c.id}')">💾 Save Notes</button>
+                      </div>
+                      <div style="display:grid; grid-template-columns: 1fr 150px; gap:8px;">
+                        <div>
+                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">📌 Important Reminder (Highlighted on Route)</label>
+                          <input type="text" id="inlineImpNote-${c.id}" value="${escapeHtml(c.importantNote || '')}" placeholder="e.g., Wants Yard Fresh added next week">
+                        </div>
+                        <div>
+                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">🦴 Treat Location</label>
+                          <select id="inlineTreatLoc-${c.id}" style="width:100%; padding:7px 8px; border:1.5px solid var(--b); border-radius:8px; font-size:12px;">
+                            <option value="Front Door" ${(c.treatLoc || 'Front Door') === 'Front Door' ? 'selected' : ''}>Front Door</option>
+                            <option value="Back Door" ${c.treatLoc === 'Back Door' ? 'selected' : ''}>Back Door</option>
+                            <option value="By Gate" ${c.treatLoc === 'By Gate' ? 'selected' : ''}>By Gate</option>
+                            <option value="No Treats" ${c.treatLoc === 'No Treats' ? 'selected' : ''}>No Treats</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div>
+                        <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">Gate Code, Dog Temperament &amp; Yard Notes</label>
+                        <textarea id="inlineGateNote-${c.id}" rows="2" placeholder="Gate code, latch details, dog names...">${escapeHtml(c.gateNotes || '')}</textarea>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- RIGHT COLUMN: CUSTOMER ACTIVITY & INVOICE/VISIT TIMELINE -->
+                  <div class="cpd-card">
+                    <div class="cpd-title">
+                      <span>📋 Activity, Invoices &amp; Yard Visits (${activityItems.length})</span>
+                      <div style="display:flex; gap:5px;">
+                        <button type="button" class="btn btn-sage btn-sm" onclick="openSquareModal('${c.id}')">💳 New Invoice / Charge</button>
+                        <button type="button" class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Full Edit</button>
+                      </div>
+                    </div>
+                    <div class="cpd-activity-list">${activityHtml}</div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+
+        return `
+          <tr class="mobile-card-row client-main-row ${isExpanded ? 'is-expanded' : ''}" onclick="toggleClientDrawer('${c.id}', event)">
+            <td class="m-header" data-label="Customer">
+              <div>
+                <strong style="font-size:14.5px; color:var(--g);"><span class="client-chevron">▶</span>${escapeHtml(c.name)}</strong><br>
+                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}${c.email ? ` • ${escapeHtml(c.email)}` : ''}</span>
+                <div>${cardBadge} ${cancelBadge}</div>
+              </div>
+              <div class="mobile-only-inline" style="text-align:right;">
+                <strong style="color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong><br>
+                <span class="badge badge-sage">${escapeHtml(c.status)}</span>
+              </div>
+            </td>
+            <td data-label="Service Address & Photo">${addrWithThumbHtml}</td>
+            <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage">Treats: ${escapeHtml(c.treatLoc)}</span></td>
+            <td data-label="Notes & Reminders" style="max-width:230px; font-size:12px;">${importantHtml}${escapeHtml(c.gateNotes || (c.importantNote ? '' : '—'))}</td>
+            <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
+            <td class="desktop-only-cell" data-label="Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
+            <td class="m-actions" data-label="Actions">
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <button class="btn btn-sage btn-sm" onclick="toggleClientDrawer('${c.id}')">${isExpanded ? '▲ Close' : '▼ Profile'}</button>
+                <button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">💳 Square</button>
+                <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+          ${drawerRowHtml}
+        `;
       }).join('');
     }
 
@@ -4228,16 +4680,49 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
-    // CLIENT MODAL & WORKFLOW ACTIONS
+    // CLIENT MODAL & WORKFLOW ACTIONS (COMPLETE SCOOP LOGS INTO CUSTOMER ACTIVITY FEED)
     window.completeScoop = async function(id) {
       const c = clients.find(x => x.id === id); if (!c) return;
       const today = todayStr(0); if (c.scoopedActionDate === today) return;
-      c.prevScoopSnapshot = { nextScoop: c.nextScoop, status: c.status }; c.scoopedActionDate = today;
-      if (c.freq === 'One-Time') { c.status = 'Paused'; await saveClientDoc(c); showToast(`One-time job completed for ${c.name}!`); return; }
+      const visitId = "visit-" + Date.now();
+      const nowTime = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+
+      c.prevScoopSnapshot = { nextScoop: c.nextScoop, status: c.status, lastVisitId: visitId };
+      c.scoopedActionDate = today;
+
+      if (!Array.isArray(c.visitHistory)) c.visitHistory = [];
+      c.visitHistory.push({
+        id: visitId,
+        date: today,
+        time: nowTime,
+        plan: c.freq || "Weekly",
+        addons: c.addonsSummary || ""
+      });
+
+      if (c.freq === 'One-Time') {
+        c.status = 'Paused';
+        await saveClientDoc(c);
+        showToast(`One-time job completed & logged to ${c.name}'s activity feed!`);
+        return;
+      }
       c.nextScoop = computeNextScoopFromDate(c.nextScoop || today, c.freq);
-      await saveClientDoc(c); showToast(`Scoop logged for ${c.name}! Next scoop: ${formatDisplayDate(c.nextScoop)}`);
+      await saveClientDoc(c);
+      showToast(`Scoop logged for ${c.name}! Next scoop: ${formatDisplayDate(c.nextScoop)}`);
     };
-    window.undoCompleteScoop = async function(id) { const c = clients.find(x => x.id === id); if (!c || !c.prevScoopSnapshot) return; c.nextScoop = c.prevScoopSnapshot.nextScoop; c.status = c.prevScoopSnapshot.status; delete c.scoopedActionDate; delete c.prevScoopSnapshot; await saveClientDoc(c); showToast(`Undid Complete Scoop for ${c.name}.`); };
+
+    window.undoCompleteScoop = async function(id) {
+      const c = clients.find(x => x.id === id); if (!c || !c.prevScoopSnapshot) return;
+      if (c.prevScoopSnapshot.lastVisitId && Array.isArray(c.visitHistory)) {
+        c.visitHistory = c.visitHistory.filter(v => v.id !== c.prevScoopSnapshot.lastVisitId);
+      }
+      c.nextScoop = c.prevScoopSnapshot.nextScoop;
+      c.status = c.prevScoopSnapshot.status;
+      delete c.scoopedActionDate;
+      delete c.prevScoopSnapshot;
+      await saveClientDoc(c);
+      showToast(`Undid Complete Scoop for ${c.name}.`);
+    };
+
     window.markReferralPaid = async function(id) { const c = clients.find(x => x.id === id); if (!c) return; c.refStatus = 'Paid'; await saveClientDoc(c); showToast(`Marked referral payout PAID for ${c.refBy}!`); };
     window.deleteClient = async function(id) { const c = clients.find(x => x.id === id); if (!c || !confirm(`Remove ${c.name} from your Cloud CRM?`)) return; await removeClientDoc(id); showToast(`Removed ${c.name}.`); };
     window.onClientStatusChanged = function() { const st = document.getElementById('fStatus').value, wrap = document.getElementById('canceledDateWrap'), inp = document.getElementById('fCanceledDate'); if (wrap) wrap.style.display = st === 'Canceled' ? 'flex' : 'none'; if (st === 'Canceled' && inp && !inp.value) inp.value = todayStr(0); };
