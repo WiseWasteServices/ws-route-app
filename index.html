@@ -323,9 +323,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .client-chevron { display: inline-block; font-size: 11px; color: var(--gm); margin-right: 5px; transition: transform 0.18s ease; }
   tr.client-main-row.is-expanded .client-chevron { transform: rotate(90deg); }
 
-  .addr-photo-inline {
-    display: flex; align-items: center; gap: 9px;
-  }
+  .addr-photo-inline { display: flex; align-items: center; gap: 9px; min-width: 0; }
   .addr-thumb-btn {
     width: 48px; height: 48px; border-radius: 9px; border: 2px solid var(--gm);
     padding: 0; overflow: hidden; cursor: zoom-in; flex-shrink: 0; background: var(--cr);
@@ -337,47 +335,25 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     color: #fff; font-size: 9px; font-weight: 900; padding: 1px 4px; border-top-left-radius: 5px;
   }
 
-  tr.client-drawer-row td {
-    background: #F6FAF6 !important;
-    padding: 0 !important;
-    border-bottom: 2px solid var(--gm);
-  }
+  tr.client-drawer-row td { background: #F6FAF6 !important; padding: 0 !important; border-bottom: 2px solid var(--gm); }
   .client-profile-drawer {
-    padding: 14px 16px;
-    display: grid;
-    grid-template-columns: 1.15fr 1fr;
-    gap: 14px;
-    border-top: 1px dashed var(--b);
+    padding: 14px 16px; display: grid; grid-template-columns: 1.15fr 1fr; gap: 14px; border-top: 1px dashed var(--b);
   }
-  @media (max-width: 900px) {
-    .client-profile-drawer { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 900px) { .client-profile-drawer { grid-template-columns: 1fr; } }
   .cpd-card {
     background: var(--w); border: 1.5px solid var(--b); border-radius: 12px;
-    padding: 11px 13px; display: flex; flex-direction: column; gap: 9px;
+    padding: 11px 13px; display: flex; flex-direction: column; gap: 9px; min-width: 0;
   }
   .cpd-title {
     font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;
     color: var(--g); border-bottom: 1px solid #E6EDE7; padding-bottom: 6px;
     display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
   }
-  .cpd-photo-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px;
-  }
-  .cpd-photo-item {
-    border: 1.5px solid var(--b); border-radius: 9px; overflow: hidden; background: var(--cr);
-    display: flex; flex-direction: column;
-  }
-  .cpd-photo-item img {
-    width: 100%; height: 86px; object-fit: cover; cursor: zoom-in; display: block;
-  }
-  .cpd-photo-cap {
-    padding: 4px 6px; font-size: 10.5px; font-weight: 700; color: var(--ink);
-    display: flex; align-items: center; justify-content: space-between; gap: 4px;
-  }
-  .cpd-activity-list {
-    display: flex; flex-direction: column; gap: 6px; max-height: 290px; overflow-y: auto;
-  }
+  .cpd-photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 8px; }
+  .cpd-photo-item { border: 1.5px solid var(--b); border-radius: 9px; overflow: hidden; background: var(--cr); display: flex; flex-direction: column; }
+  .cpd-photo-item img { width: 100%; height: 84px; object-fit: cover; cursor: zoom-in; display: block; }
+  .cpd-photo-cap { padding: 4px 6px; font-size: 10.5px; font-weight: 700; color: var(--ink); display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+  .cpd-activity-list { display: flex; flex-direction: column; gap: 6px; max-height: 310px; overflow-y: auto; }
   .cpd-act-item {
     background: var(--cr); border: 1px solid #DCE6DA; border-left: 4px solid var(--gm);
     border-radius: 8px; padding: 7px 10px; font-size: 12px; line-height: 1.35;
@@ -398,9 +374,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     padding: 18px; z-index: 4000;
   }
   .photo-lightbox.open { display: flex; }
-  .photo-lightbox-inner {
-    max-width: 92vw; max-height: 84vh; display: flex; flex-direction: column; align-items: center; gap: 10px;
-  }
+  .photo-lightbox-inner { max-width: 92vw; max-height: 84vh; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .photo-lightbox-inner img {
     max-width: 100%; max-height: 74vh; border-radius: 14px; border: 3px solid var(--gt);
     box-shadow: 0 20px 60px rgba(0,0,0,0.6); object-fit: contain; background: #000;
@@ -467,53 +441,86 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .ws-user-pin { width: 22px; height: 22px; border-radius: 50%; background: #1A73E8; border: 3px solid #ffffff; box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.35); }
   @media (max-width: 860px) { .map-layout { grid-template-columns: 1fr; } .map-sidebar { border-left: none; border-top: 1.5px solid var(--b); max-height: 280px; } #customerMap { height: 360px; } }
 
-  /* TABLES */
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { background: #F8FBF8; text-align: left; padding: 11px 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--m); border-bottom: 1.5px solid var(--b); white-space: nowrap; }
-  td { padding: 12px 14px; border-bottom: 1px solid #E6EDE7; vertical-align: middle; }
+  /* TABLES — ZERO HORIZONTAL OVERFLOW ON DESKTOP & MOBILE */
+  .table-wrap { overflow-x: hidden; width: 100%; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
+  th {
+    background: #F8FBF8; text-align: left; padding: 9px 10px;
+    font-size: 10.5px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.5px; color: var(--m); border-bottom: 1.5px solid var(--b);
+    white-space: normal; word-wrap: break-word;
+  }
+  td {
+    padding: 9px 10px; border-bottom: 1px solid #E6EDE7;
+    vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+  }
   tr:hover td { background: #FAFDFB; }
+
+  #clientsTable th:nth-child(1), #clientsTable td:nth-child(1) { width: 25%; }
+  #clientsTable th:nth-child(2), #clientsTable td:nth-child(2) { width: 27%; }
+  #clientsTable th:nth-child(3), #clientsTable td:nth-child(3) { width: 26%; }
+  #clientsTable th:nth-child(4), #clientsTable td:nth-child(4) { width: 22%; }
+
   .mobile-only-inline { display: none; }
   @media (max-width: 768px) {
     .mobile-only-inline { display: inline; }
     .desktop-only-cell { display: none !important; }
-    .table-wrap { overflow-x: visible; padding: 10px; }
-    table, thead, tbody, th, td, tr { display: block; width: 100%; }
+    .table-wrap { overflow-x: hidden; padding: 8px; }
+    table, thead, tbody, th, td, tr { display: block; width: 100% !important; max-width: 100%; }
     thead { display: none; }
-    tr.mobile-card-row { background: var(--w); border: 1.5px solid var(--b); border-left: 5px solid var(--gm); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; box-shadow: 0 2px 6px rgba(38, 58, 45, 0.04); display: grid; grid-template-columns: 1fr 1fr; gap: 7px 10px; }
+    tr.mobile-card-row {
+      background: var(--w); border: 1.5px solid var(--b); border-left: 5px solid var(--gm);
+      border-radius: 12px; padding: 9px 10px; margin-bottom: 9px;
+      box-shadow: 0 2px 6px rgba(38, 58, 45, 0.04);
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 8px;
+    }
     tr.mobile-card-row.is-due { border-left-color: #D9534F; }
-    tr.mobile-card-row td { padding: 4px 6px; border-bottom: none; background: var(--cr); border-radius: 7px; font-size: 11.5px; line-height: 1.35; word-break: break-word; }
-    tr.mobile-card-row td::before { content: attr(data-label); display: block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gm); margin-bottom: 2px; }
-    tr.mobile-card-row td.m-header { grid-column: 1 / -1; background: transparent; padding: 0 0 6px; border-bottom: 1px solid #E6EDE7; border-radius: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+    tr.mobile-card-row td {
+      padding: 5px 7px; border-bottom: none; background: var(--cr);
+      border-radius: 7px; font-size: 11.5px; line-height: 1.32;
+      min-width: 0; overflow-wrap: anywhere;
+    }
+    tr.mobile-card-row td::before {
+      content: attr(data-label); display: block; font-size: 9px; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.45px; color: var(--gm); margin-bottom: 2px;
+    }
+    tr.mobile-card-row td.m-header {
+      grid-column: 1 / -1; background: transparent; padding: 0 0 6px;
+      border-bottom: 1px solid #E6EDE7; border-radius: 0;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 6px;
+    }
     tr.mobile-card-row td.m-header::before { display: none; }
-    tr.mobile-card-row td.m-actions { grid-column: 1 / -1; background: transparent; padding: 4px 0 0; }
+    tr.mobile-card-row td.m-full { grid-column: 1 / -1; }
+    tr.mobile-card-row td.m-actions {
+      grid-column: 1 / -1; background: transparent; padding: 4px 0 0;
+    }
     tr.mobile-card-row td.m-actions::before { display: none; }
-    tr.client-drawer-row { display: block; margin-top: -6px; margin-bottom: 12px; }
+    tr.client-drawer-row { display: block; margin-top: -5px; margin-bottom: 10px; }
     tr.client-drawer-row td { display: block; border-radius: 0 0 12px 12px; border: 1.5px solid var(--gm); border-top: none; }
-    tr.empty-table-row td { background: transparent; padding: 20px 10px; }
+    tr.empty-table-row td { background: transparent; padding: 18px 8px; }
   }
 
   /* BADGES & ROUTE CARDS */
-  .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 10.5px; font-weight: 800; white-space: nowrap; margin: 1px 2px 1px 0; }
+  .badge { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 10px; font-weight: 800; white-space: normal; line-height: 1.25; margin: 1px 2px 1px 0; }
   .badge-due, .badge-red { background: var(--due-bg); color: var(--due-ink); border: 1px solid var(--due-b); }
   .badge-soon, .badge-amber { background: var(--warn-bg); color: var(--warn-ink); border: 1px solid var(--warn-b); }
   .badge-ok, .badge-green { background: var(--ok-bg); color: var(--ok-ink); border: 1px solid var(--ok-b); }
   .badge-sage { background: var(--gt); color: var(--g); border: 1px solid var(--b); }
   .badge-blue { background: var(--badge-blue-bg); color: var(--badge-blue-text); border: 1px solid #B6D4F2; }
 
-  .route-grid { padding: 14px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
-  .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 12px; padding: 13px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 9px; }
+  .route-grid { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+  .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 12px; padding: 12px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 8px; min-width: 0; }
   .route-card.due-today { border-left-color: #D9534F; background: linear-gradient(180deg, #FFF9F9 0%, #FFFFFF 100%); }
   .route-card.trial-card { border-left-color: #E6A83A; background: linear-gradient(180deg, #FFFDF5 0%, #FFFFFF 100%); }
   .route-card.scooped-done { border-left-color: #3B8754; background: #F6FBF7; }
-  .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-  .rc-name { font-size: 15.5px; font-weight: 900; color: var(--g); }
+  .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
+  .rc-name { font-size: 15px; font-weight: 900; color: var(--g); }
   .rc-addr { font-size: 11.5px; color: var(--m); font-weight: 600; margin-top: 2px; word-break: break-word; }
-  .rc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--cr); padding: 8px 9px; border-radius: 8px; font-size: 11.5px; }
+  .rc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: var(--cr); padding: 7px 8px; border-radius: 8px; font-size: 11px; }
   .rc-meta div strong { color: var(--g); }
-  .rc-addons-bar { background: var(--gt); border: 1px solid var(--b); color: var(--g); padding: 6px 9px; border-radius: 8px; font-size: 11.5px; font-weight: 800; }
-  .rc-notes { font-size: 11.5px; background: #FFFDF7; border: 1px dashed #D8C79E; padding: 6px 9px; border-radius: 7px; color: #4D3E18; word-break: break-word; }
-  .rc-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .rc-addons-bar { background: var(--gt); border: 1px solid var(--b); color: var(--g); padding: 5px 8px; border-radius: 8px; font-size: 11px; font-weight: 800; }
+  .rc-notes { font-size: 11px; background: #FFFDF7; border: 1px dashed #D8C79E; padding: 5px 8px; border-radius: 7px; color: #4D3E18; word-break: break-word; }
+  .rc-actions { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
 
   /* MODALS */
   .modal-backdrop, .modal-overlay { position: fixed; inset: 0; background: rgba(20, 32, 24, 0.58); display: none; align-items: center; justify-content: center; padding: 12px; z-index: 1000; overflow-y: auto; }
@@ -647,31 +654,37 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .fb-toast.error { background-color: #7F1D1D; border-left-color: #FCA5A5; }
 
   @media (max-width: 680px) {
-    .topbar { padding: 9px 12px; gap: 8px; }
-    .brand-left { width: 100%; justify-content: space-between; gap: 8px; }
-    .brand-title h1 { font-size: 15.5px; }
+    .topbar { padding: 9px 10px; gap: 8px; }
+    .brand-left { width: 100%; justify-content: space-between; gap: 6px; }
+    .brand-title h1 { font-size: 15px; }
     .brand-title span { display: none; }
     .mobile-more-toggle { display: inline-flex; margin-left: auto; }
     .workspace-switcher, .backup-bar { display: none; width: 100%; }
     .topbar.mobile-menu-open .workspace-switcher { display: inline-flex; justify-content: center; }
     .topbar.mobile-menu-open .backup-bar { display: flex; justify-content: space-between; gap: 5px; }
-    .ws-mode-btn { flex: 1; padding: 7px 8px; font-size: 12px; }
+    .ws-mode-btn { flex: 1; padding: 7px 6px; font-size: 11.5px; }
     .backup-status { display: none; }
-    .backup-bar .btn { padding: 6px 9px; font-size: 11px; flex: 1; }
-    .ai-quickbar { position: fixed; top: auto; bottom: 0; left: 0; right: 0; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); border-top: 2px solid var(--gm); border-bottom: none; box-shadow: 0 -4px 16px rgba(24, 36, 28, 0.16); z-index: 480; }
+    .backup-bar .btn { padding: 6px 8px; font-size: 11px; flex: 1; }
+    .ai-quickbar { position: fixed; top: auto; bottom: 0; left: 0; right: 0; padding: 7px 8px calc(7px + env(safe-area-inset-bottom)); border-top: 2px solid var(--gm); border-bottom: none; box-shadow: 0 -4px 16px rgba(24, 36, 28, 0.16); z-index: 480; }
     .ai-qb-label { display: none; }
-    .ai-qb-input { min-width: 0; font-size: 13px; padding: 8px 10px; }
-    .container { padding: 12px 10px 88px; }
-    .kpi-grid { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    .kpi-card { padding: 10px 12px; border-radius: 11px; }
-    .kpi-val { font-size: 20px; }
-    .nav-bar { gap: 8px; margin-bottom: 12px; }
-    .tabs { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; padding: 5px; }
-    .tab-btn { padding: 7px 6px; font-size: 11.5px; text-align: center; }
+    .ai-qb-input { min-width: 0; font-size: 13px; padding: 7px 9px; }
+    .container { padding: 10px 8px 86px; width: 100%; max-width: 100vw; }
+    .panel-card, .perf-section-card, .weather-widget, .general-notes-aside { max-width: 100%; border-radius: 12px; }
+    .panel-hd, .perf-section-hd { padding: 9px 10px; }
+    .perf-section-body { padding: 10px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+    .kpi-card { padding: 9px 10px; border-radius: 11px; min-width: 0; }
+    .kpi-val { font-size: 19px; }
+    .nav-bar { gap: 7px; margin-bottom: 10px; }
+    .tabs { width: 100%; display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; padding: 4px; }
+    .tab-btn { padding: 6px 5px; font-size: 11px; text-align: center; }
     .search-controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .search-input { grid-column: 1 / -1; min-width: 0; width: 100%; }
-    .leads-grid, .route-grid { grid-template-columns: 1fr; padding: 10px; gap: 10px; }
+    .leads-grid, .route-grid { grid-template-columns: 1fr; padding: 8px; gap: 8px; }
     .field.span-2 { grid-column: span 1; }
+    .client-profile-drawer { padding: 10px; gap: 10px; }
+    .cpd-card { padding: 9px 10px; min-width: 0; }
+    .cpd-photo-add-row, .cpd-note-top-row { grid-template-columns: 1fr !important; }
   }
 </style>
 </head>
@@ -1086,7 +1099,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           </div>
         </section>
 
-        <!-- TAB 5: ALL CLIENTS DIRECTORY (CLICK ANY CLIENT TO EXPAND PROFILE, PHOTOS & ACTIVITY) -->
+        <!-- TAB 5: ALL CLIENTS DIRECTORY (COMPACT 4-COLUMN + CLICK-TO-EXPAND PROFILE) -->
         <section id="tab-clients" class="view-panel">
           <div class="panel-card">
             <div class="panel-hd">
@@ -1100,16 +1113,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               </div>
             </div>
             <div class="table-wrap">
-              <table>
+              <table id="clientsTable">
                 <thead>
                   <tr>
-                    <th>Customer</th>
-                    <th>Service Address &amp; Gate Photo</th>
-                    <th>Pets &amp; Treat Location</th>
-                    <th>Notes &amp; Reminders</th>
-                    <th>Start Date &amp; Next Scoop</th>
-                    <th>Service &amp; Monthly Rate</th>
-                    <th>Actions</th>
+                    <th>Customer &amp; Plan</th>
+                    <th>Address &amp; Gate Photo</th>
+                    <th>Pets, Treats &amp; Notes</th>
+                    <th>Schedule &amp; Actions</th>
                   </tr>
                 </thead>
                 <tbody id="clientsTableBody"></tbody>
@@ -1388,8 +1398,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div style="flex:1; min-width:190px; display:flex; flex-direction:column; gap:0.4rem;">
               <div style="font-size:0.9rem; font-weight:800; color:var(--ws-forest);" id="postStashMetaText">Graphic saved &amp; synced to Cloud!</div>
               <div style="font-size:0.78rem; color:var(--ws-muted); line-height:1.35;">
-                1. Click <strong>"Copy Post"</strong> above and paste text into Facebook.<br>
-                2. Click <strong>"📋 Copy Image for FB"</strong> below and press <strong>Ctrl+V</strong> in Facebook!
+1. Click <strong>"Copy Post"</strong> above and paste text into Facebook.<br>
+2. Click <strong>"📋 Copy Image for FB"</strong> below and press <strong>Ctrl+V</strong> in Facebook!
               </div>
               <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.15rem;">
                 <button type="button" class="btn btn-sm btn-green" id="btnCopyStashedImageBig">📋 Copy Image for Facebook</button>
@@ -2164,7 +2174,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     function buildClientActivityFeed(c) {
       const events = [];
 
-      // 1. Yard Visits ("Complete Scoop" history)
       const visits = Array.isArray(c.visitHistory) ? c.visitHistory : [];
       visits.forEach(v => {
         events.push({
@@ -2178,7 +2187,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         });
       });
 
-      // 2. Square Invoices & Payments (Separate entry for Invoice Sent/Viewed vs Payment Received)
       const sqHist = Array.isArray(c.squareHistory) ? c.squareHistory : [];
       sqHist.forEach(h => {
         const amtStr = `$${Number(h.amount || 0).toFixed(2)}`;
@@ -2203,7 +2211,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           });
         }
 
-        // Separate log entry when the invoice or card was actually PAID
         if (st === "PAID" || st === "COMPLETED") {
           const paidDate = h.paidDate || h.date || "";
           events.push({
@@ -2228,7 +2235,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         }
       });
 
-      // 3. Manual Logged Payments matching this client
       manualPayments.forEach(mp => {
         if (findLooseCrmClient({ name: mp.customerName })?.id !== c.id) return;
         const st = String(mp.status || "PAID").toUpperCase();
@@ -2243,7 +2249,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         });
       });
 
-      // 4. Account Started Milestone
       if (c.startDate) {
         events.push({
           sortKey: `${c.startDate}T08:00`,
@@ -4501,17 +4506,22 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     // ========================================================================
-    // COMPLETE CLIENT DIRECTORY WITH INLINE GATE PHOTO & EXPANDABLE PROFILE
+    // COMPLETE CLIENT DIRECTORY (ZERO SIDEWAYS SCROLL + PROMINENT ADD-ONS)
     // ========================================================================
     function renderClientsTable() {
       const tbody = document.getElementById('clientsTableBody'), list = getFilteredClients().sort((a, b) => a.name.localeCompare(b.name));
-      if (!list.length) { tbody.innerHTML = `<tr class="empty-table-row"><td colspan="7" style="text-align:center; padding:24px; color:var(--m); font-weight:600;">No clients added yet.</td></tr>`; return; }
+      if (!list.length) { tbody.innerHTML = `<tr class="empty-table-row"><td colspan="4" style="text-align:center; padding:20px; color:var(--m); font-weight:600;">No clients added yet.</td></tr>`; return; }
 
       tbody.innerHTML = list.map(c => {
         const isExpanded = expandedClientId === c.id;
-        const cardBadge = c.hasCardOnFile ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card on File')}</span>` : '';
+        const cardBadge = c.hasCardOnFile ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card')}</span>` : '';
         const cancelBadge = c.status === 'Canceled' ? `<span class="badge badge-red">Canceled${c.canceledDate ? ` (${formatDisplayDate(c.canceledDate)})` : ''}</span>` : '';
-        const importantHtml = c.importantNote ? `<div class="important-note-box" style="margin-bottom:4px;"><span>📌 ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : '';
+        const importantHtml = c.importantNote ? `<div class="important-note-box" style="margin-bottom:4px; padding:4px 7px; font-size:11px;"><span>📌 ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : '';
+
+        const addonsText = (c.addonsSummary || "").trim();
+        const rowAddonsBadgeHtml = addonsText
+          ? `<div style="margin-top:4px;"><span style="display:inline-block; background:#E2F2E7; color:#164A28; border:1.5px solid #3B8754; border-radius:7px; padding:3px 8px; font-size:11px; font-weight:900; line-height:1.25;">✨ Add-Ons: ${escapeHtml(addonsText)}</span></div>`
+          : '';
 
         const photos = Array.isArray(c.propertyPhotos) ? c.propertyPhotos : [];
         const primaryPhoto = photos[0] || null;
@@ -4526,9 +4536,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 ${photos.length > 1 ? `<span class="addr-thumb-badge">+${photos.length - 1}</span>` : ''}
               </button>
             ` : ''}
-            <div>
-              <strong>${escapeHtml(fullAddr)}</strong>
-              ${primaryPhoto ? `<div style="font-size:10.5px; color:var(--gm); font-weight:700;">📷 Tap photo to zoom</div>` : ''}
+            <div style="min-width:0;">
+              <strong style="font-size:12px;">${escapeHtml(fullAddr)}</strong>
+              ${primaryPhoto ? `<div style="font-size:10px; color:var(--gm); font-weight:800;">📷 Tap photo to zoom</div>` : ''}
             </div>
           </div>
         `;
@@ -4549,57 +4559,75 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                   </div>
                 `;
               }).join("")
-            : `<div style="font-size:12px; color:var(--m); padding:6px 0;">No house or gate photos uploaded yet. Add one below so you or an employee always know the exact property &amp; gate!</div>`;
+            : `<div style="font-size:11.5px; color:var(--m); padding:4px 0;">No house or gate photos uploaded yet. Add one below so you or an employee always know the exact property &amp; gate!</div>`;
 
           const activityHtml = activityItems.length
             ? activityItems.map(act => `
                 <div class="cpd-act-item ${act.kind}">
-                  <div>
+                  <div style="min-width:0;">
                     <div style="font-weight:800; color:var(--g);">${act.icon} ${act.title}</div>
                     <div style="font-size:11px; color:var(--m); margin-top:2px;">${act.subtitle}</div>
                   </div>
                   <div style="text-align:right; flex-shrink:0;">
-                    <div style="font-size:10.5px; font-weight:800; color:var(--m); margin-bottom:2px;">${escapeHtml(act.dateLabel)}</div>
+                    <div style="font-size:10px; font-weight:800; color:var(--m); margin-bottom:2px;">${escapeHtml(act.dateLabel)}</div>
                     ${act.badgeHtml}
                   </div>
                 </div>
               `).join("")
-            : `<div style="font-size:12px; color:var(--m);">No activity logged for this client yet.</div>`;
+            : `<div style="font-size:11.5px; color:var(--m);">No activity logged for this client yet.</div>`;
+
+          const drawerAddonsBannerHtml = `
+            <div style="background:${addonsText ? 'linear-gradient(135deg, #E2F2E7 0%, #EDF7F0 100%)' : 'var(--cr)'}; border:2px solid ${addonsText ? '#3B8754' : 'var(--b)'}; border-radius:11px; padding:10px 12px; display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+              <div style="min-width:0;">
+                <div style="font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:0.5px; color:var(--gm);">
+                  ✨ Active Plan &amp; Recurring Add-Ons
+                </div>
+                <div style="font-size:13.5px; font-weight:900; color:var(--g); margin-top:2px;">
+                  ${escapeHtml(c.serviceType || 'Dog Waste Removal')} (${escapeHtml(c.freq)}) • $${Number(c.netPrice).toFixed(2)}/mo
+                </div>
+                <div style="font-size:12.5px; font-weight:900; color:${addonsText ? '#164A28' : 'var(--m)'}; margin-top:3px;">
+                  ${addonsText ? `✅ Add-Ons: ${escapeHtml(addonsText)}` : 'No extra add-ons active on this plan'}
+                </div>
+              </div>
+              <button type="button" class="btn btn-dark btn-sm" onclick="openClientModal('${c.id}')">✏️ Edit Plan / Add-Ons</button>
+            </div>
+          `;
 
           drawerRowHtml = `
             <tr class="client-drawer-row">
-              <td colspan="7">
+              <td colspan="4">
                 <div class="client-profile-drawer">
-                  <!-- LEFT COLUMN: GATE / HOUSE PHOTOS + INLINE NOTES EDITOR -->
-                  <div style="display:flex; flex-direction:column; gap:10px;">
+                  <div style="display:flex; flex-direction:column; gap:10px; min-width:0;">
+                    ${drawerAddonsBannerHtml}
+
                     <div class="cpd-card">
                       <div class="cpd-title">
-                        <span>📷 House &amp; Gate Verification Photos (${photos.length})</span>
+                        <span>📷 House &amp; Gate Photos (${photos.length})</span>
                         <label class="btn btn-dark btn-sm" style="cursor:pointer;">
                           + Upload Photo
                           <input type="file" accept="image/*" style="display:none;" onchange="handleClientPhotoUpload('${c.id}', event)">
                         </label>
                       </div>
-                      <div style="display:grid; grid-template-columns: 120px 1fr auto; gap:6px; align-items:center;">
-                        <input type="text" id="newPhotoLabel-${c.id}" placeholder="Label (e.g. Side Gate)" style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px;">
-                        <input type="url" id="newPhotoUrl-${c.id}" placeholder="Or paste image link (https://...)" style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px;">
-                        <button type="button" class="btn btn-sage btn-sm" onclick="addClientPhotoUrl('${c.id}')">Add Link</button>
+                      <div class="cpd-photo-add-row" style="display:grid; grid-template-columns: 115px minmax(0, 1fr) auto; gap:6px; align-items:center;">
+                        <input type="text" id="newPhotoLabel-${c.id}" placeholder="Label (e.g. Gate)" style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px; min-width:0;">
+                        <input type="url" id="newPhotoUrl-${c.id}" placeholder="Or paste image link..." style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px; min-width:0;">
+                        <button type="button" class="btn btn-sage btn-sm" onclick="addClientPhotoUrl('${c.id}')">Add</button>
                       </div>
                       <div class="cpd-photo-grid">${photosGridHtml}</div>
                     </div>
 
                     <div class="cpd-card cpd-note-editor">
                       <div class="cpd-title">
-                        <span>📝 Quick-Edit Client Notes &amp; Gate Info</span>
+                        <span>📝 Quick-Edit Notes &amp; Gate Info</span>
                         <button type="button" class="btn btn-green btn-sm" onclick="saveInlineClientNotes('${c.id}')">💾 Save Notes</button>
                       </div>
-                      <div style="display:grid; grid-template-columns: 1fr 150px; gap:8px;">
-                        <div>
-                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">📌 Important Reminder (Highlighted on Route)</label>
-                          <input type="text" id="inlineImpNote-${c.id}" value="${escapeHtml(c.importantNote || '')}" placeholder="e.g., Wants Yard Fresh added next week">
+                      <div class="cpd-note-top-row" style="display:grid; grid-template-columns: minmax(0, 1fr) 135px; gap:8px;">
+                        <div style="min-width:0;">
+                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">📌 Important Reminder</label>
+                          <input type="text" id="inlineImpNote-${c.id}" value="${escapeHtml(c.importantNote || '')}" placeholder="e.g., Wants Yard Fresh next week">
                         </div>
-                        <div>
-                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">🦴 Treat Location</label>
+                        <div style="min-width:0;">
+                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">🦴 Treat Drop</label>
                           <select id="inlineTreatLoc-${c.id}" style="width:100%; padding:7px 8px; border:1.5px solid var(--b); border-radius:8px; font-size:12px;">
                             <option value="Front Door" ${(c.treatLoc || 'Front Door') === 'Front Door' ? 'selected' : ''}>Front Door</option>
                             <option value="Back Door" ${c.treatLoc === 'Back Door' ? 'selected' : ''}>Back Door</option>
@@ -4615,12 +4643,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                     </div>
                   </div>
 
-                  <!-- RIGHT COLUMN: CUSTOMER ACTIVITY & INVOICE/VISIT TIMELINE -->
-                  <div class="cpd-card">
+                  <div class="cpd-card" style="min-width:0;">
                     <div class="cpd-title">
-                      <span>📋 Activity, Invoices &amp; Yard Visits (${activityItems.length})</span>
-                      <div style="display:flex; gap:5px;">
-                        <button type="button" class="btn btn-sage btn-sm" onclick="openSquareModal('${c.id}')">💳 New Invoice / Charge</button>
+                      <span>📋 Activity, Invoices &amp; Visits (${activityItems.length})</span>
+                      <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-sage btn-sm" onclick="openSquareModal('${c.id}')">💳 Charge / Invoice</button>
                         <button type="button" class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Full Edit</button>
                       </div>
                     </div>
@@ -4634,24 +4661,41 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         return `
           <tr class="mobile-card-row client-main-row ${isExpanded ? 'is-expanded' : ''}" onclick="toggleClientDrawer('${c.id}', event)">
-            <td class="m-header" data-label="Customer">
-              <div>
-                <strong style="font-size:14.5px; color:var(--g);"><span class="client-chevron">▶</span>${escapeHtml(c.name)}</strong><br>
-                <span style="font-size:11.5px; color:var(--m);">${escapeHtml(c.phone)}${c.email ? ` • ${escapeHtml(c.email)}` : ''}</span>
-                <div>${cardBadge} ${cancelBadge}</div>
+            <td class="m-header" data-label="Customer & Plan">
+              <div style="min-width:0;">
+                <strong style="font-size:14px; color:var(--g);"><span class="client-chevron">▶</span>${escapeHtml(c.name)}</strong><br>
+                <span style="font-size:11px; color:var(--m);">${escapeHtml(c.phone)}${c.email ? `<br>${escapeHtml(c.email)}` : ''}</span>
+                <div style="margin-top:3px;">
+                  <strong style="font-size:12px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong>
+                  <span style="font-size:11px; color:var(--m);">• ${escapeHtml(c.freq)}</span>
+                </div>
+                ${rowAddonsBadgeHtml}
+                <div style="margin-top:3px;">${cardBadge} ${cancelBadge}</div>
               </div>
-              <div class="mobile-only-inline" style="text-align:right;">
-                <strong style="color:var(--g);">$${Number(c.netPrice).toFixed(2)}/mo</strong><br>
+              <div class="mobile-only-inline" style="text-align:right; flex-shrink:0;">
                 <span class="badge badge-sage">${escapeHtml(c.status)}</span>
               </div>
             </td>
-            <td data-label="Service Address & Photo">${addrWithThumbHtml}</td>
-            <td data-label="Pets & Treats">${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}<br><span class="badge badge-sage">Treats: ${escapeHtml(c.treatLoc)}</span></td>
-            <td data-label="Notes & Reminders" style="max-width:230px; font-size:12px;">${importantHtml}${escapeHtml(c.gateNotes || (c.importantNote ? '' : '—'))}</td>
-            <td data-label="Start & Next Scoop"><strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br><span style="font-size:11.5px; color:var(--gm); font-weight:700;">Next Scoop: ${formatDisplayDate(c.nextScoop)} (${escapeHtml(c.freq)})</span></td>
-            <td class="desktop-only-cell" data-label="Rate"><strong>$${Number(c.netPrice).toFixed(2)}/mo</strong><br><span style="font-size:11px; color:var(--m);">${escapeHtml(c.serviceType || 'Dog Waste')}${c.addonsSummary ? ` + ${escapeHtml(c.addonsSummary)}` : ''}</span></td>
-            <td class="m-actions" data-label="Actions">
-              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+
+            <td class="m-full" data-label="Service Address & Gate Photo">
+              ${addrWithThumbHtml}
+            </td>
+
+            <td class="m-full" data-label="Pets, Treats & Notes">
+              <div style="margin-bottom:4px;">
+                <strong>${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</strong>
+                <span class="badge badge-sage">Treats: ${escapeHtml(c.treatLoc)}</span>
+              </div>
+              ${importantHtml}
+              <div style="font-size:11.5px; color:var(--ink);">${escapeHtml(c.gateNotes || '')}</div>
+            </td>
+
+            <td class="m-actions" data-label="Schedule & Actions">
+              <div style="font-size:11px; margin-bottom:6px;">
+                <strong>Start:</strong> ${formatDisplayDate(c.startDate)}<br>
+                <span style="color:var(--gm); font-weight:800;">Next Scoop: ${formatDisplayDate(c.nextScoop)}</span>
+              </div>
+              <div style="display:flex; gap:5px; flex-wrap:wrap;">
                 <button class="btn btn-sage btn-sm" onclick="toggleClientDrawer('${c.id}')">${isExpanded ? '▲ Close' : '▼ Profile'}</button>
                 <button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">💳 Square</button>
                 <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
@@ -4680,7 +4724,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }).join('');
     }
 
-    // CLIENT MODAL & WORKFLOW ACTIONS (COMPLETE SCOOP LOGS INTO CUSTOMER ACTIVITY FEED)
+    // CLIENT MODAL & WORKFLOW ACTIONS
     window.completeScoop = async function(id) {
       const c = clients.find(x => x.id === id); if (!c) return;
       const today = todayStr(0); if (c.scoopedActionDate === today) return;
