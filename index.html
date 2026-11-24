@@ -124,6 +124,36 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   .hidden { display: none !important; }
 
+  /* EDIT MODE LOCK & TOP BANNER */
+  .edit-mode-banner {
+    display: none;
+    background: #FFF4E5;
+    border-bottom: 2px solid #E6A83A;
+    color: #7A3E00;
+    padding: 8px 24px;
+    font-size: 12.5px;
+    font-weight: 900;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 64px;
+    z-index: 490;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  }
+  body.edit-mode-active .edit-mode-banner {
+    display: flex;
+  }
+  body:not(.edit-mode-active) .edit-only-control {
+    display: none !important;
+  }
+  #btnDesktopEditMode.is-editing {
+    background: #E6A83A;
+    color: #18241C;
+    border: 1.5px solid #7A4B00;
+  }
+
   /* LOGIN GATE OVERLAY */
   .auth-gate {
     position: fixed; inset: 0; background: rgba(24, 36, 28, 0.94);
@@ -614,6 +644,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   #fbWorkspace .day-tab.active { background-color: var(--ws-forest); color: var(--ws-white); border-color: var(--ws-forest); }
   #fbWorkspace .day-tab-title { font-weight: 800; font-size: 0.9rem; }
   #fbWorkspace .today-pill { font-size: 0.64rem; font-weight: 800; text-transform: uppercase; background-color: var(--ws-sage); color: var(--ws-forest); padding: 0.08rem 0.4rem; border-radius: 999px; }
+  #fbWorkspace .day-tab.active .today-pill { background-color: var(--ws-white); }
   #fbWorkspace .day-tab-meta { font-size: 0.75rem; color: var(--ws-muted); font-weight: 600; }
   #fbWorkspace .day-tab.active .day-tab-meta { color: var(--ws-sage); }
   #fbWorkspace .idea-panel { background-color: var(--ws-white); border: 1.5px solid var(--b); border-top: 4px solid var(--ws-forest); border-radius: var(--radius-md); margin-bottom: 1.1rem; overflow: hidden; }
@@ -625,6 +656,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   #fbWorkspace .idea-body.collapsed { display: none; }
   #fbWorkspace .idea-filters { display: flex; flex-wrap: wrap; gap: 0.35rem; }
   .filter-pill { padding: 0.3rem 0.68rem; border-radius: 999px; border: 1px solid var(--ws-border); background-color: var(--ws-cream); color: var(--ws-text); font-size: 0.78rem; font-weight: 600; cursor: pointer; }
+  .filter-pill:hover { border-color: var(--ws-forest); background-color: var(--ws-sage-tint); }
   .filter-pill.active { background-color: var(--ws-forest); color: var(--ws-white); border-color: var(--ws-forest); }
   #fbWorkspace .idea-hook-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; }
   #fbWorkspace .idea-hook-title { font-size: 1rem; font-weight: 800; color: var(--ws-text); margin: 0; }
@@ -653,6 +685,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   #fbWorkspace .post-stash-thumb { width: 112px; height: 140px; object-fit: cover; border-radius: var(--radius-sm); border: 1.5px solid var(--ws-forest); }
   #fbWorkspace .queue-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.8rem; }
   #fbWorkspace .queue-heading h2 { margin: 0; font-size: 1.1rem; color: var(--ws-forest); font-weight: 900; }
+  #fbWorkspace .queue-heading span { font-size: 0.84rem; color: var(--ws-muted); font-weight: 600; }
   #fbWorkspace .card-stack, #manageGroupsList { display: flex; flex-direction: column; gap: 0.85rem; }
   #fbWorkspace .group-card { background-color: var(--ws-white); border: 1.5px solid var(--b); border-left: 5px solid var(--ws-forest); border-radius: var(--radius-md); padding: 1rem 1.1rem; display: flex; flex-direction: column; gap: 0.7rem; }
   #fbWorkspace .group-card.posted { background-color: #F8FBF9; border-left-color: #2E7D4F; opacity: 0.88; }
@@ -682,6 +715,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
      NATIVE MOBILE APP SHELL (BOTTOM TAB DOCK + SLIDE-UP MORE DRAWER)
      ========================================================================== */
   @media (max-width: 768px) {
+    .edit-mode-banner { top: 50px; padding: 7px 12px; font-size: 12px; }
     .topbar { padding: 8px 12px; gap: 7px; }
     .brand-left { width: 100%; justify-content: space-between; gap: 6px; flex-wrap: nowrap; }
     .brand-logo-wrap { padding: 3px 6px; }
@@ -699,7 +733,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     .backup-status { display: none; }
     .backup-bar .btn { padding: 9px 8px; font-size: 12px; flex: 1; min-height: 40px; }
 
-    /* Compact top-docked AI Quick Note Bar right under header */
     .ai-quickbar {
       position: sticky; top: 50px; z-index: 440;
       padding: 6px 10px; border-bottom: 1.5px solid var(--gm);
@@ -714,28 +747,23 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     .panel-hd, .perf-section-hd { padding: 11px 12px; }
     .perf-section-body { padding: 11px; }
 
-    /* Sleek compact weather bar on mobile */
     .weather-widget { padding: 7px 10px; margin-bottom: 10px; }
     .weather-timeline-bar { display: none; }
 
-    /* KPI grid hidden unless "📊 Stats" is toggled */
     .kpi-grid { display: none; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .kpi-grid.mobile-kpi-open { display: grid; }
     .kpi-card { padding: 10px 11px; border-radius: 12px; min-width: 0; }
     .kpi-val { font-size: 19px; }
 
-    /* Hide desktop top tabs on mobile — replaced by fixed native bottom dock */
     .tabs { display: none !important; }
     .nav-bar { margin-bottom: 8px; }
 
-    /* Search & filter bar slides open cleanly when toggled from bottom "More" sheet */
     .search-controls { display: none; width: 100%; grid-template-columns: 1fr 1fr; gap: 7px; background: var(--w); padding: 10px; border-radius: 14px; border: 1.5px solid var(--gm); box-shadow: var(--shadow-sm); }
     .search-controls.mobile-search-open { display: grid; }
     .search-input { grid-column: 1 / -1; min-width: 0; width: 100%; min-height: 44px; font-size: 14px; }
     .filter-select { min-height: 44px; font-size: 13px; }
     .search-controls .btn { min-height: 44px; font-size: 13px; }
 
-    /* Fixed Native App Bottom Tab Bar (Schedule • Map • Clients • Leads • More) */
     .mobile-bottom-dock {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
       background: var(--w); border-top: 2px solid var(--b);
@@ -759,7 +787,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       display: inline-flex; align-items: center; justify-content: center;
     }
 
-    /* Bigger thumb-friendly action buttons inside Route Cards, Client Directory & Billing */
     .leads-grid, .route-grid { grid-template-columns: 1fr; padding: 10px; gap: 11px; }
     .rc-actions, .lead-actions, .m-actions > div { display: grid !important; grid-template-columns: 1fr 1fr; gap: 7px !important; }
     .rc-actions .btn, .lead-actions .btn, .m-actions .btn {
@@ -768,7 +795,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     .rc-actions .btn:first-child { grid-column: 1 / -1; font-size: 14.5px; min-height: 50px; }
     .rc-actions .undo-link { grid-column: 1 / -1; text-align: center; padding: 6px; font-size: 12.5px; }
 
-    /* Make Schedule, Map & Billing filter controls big and easy to tap */
     #tab-schedule .panel-hd > div,
     #tab-map .panel-hd > div,
     #tab-billing .panel-hd > div {
@@ -844,6 +870,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     <div class="backup-bar">
       <div class="backup-status" id="cloudSyncStatus">☁️ Connecting to Cloud...</div>
+      <button type="button" class="btn btn-outline" id="btnDesktopEditMode" onclick="toggleEditMode()" title="Toggle Edit Mode to edit or delete records and drag map pins">🔒 Edit Mode: OFF</button>
       <button class="btn btn-sage" onclick="openAppLauncher()" title="Quick access to all Wise Scoopers websites and tools">🧰 Apps</button>
       <button class="btn btn-sage" onclick="downloadBackup(true)" title="Download a JSON backup file to your PC/device">💾 Backup</button>
       <label class="btn btn-outline" style="cursor:pointer;" title="Upload a saved JSON backup file into your cloud database">
@@ -853,6 +880,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       <button class="btn btn-outline btn-sm" onclick="handleLogout()" title="Sign out">Sign Out</button>
     </div>
   </header>
+
+  <!-- EDIT MODE ACTIVE BANNER (SHOWN ON DESKTOP & MOBILE WHEN UNLOCKED) -->
+  <div class="edit-mode-banner" id="editModeBanner" role="status">
+    <span>✏️ <strong>EDIT MODE IS ON</strong> — Editing, deleting, refunds &amp; map pin dragging are unlocked.</span>
+    <button type="button" class="btn btn-dark btn-sm" onclick="toggleEditMode(false)">🔒 Done Editing</button>
+  </div>
 
   <!-- PERSISTENT AI QUICK-NOTE BAR -->
   <div class="ai-quickbar" id="aiQuickNoteBar">
@@ -1188,7 +1221,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             </div>
 
             <div class="map-tip-bar">
-              <span><strong>Live GPS Routing:</strong> Numbered <strong>#1, #2, #3...</strong> from your current GPS. Switch to <em>Satellite View</em> and drag any 💩 pin onto the exact gate—it saves straight to the cloud!</span>
+              <span><strong>Live GPS Routing:</strong> Numbered <strong>#1, #2, #3...</strong> from your current GPS. Turn on <strong>Edit Mode</strong> to drag 💩 pins onto exact gates.</span>
             </div>
 
             <div class="map-layout">
@@ -1327,8 +1360,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <button type="button" class="mobile-sheet-item" data-sheet-tab="billing" onclick="switchTab('billing'); toggleMobileMoreSheet(false);">💳 Billing</button>
         <button type="button" class="mobile-sheet-item" data-sheet-tab="performance" onclick="switchTab('performance'); toggleMobileMoreSheet(false);">📈 Money &amp; P&amp;L</button>
         <button type="button" class="mobile-sheet-item" data-sheet-tab="referrals" onclick="switchTab('referrals'); toggleMobileMoreSheet(false);">🤝 Referrals ($20)</button>
+        <button type="button" class="mobile-sheet-item" id="btnMobileSheetEditMode" onclick="toggleEditMode(); toggleMobileMoreSheet(false);">🔒 Edit Mode: OFF</button>
         <button type="button" class="mobile-sheet-item" onclick="toggleMobileSearchBar(); toggleMobileMoreSheet(false);">🔍 Search / Filter</button>
-        <button type="button" class="mobile-sheet-item" style="grid-column: 1 / -1; background:var(--g); color:var(--w);" onclick="openClientModal(); toggleMobileMoreSheet(false);">+ Add New Client</button>
+        <button type="button" class="mobile-sheet-item" onclick="openClientModal(); toggleMobileMoreSheet(false);">+ Add Client</button>
       </div>
     </div>
   </div>
@@ -2188,6 +2222,38 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     let isAuthenticated = false;
     let hasRunInitialSquareSync = false;
     let expandedClientId = null;
+    let isEditMode = false;
+
+    window.syncEditModeUi = function() {
+      document.body.classList.toggle("edit-mode-active", isEditMode);
+
+      const deskBtn = document.getElementById("btnDesktopEditMode");
+      if (deskBtn) {
+        deskBtn.textContent = isEditMode ? "✏️ Edit Mode: ON" : "🔒 Edit Mode: OFF";
+        deskBtn.classList.toggle("is-editing", isEditMode);
+        deskBtn.classList.toggle("btn-outline", !isEditMode);
+      }
+
+      const mobBtn = document.getElementById("btnMobileSheetEditMode");
+      if (mobBtn) {
+        mobBtn.textContent = isEditMode ? "✏️ Edit Mode: ON" : "🔒 Edit Mode: OFF";
+        mobBtn.classList.toggle("active", isEditMode);
+      }
+
+      const mapTip = document.querySelector("#tab-map .map-tip-bar span");
+      if (mapTip) {
+        mapTip.innerHTML = isEditMode
+          ? `<strong>✏️ Edit Mode ON:</strong> Drag any 💩 pin onto the exact gate—it saves straight to the cloud!`
+          : `<strong>Live GPS Routing:</strong> Numbered <strong>#1, #2, #3...</strong> from your current GPS. Turn on <strong>Edit Mode</strong> to drag 💩 pins onto exact gates.`;
+      }
+    };
+
+    window.toggleEditMode = function(forceState = null) {
+      isEditMode = forceState !== null ? Boolean(forceState) : !isEditMode;
+      window.syncEditModeUi();
+      if (typeof window.renderAll === "function") window.renderAll();
+      showToast(isEditMode ? "✏️ Edit Mode ON — all edits unlocked." : "🔒 Edit Mode OFF — field view locked.");
+    };
 
     window.toggleMobileHeaderExtras = function() {
       const topbar = document.getElementById("mainTopbar");
@@ -2291,6 +2357,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     window.handleClientPhotoUpload = async function(clientId, event) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to upload photos."); return; }
       const file = event.target.files?.[0];
       if (!file) return;
       const c = clients.find(x => x.id === clientId);
@@ -2312,6 +2379,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.addClientPhotoUrl = async function(clientId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to add photos."); return; }
       const c = clients.find(x => x.id === clientId);
       if (!c) return;
       const urlInp = document.getElementById(`newPhotoUrl-${clientId}`);
@@ -2327,6 +2395,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteClientPhoto = async function(clientId, photoId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete photos."); return; }
       const c = clients.find(x => x.id === clientId);
       if (!c || !Array.isArray(c.propertyPhotos)) return;
       if (!confirm("Remove this property photo?")) return;
@@ -2336,6 +2405,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.saveInlineClientNotes = async function(clientId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to edit notes."); return; }
       const c = clients.find(x => x.id === clientId);
       if (!c) return;
       const impEl = document.getElementById(`inlineImpNote-${clientId}`);
@@ -2595,8 +2665,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               else if (p.status === "REFUNDED") badge = `<span class="badge badge-red">↩ Refunded</span>`;
 
               const actions = p.source === "manual"
-                ? `<button type="button" class="btn btn-outline btn-sm" onclick="openManualPaymentModal('${escapeHtml(p.id)}')">Edit</button> <button type="button" class="btn btn-danger btn-sm" onclick="deleteManualPayment('${escapeHtml(p.id)}')">Delete</button>`
-                : `${p.status === "PAID" ? `<button type="button" class="btn btn-outline btn-sm" onclick="markSquareTxRefunded('${escapeHtml(p.clientId)}', ${p.histIndex})">Refund</button>` : ""} ${p.url ? `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener" class="btn btn-sage btn-sm">Link ↗</a>` : ""}`;
+                ? `<button type="button" class="btn btn-outline btn-sm edit-only-control" onclick="openManualPaymentModal('${escapeHtml(p.id)}')">Edit</button> <button type="button" class="btn btn-danger btn-sm edit-only-control" onclick="deleteManualPayment('${escapeHtml(p.id)}')">Delete</button>`
+                : `${p.status === "PAID" ? `<button type="button" class="btn btn-outline btn-sm edit-only-control" onclick="markSquareTxRefunded('${escapeHtml(p.clientId)}', ${p.histIndex})">Refund</button>` : ""} ${p.url ? `<a href="${escapeHtml(p.url)}" target="_blank" rel="noopener" class="btn btn-sage btn-sm">Link ↗</a>` : ""}`;
 
               return `
                 <tr class="mobile-card-row">
@@ -2605,7 +2675,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                   <td data-label="Method / Details">${escapeHtml(p.method)}${p.summary && p.summary !== p.method ? `<br><span style="font-size:11px; color:var(--m);">${escapeHtml(p.summary)}</span>` : ""}</td>
                   <td data-label="Status">${badge}</td>
                   <td class="desktop-only-cell" data-label="Amount"><strong>$${p.grossAmount.toFixed(2)}</strong></td>
-                  <td class="m-actions" data-label="Actions">${actions}</td>
+                  <td class="m-actions" data-label="Actions">${actions || '<span style="font-size:11px; color:var(--m);">—</span>'}</td>
                 </tr>
               `;
             }).join("")
@@ -2624,8 +2694,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <td data-label="Frequency">${escapeHtml(e.frequency || "One-Time")}</td>
                 <td class="desktop-only-cell" data-label="Amount"><strong>$${Number(e.amount).toFixed(2)}</strong></td>
                 <td class="m-actions" data-label="Actions">
-                  <button type="button" class="btn btn-outline btn-sm" onclick="openExpenseModal('${escapeHtml(e.id)}')">Edit</button>
-                  <button type="button" class="btn btn-danger btn-sm" onclick="deleteBusinessExpense('${escapeHtml(e.id)}')">Delete</button>
+                  <button type="button" class="btn btn-outline btn-sm edit-only-control" onclick="openExpenseModal('${escapeHtml(e.id)}')">Edit</button>
+                  <button type="button" class="btn btn-danger btn-sm edit-only-control" onclick="deleteBusinessExpense('${escapeHtml(e.id)}')">Delete</button>
                 </td>
               </tr>
             `).join("")
@@ -2644,8 +2714,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                 <td data-label="Notes">${escapeHtml(d.notes || "—")}</td>
                 <td class="desktop-only-cell" data-label="Amount"><strong style="color:var(--warn-ink);">-$${Number(d.discountAmount || 0).toFixed(2)}</strong></td>
                 <td class="m-actions" data-label="Actions">
-                  <button type="button" class="btn btn-outline btn-sm" onclick="openDiscountModal('${escapeHtml(d.id)}')">Edit</button>
-                  <button type="button" class="btn btn-danger btn-sm" onclick="deleteDiscountLog('${escapeHtml(d.id)}')">Delete</button>
+                  <button type="button" class="btn btn-outline btn-sm edit-only-control" onclick="openDiscountModal('${escapeHtml(d.id)}')">Edit</button>
+                  <button type="button" class="btn btn-danger btn-sm edit-only-control" onclick="deleteDiscountLog('${escapeHtml(d.id)}')">Delete</button>
                 </td>
               </tr>
             `).join("")
@@ -2655,6 +2725,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     // MANUAL PAYMENT, EXPENSE & DISCOUNT CRUD
     window.openManualPaymentModal = function(paymentId = null) {
+      if (paymentId && !isEditMode) { showToast("Turn on Edit Mode first to edit records."); return; }
       const form = document.getElementById("manualPaymentForm");
       form.reset();
       document.getElementById("editManualPaymentId").value = paymentId || "";
@@ -2711,12 +2782,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteManualPayment = async function(id) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete records."); return; }
       if (!confirm("Delete this logged payment?")) return;
       await deleteDoc(doc(db, "wise_scoopers_manual_payments", id));
       showToast("Deleted payment record.");
     };
 
     window.markSquareTxRefunded = async function(clientId, histIndex) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to record refunds."); return; }
       const c = clients.find(x => x.id === clientId);
       if (!c || !Array.isArray(c.squareHistory) || !c.squareHistory[histIndex]) return;
       const tx = c.squareHistory[histIndex];
@@ -2731,6 +2804,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.openExpenseModal = function(expenseId = null) {
+      if (expenseId && !isEditMode) { showToast("Turn on Edit Mode first to edit expenses."); return; }
       const form = document.getElementById("expenseForm");
       form.reset();
       document.getElementById("editExpenseId").value = expenseId || "";
@@ -2769,12 +2843,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteBusinessExpense = async function(id) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete expenses."); return; }
       if (!confirm("Delete this business expense record?")) return;
       await deleteDoc(doc(db, "wise_scoopers_expenses", id));
       showToast("Deleted expense.");
     };
 
     window.openDiscountModal = function(discountId = null) {
+      if (discountId && !isEditMode) { showToast("Turn on Edit Mode first to edit discounts."); return; }
       const form = document.getElementById("discountForm");
       form.reset();
       document.getElementById("editDiscountId").value = discountId || "";
@@ -2816,6 +2892,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteDiscountLog = async function(id) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete discounts."); return; }
       if (!confirm("Delete this discount record?")) return;
       await deleteDoc(doc(db, "wise_scoopers_discounts", id));
       showToast("Deleted discount record.");
@@ -2905,6 +2982,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.editGeneralNote = async function(noteId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to edit general notes."); return; }
       const existing = generalNotes.find(n => n.id === noteId);
       if (!existing) return;
       const updated = prompt("Edit General Note:", existing.text);
@@ -2918,6 +2996,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteGeneralNote = async function(noteId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete general notes."); return; }
       await removeGeneralNoteDoc(noteId);
       showToast("Removed General Note.");
     };
@@ -2938,7 +3017,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         <div class="gn-item">
           <div class="gn-item-meta">
             <span>🕒 ${escapeHtml(n.displayTime || "")}${n.editedTime ? ` (edited)` : ""}</span>
-            <div style="display:flex; gap:6px; align-items:center;">
+            <div style="display:flex; gap:6px; align-items:center;" class="edit-only-control">
               <button type="button" class="undo-link" onclick="editGeneralNote('${escapeHtml(n.id)}')">Edit</button>
               <button type="button" class="undo-link" style="color:var(--due-ink);" onclick="deleteGeneralNote('${escapeHtml(n.id)}')">✕</button>
             </div>
@@ -3146,6 +3225,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.clearImportantNote = async function(clientId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to clear reminders."); return; }
       const c = clients.find(x => x.id === clientId);
       if (!c) return;
       c.importantNote = "";
@@ -4010,6 +4090,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.openReferralModal = function(manualRefId = null) {
+      if (manualRefId && !isEditMode) { showToast("Turn on Edit Mode first to edit referrals."); return; }
       const form = document.getElementById("referralForm");
       form.reset();
       document.getElementById("editReferralId").value = manualRefId || "";
@@ -4083,6 +4164,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteManualReferral = async function(id) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete referrals."); return; }
       const mr = manualReferrals.find(x => x.id === id);
       if (!confirm(`Remove this partner referral entry (${mr ? mr.partnerDetails : "entry"})?`)) return;
       await removeManualReferralDoc(id);
@@ -4236,6 +4318,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.deleteLead = async function(leadId) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to remove leads."); return; }
       const lead = leads.find(l => l.id === leadId);
       if (!confirm(`Dismiss and remove ${lead ? lead.name : 'this entry'}?`)) return;
       await removeLeadDoc(leadId);
@@ -4373,6 +4456,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
 
     window.renderAll = function() {
+      window.syncEditModeUi();
       renderLeadsAndPotentialCards();
       renderKPIs();
       renderPerformanceDashboard();
@@ -4432,7 +4516,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <div class="lead-info-grid"><div class="lead-box"><div class="lead-box-lbl">📍 Service Address</div><strong>${escapeHtml(fullAddr)}</strong></div><div class="lead-box"><div class="lead-box-lbl">🐾 Pets &amp; Plan</div><strong>${petText}</strong><br><span>${escapeHtml(l.serviceType || 'Dog Waste Removal')}</span></div></div>
             ${l.importantNote ? `<div class="important-note-box"><span>📌 <strong>Important:</strong> ${escapeHtml(l.importantNote)}</span></div>` : ''}
             <div class="lead-notes-box"><div class="lead-box-lbl" style="color:#7A4B00;">📝 Notes</div>${parsed.cleanNote ? escapeHtml(parsed.cleanNote) : '<em style="color:var(--m);">No notes added yet.</em>'}</div>
-            <div class="lead-actions"><button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us Day</button><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button><a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm" onclick="deleteLead('${l.id}')">Remove</button></div>
+            <div class="lead-actions"><button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us Day</button><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button><a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Remove</button></div>
           </div>`;
         }).join('');
 
@@ -4453,7 +4537,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             ${(parsed.referralSource || parsed.referralDetails) ? `<div class="lead-box" style="background:var(--gt); border-color:var(--gm);"><div class="lead-box-lbl">🤝 How Heard / Business Referral</div><strong>${escapeHtml(parsed.referralSource || 'Referral')}</strong>${parsed.referralDetails ? ` — <span>${escapeHtml(parsed.referralDetails)}</span>` : ''}</div>` : ''}
             ${l.importantNote ? `<div class="important-note-box"><span>📌 <strong>Important:</strong> ${escapeHtml(l.importantNote)}</span></div>` : ''}
             ${parsed.cleanNote ? `<div class="lead-notes-box"><div class="lead-box-lbl" style="color:#7A4B00;">📝 Notes</div>${escapeHtml(parsed.cleanNote)}</div>` : ''}
-            <div class="lead-actions"><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button><button class="btn btn-amber btn-sm" onclick="moveLeadToPotential('${l.id}')">🎁 Potential Client / Try Us</button><a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm" onclick="deleteLead('${l.id}')">Dismiss</button></div>
+            <div class="lead-actions"><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert to Client</button><button class="btn btn-amber btn-sm" onclick="moveLeadToPotential('${l.id}')">🎁 Potential Client / Try Us</button><a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Dismiss</button></div>
           </div>`;
         }).join('');
     }
@@ -4609,15 +4693,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         else if (i > 0) straightMiles += haversineMiles(orderedStops[i - 1].lat, orderedStops[i - 1].lng, item.lat, item.lng);
 
         const isDue = diffDaysFromToday(c.nextScoop) <= 0, pinClass = c.isPotentialTrial ? 'pin-trial' : isDue ? 'pin-due' : 'pin-active';
-        const icon = L.divIcon({ className: '', html: `<div class="ws-pin ${pinClass}"><span>${c.isPotentialTrial ? '🎁' : '💩'}</span>${bestRouteEnabled ? `<div class="ws-pin-order">${stopNumber}</div>` : ''}</div>`, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30] });
+        const icon = L.divIcon({ className: '', html: `<div class="ws-pin ${pinClass}" style="cursor:${isEditMode ? 'grab' : 'pointer'};"><span>${c.isPotentialTrial ? '🎁' : '💩'}</span>${bestRouteEnabled ? `<div class="ws-pin-order">${stopNumber}</div>` : ''}</div>`, iconSize: [30, 30], iconAnchor: [15, 30], popupAnchor: [0, -30] });
         const destParam = item.isManual ? `${item.lat},${item.lng}` : fullAddr;
-        const marker = L.marker([item.lat, item.lng], { icon, draggable: true }).addTo(markersLayer).bindPopup(`<div style="min-width:210px;"><strong>${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</strong><br><small>${escapeHtml(fullAddr)}</small><div style="margin-top:6px; display:flex; gap:5px;"><a href="${getAppleMapsSingleUrl(destParam)}" target="_blank" style="background:#263A2D; color:#fff; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px;">🍎 Apple Maps</a><a href="${getGoogleMapsSingleUrl(destParam)}" target="_blank" style="background:#E5EEE5; color:#263A2D; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px;">🧭 Google Maps</a></div></div>`);
+        const marker = L.marker([item.lat, item.lng], { icon, draggable: isEditMode }).addTo(markersLayer).bindPopup(`<div style="min-width:210px;"><strong>${bestRouteEnabled ? `Stop #${stopNumber}: ` : ''}${escapeHtml(c.name)}</strong><br><small>${escapeHtml(fullAddr)}</small><div style="margin-top:6px; display:flex; gap:5px;"><a href="${getAppleMapsSingleUrl(destParam)}" target="_blank" style="background:#263A2D; color:#fff; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px;">🍎 Apple Maps</a><a href="${getGoogleMapsSingleUrl(destParam)}" target="_blank" style="background:#E5EEE5; color:#263A2D; padding:4px 8px; border-radius:5px; text-decoration:none; font-size:11px;">🧭 Google Maps</a></div></div>`);
 
-        marker.on('dragend', async e => {
-          const pos = e.target.getLatLng(), newGeo = { lat: Number(pos.lat.toFixed(6)), lng: Number(pos.lng.toFixed(6)), query: fullAddr, approx: false, manual: true };
-          if (c.isPotentialTrial) { const l = leads.find(x => x.id === c.id); if (l) { l.geo = newGeo; await saveLeadDoc(l); } } else { c.geo = newGeo; await saveClientDoc(c); }
-          showToast(`Saved exact GPS pin to Cloud for ${c.name}!`);
-        });
+        if (isEditMode) {
+          marker.on('dragend', async e => {
+            const pos = e.target.getLatLng(), newGeo = { lat: Number(pos.lat.toFixed(6)), lng: Number(pos.lng.toFixed(6)), query: fullAddr, approx: false, manual: true };
+            if (c.isPotentialTrial) { const l = leads.find(x => x.id === c.id); if (l) { l.geo = newGeo; await saveLeadDoc(l); } } else { c.geo = newGeo; await saveClientDoc(c); }
+            showToast(`Saved exact GPS pin to Cloud for ${c.name}!`);
+          });
+        }
 
         markerById[c.id] = marker; bounds.push([item.lat, item.lng]); fallbackLatLngs.push([item.lat, item.lng]);
         sidebarHtml.push(`<div class="map-stop-item ${c.isPotentialTrial ? 'is-trial' : isDue ? 'is-due' : ''}" onclick="focusClientPin('${c.id}')"><div style="display:flex; justify-content:space-between; align-items:center;"><div>${bestRouteEnabled ? `<span class="stop-num-badge ${c.isPotentialTrial ? 'trial' : isDue ? 'due' : ''}">${stopNumber}</span>` : ''}<strong style="font-size:13px; color:var(--g);">${escapeHtml(c.name)}</strong></div><span class="badge ${c.isPotentialTrial ? 'badge-soon' : isDue ? 'badge-due' : 'badge-sage'}">${c.isPotentialTrial ? '🎁 Try Us' : isDue ? 'Due' : 'Active'}</span></div><div style="font-size:11.5px; color:var(--m); margin-top:2px;">${escapeHtml(fullAddr)}</div></div>`);
@@ -4674,7 +4760,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           <td class="desktop-only-cell" data-label="Customer"><strong>${escapeHtml(c.name)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(derivedCity)} • ${escapeHtml(c.phone)}</span><br>${cardBadge}</td>
           <td data-label="Service & Add-Ons"><strong>${escapeHtml(c.serviceType || 'Dog Waste Removal')}</strong> (${escapeHtml(c.freq)})${c.addonsSummary ? `<br><span class="badge badge-sage">${escapeHtml(c.addonsSummary)}</span>` : ''}${recDisc > 0 ? `<br><span class="badge badge-amber">-$${recDisc.toFixed(2)}/mo disc.</span>` : ''}</td>
           <td class="desktop-only-cell" data-label="Rate"><strong style="font-size:15.5px; color:var(--g);">$${Number(c.netPrice).toFixed(2)}</strong>${recDisc > 0 ? `<br><span style="font-size:10.5px; color:var(--ok-ink);">Net: $${Math.max(0, Number(c.netPrice) - recDisc).toFixed(2)}</span>` : ''}</td>
-          <td class="m-actions" data-label="Actions"><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">${c.hasCardOnFile ? '⚡ Charge / Invoice' : '📩 Send Invoice'}</button><button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button></div></td>
+          <td class="m-actions" data-label="Actions"><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">${c.hasCardOnFile ? '⚡ Charge / Invoice' : '📩 Send Invoice'}</button><button class="btn btn-outline btn-sm edit-only-control" onclick="openClientModal('${c.id}')">Edit</button></div></td>
         </tr>`;
       }).join('');
     }
@@ -4700,12 +4786,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
         const scoopedToday = c.scoopedActionDate === today;
         const statusBadge = scoopedToday ? `<span class="badge badge-ok">✓ Scooped • Next: ${formatDisplayDate(c.nextScoop)}</span>` : isDue ? `<span class="badge badge-due">Due (${formatDisplayDate(c.nextScoop)})</span>` : `<span class="badge badge-ok">Next: ${formatDisplayDate(c.nextScoop)}</span>`;
-        return `<div class="route-card ${scoopedToday ? 'scooped-done' : isDue ? 'due-today' : ''}"><div style="display:flex; flex-direction:column; gap:8px;"><div class="rc-top"><div><div class="rc-name">${escapeHtml(c.name)}</div><div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div></div>${statusBadge}</div><div class="rc-meta"><div><strong>Plan:</strong> ${escapeHtml(c.freq)}</div><div><strong>Start:</strong> ${formatDisplayDate(c.startDate)}</div><div><strong>Pets:</strong> ${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div><div><strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div></div>${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}${c.importantNote ? `<div class="important-note-box"><span>📌 <strong>Important:</strong> ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : ''}${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}</div><div class="rc-actions">${scoopedToday ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button><button class="undo-link" onclick="undoCompleteScoop('${c.id}')">Undo</button>` : `<button class="btn btn-dark btn-sm" onclick="completeScoop('${c.id}')">✓ Complete Scoop</button>`}<button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button><a href="${mapsDirUrl}" target="_blank" class="btn btn-outline btn-sm">${mapsLabel}</a>${callHref ? `<a href="${callHref}" class="btn btn-outline btn-sm">📞 Call</a>` : ''}<button class="btn btn-green btn-sm" onclick="openSquareModal('${c.id}')">${c.hasCardOnFile ? '⚡ Bill Add-On' : '📩 Invoice'}</button><button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button></div></div>`;
+        return `<div class="route-card ${scoopedToday ? 'scooped-done' : isDue ? 'due-today' : ''}"><div style="display:flex; flex-direction:column; gap:8px;"><div class="rc-top"><div><div class="rc-name">${escapeHtml(c.name)}</div><div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div></div>${statusBadge}</div><div class="rc-meta"><div><strong>Plan:</strong> ${escapeHtml(c.freq)}</div><div><strong>Start:</strong> ${formatDisplayDate(c.startDate)}</div><div><strong>Pets:</strong> ${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div><div><strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div></div>${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}${c.importantNote ? `<div class="important-note-box"><span>📌 <strong>Important:</strong> ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link edit-only-control" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : ''}${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}</div><div class="rc-actions">${scoopedToday ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button><button class="undo-link" onclick="undoCompleteScoop('${c.id}')">Undo</button>` : `<button class="btn btn-dark btn-sm" onclick="completeScoop('${c.id}')">✓ Complete Scoop</button>`}<button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button><a href="${mapsDirUrl}" target="_blank" class="btn btn-outline btn-sm">${mapsLabel}</a>${callHref ? `<a href="${callHref}" class="btn btn-outline btn-sm">📞 Call</a>` : ''}<button class="btn btn-green btn-sm" onclick="openSquareModal('${c.id}')">${c.hasCardOnFile ? '⚡ Bill Add-On' : '📩 Invoice'}</button><button class="btn btn-outline btn-sm edit-only-control" onclick="openClientModal('${c.id}')">Edit</button></div></div>`;
       }).join('');
     }
 
     // ========================================================================
-    // COMPLETE CLIENT DIRECTORY (INDEXED PHOTO LIGHTBOX + ZERO OVERFLOW)
+    // COMPLETE CLIENT DIRECTORY (EDIT MODE LOCKED BY DEFAULT)
     // ========================================================================
     function renderClientsTable() {
       const tbody = document.getElementById('clientsTableBody'), list = getFilteredClients().sort((a, b) => a.name.localeCompare(b.name));
@@ -4715,7 +4801,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const isExpanded = expandedClientId === c.id;
         const cardBadge = c.hasCardOnFile ? `<span class="badge badge-ok">💳 ${escapeHtml(c.squareCardLabel || 'Card')}</span>` : '';
         const cancelBadge = c.status === 'Canceled' ? `<span class="badge badge-red">Canceled${c.canceledDate ? ` (${formatDisplayDate(c.canceledDate)})` : ''}</span>` : '';
-        const importantHtml = c.importantNote ? `<div class="important-note-box" style="margin-bottom:4px; padding:4px 7px; font-size:11px;"><span>📌 ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : '';
+        const importantHtml = c.importantNote ? `<div class="important-note-box" style="margin-bottom:4px; padding:4px 7px; font-size:11px;"><span>📌 ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link edit-only-control" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : '';
 
         const addonsText = (c.addonsSummary || "").trim();
         const rowAddonsBadgeHtml = addonsText
@@ -4750,11 +4836,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                   <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.label)}" onclick="openClientPhotoByIndex('${c.id}', ${pIdx}, event)">
                   <div class="cpd-photo-cap">
                     <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.label)}</span>
-                    <button type="button" class="undo-link" style="color:var(--due-ink); padding:0;" onclick="deleteClientPhoto('${c.id}', '${escapeHtml(p.id)}')" title="Delete photo">✕</button>
+                    <button type="button" class="undo-link edit-only-control" style="color:var(--due-ink); padding:0;" onclick="deleteClientPhoto('${c.id}', '${escapeHtml(p.id)}')" title="Delete photo">✕</button>
                   </div>
                 </div>
               `).join("")
-            : `<div style="font-size:11.5px; color:var(--m); padding:4px 0;">No house or gate photos uploaded yet. Add one below so you or an employee always know the exact property &amp; gate!</div>`;
+            : `<div style="font-size:11.5px; color:var(--m); padding:4px 0;">No house or gate photos uploaded yet.${isEditMode ? ' Add one below!' : ' Turn on Edit Mode to upload photos.'}</div>`;
 
           const activityHtml = activityItems.length
             ? activityItems.map(act => `
@@ -4784,9 +4870,51 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                   ${addonsText ? `✅ Add-Ons: ${escapeHtml(addonsText)}` : 'No extra add-ons active on this plan'}
                 </div>
               </div>
-              <button type="button" class="btn btn-dark btn-sm" onclick="openClientModal('${c.id}')">✏️ Edit Plan / Add-Ons</button>
+              <button type="button" class="btn btn-dark btn-sm edit-only-control" onclick="openClientModal('${c.id}')">✏️ Edit Plan / Add-Ons</button>
             </div>
           `;
+
+          const notesSectionHtml = isEditMode
+            ? `
+              <div class="cpd-card cpd-note-editor">
+                <div class="cpd-title">
+                  <span>📝 Quick-Edit Notes &amp; Gate Info</span>
+                  <button type="button" class="btn btn-green btn-sm" onclick="saveInlineClientNotes('${c.id}')">💾 Save Notes</button>
+                </div>
+                <div class="cpd-note-top-row" style="display:grid; grid-template-columns: minmax(0, 1fr) 135px; gap:8px;">
+                  <div style="min-width:0;">
+                    <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">📌 Important Reminder</label>
+                    <input type="text" id="inlineImpNote-${c.id}" value="${escapeHtml(c.importantNote || '')}" placeholder="e.g., Wants Yard Fresh next week">
+                  </div>
+                  <div style="min-width:0;">
+                    <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">🦴 Treat Drop</label>
+                    <select id="inlineTreatLoc-${c.id}" style="width:100%; padding:7px 8px; border:1.5px solid var(--b); border-radius:8px; font-size:12px;">
+                      <option value="Front Door" ${(c.treatLoc || 'Front Door') === 'Front Door' ? 'selected' : ''}>Front Door</option>
+                      <option value="Back Door" ${c.treatLoc === 'Back Door' ? 'selected' : ''}>Back Door</option>
+                      <option value="By Gate" ${c.treatLoc === 'By Gate' ? 'selected' : ''}>By Gate</option>
+                      <option value="No Treats" ${c.treatLoc === 'No Treats' ? 'selected' : ''}>No Treats</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">Gate Code, Dog Temperament &amp; Yard Notes</label>
+                  <textarea id="inlineGateNote-${c.id}" rows="2" placeholder="Gate code, latch details, dog names...">${escapeHtml(c.gateNotes || '')}</textarea>
+                </div>
+              </div>
+            `
+            : `
+              <div class="cpd-card">
+                <div class="cpd-title">
+                  <span>📝 Notes &amp; Gate Info (Locked)</span>
+                  <span style="font-size:10.5px; color:var(--m); font-weight:700;">Turn on Edit Mode to modify</span>
+                </div>
+                <div style="font-size:12px; color:var(--ink); line-height:1.4;">
+                  <div><strong>Treat Drop:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div>
+                  ${c.importantNote ? `<div style="margin-top:4px; color:#7A3E00;"><strong>📌 Important:</strong> ${escapeHtml(c.importantNote)}</div>` : ''}
+                  <div style="margin-top:4px;"><strong>Gate / Yard Notes:</strong> ${escapeHtml(c.gateNotes || 'None')}</div>
+                </div>
+              </div>
+            `;
 
           drawerRowHtml = `
             <tr class="client-drawer-row">
@@ -4798,12 +4926,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                     <div class="cpd-card">
                       <div class="cpd-title">
                         <span>📷 House &amp; Gate Photos (${photos.length})</span>
-                        <label class="btn btn-dark btn-sm" style="cursor:pointer;">
+                        <label class="btn btn-dark btn-sm edit-only-control" style="cursor:pointer;">
                           + Upload Photo
                           <input type="file" accept="image/*" style="display:none;" onchange="handleClientPhotoUpload('${c.id}', event)">
                         </label>
                       </div>
-                      <div class="cpd-photo-add-row" style="display:grid; grid-template-columns: 115px minmax(0, 1fr) auto; gap:6px; align-items:center;">
+                      <div class="cpd-photo-add-row edit-only-control" style="display:grid; grid-template-columns: 115px minmax(0, 1fr) auto; gap:6px; align-items:center;">
                         <input type="text" id="newPhotoLabel-${c.id}" placeholder="Label (e.g. Gate)" style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px; min-width:0;">
                         <input type="url" id="newPhotoUrl-${c.id}" placeholder="Or paste image link..." style="padding:5px 7px; border:1.5px solid var(--b); border-radius:7px; font-size:11.5px; min-width:0;">
                         <button type="button" class="btn btn-sage btn-sm" onclick="addClientPhotoUrl('${c.id}')">Add</button>
@@ -4811,31 +4939,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                       <div class="cpd-photo-grid">${photosGridHtml}</div>
                     </div>
 
-                    <div class="cpd-card cpd-note-editor">
-                      <div class="cpd-title">
-                        <span>📝 Quick-Edit Notes &amp; Gate Info</span>
-                        <button type="button" class="btn btn-green btn-sm" onclick="saveInlineClientNotes('${c.id}')">💾 Save Notes</button>
-                      </div>
-                      <div class="cpd-note-top-row" style="display:grid; grid-template-columns: minmax(0, 1fr) 135px; gap:8px;">
-                        <div style="min-width:0;">
-                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">📌 Important Reminder</label>
-                          <input type="text" id="inlineImpNote-${c.id}" value="${escapeHtml(c.importantNote || '')}" placeholder="e.g., Wants Yard Fresh next week">
-                        </div>
-                        <div style="min-width:0;">
-                          <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">🦴 Treat Drop</label>
-                          <select id="inlineTreatLoc-${c.id}" style="width:100%; padding:7px 8px; border:1.5px solid var(--b); border-radius:8px; font-size:12px;">
-                            <option value="Front Door" ${(c.treatLoc || 'Front Door') === 'Front Door' ? 'selected' : ''}>Front Door</option>
-                            <option value="Back Door" ${c.treatLoc === 'Back Door' ? 'selected' : ''}>Back Door</option>
-                            <option value="By Gate" ${c.treatLoc === 'By Gate' ? 'selected' : ''}>By Gate</option>
-                            <option value="No Treats" ${c.treatLoc === 'No Treats' ? 'selected' : ''}>No Treats</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div>
-                        <label style="font-size:10.5px; font-weight:800; color:var(--g); display:block; margin-bottom:2px;">Gate Code, Dog Temperament &amp; Yard Notes</label>
-                        <textarea id="inlineGateNote-${c.id}" rows="2" placeholder="Gate code, latch details, dog names...">${escapeHtml(c.gateNotes || '')}</textarea>
-                      </div>
-                    </div>
+                    ${notesSectionHtml}
                   </div>
 
                   <div class="cpd-card" style="min-width:0;">
@@ -4843,7 +4947,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
                       <span>📋 Activity, Invoices &amp; Visits (${activityItems.length})</span>
                       <div style="display:flex; gap:5px; flex-wrap:wrap;">
                         <button type="button" class="btn btn-sage btn-sm" onclick="openSquareModal('${c.id}')">💳 Charge / Invoice</button>
-                        <button type="button" class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Full Edit</button>
+                        <button type="button" class="btn btn-outline btn-sm edit-only-control" onclick="openClientModal('${c.id}')">Full Edit</button>
                       </div>
                     </div>
                     <div class="cpd-activity-list">${activityHtml}</div>
@@ -4892,8 +4996,8 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
               <div style="display:flex; gap:5px; flex-wrap:wrap;">
                 <button class="btn btn-sage btn-sm" onclick="toggleClientDrawer('${c.id}')">${isExpanded ? '▲ Close' : '▼ Profile'}</button>
                 <button class="btn btn-dark btn-sm" onclick="openSquareModal('${c.id}')">💳 Square</button>
-                <button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button>
-                <button class="btn btn-danger btn-sm" onclick="deleteClient('${c.id}')">Delete</button>
+                <button class="btn btn-outline btn-sm edit-only-control" onclick="openClientModal('${c.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm edit-only-control" onclick="deleteClient('${c.id}')">Delete</button>
               </div>
             </td>
           </tr>
@@ -4912,9 +5016,9 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       tbody.innerHTML = combined.map(item => {
         const amtStr = `$${Number(item.rewardAmount).toFixed(2)}`, statusBadge = item.status === 'Paid' ? `<span class="badge badge-ok">✓ Paid (${amtStr})</span>` : `<span class="badge badge-soon">Pending (${amtStr} Owed)</span>`;
         const actionsHtml = item.sourceType === "manual"
-          ? `${item.status !== 'Paid' ? `<button class="btn btn-green btn-sm" onclick="markManualReferralPaid('${item.id}')">💵 Mark ${amtStr} Paid</button>` : ''}<button class="btn btn-outline btn-sm" onclick="openReferralModal('${item.id}')">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteManualReferral('${item.id}')">Delete</button>`
-          : `${item.status !== 'Paid' ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${item.id}')">💵 Mark ${amtStr} Paid</button>` : ''}<button class="btn btn-outline btn-sm" onclick="openClientModal('${item.id}')">View / Edit Client</button>`;
-        return `<tr class="mobile-card-row"><td class="m-header" data-label="Customer"><div><strong>${escapeHtml(item.customerName)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(item.subLabel)}</span></div><div class="mobile-only-inline">${statusBadge}</div></td><td data-label="Partner"><strong>${escapeHtml(item.partnerDetails)}</strong>${item.notes ? `<div style="font-size:11px; color:var(--m);">📝 ${escapeHtml(item.notes)}</div>` : ''}</td><td data-label="Town">${escapeHtml(item.partnerTown)}</td><td data-label="Date">${formatDisplayDate(item.date)}</td><td class="desktop-only-cell" data-label="Status">${statusBadge}</td><td class="m-actions" data-label="Actions"><div style="display:flex; gap:6px; flex-wrap:wrap;">${actionsHtml}</div></td></tr>`;
+          ? `${item.status !== 'Paid' ? `<button class="btn btn-green btn-sm" onclick="markManualReferralPaid('${item.id}')">💵 Mark ${amtStr} Paid</button>` : ''}<button class="btn btn-outline btn-sm edit-only-control" onclick="openReferralModal('${item.id}')">Edit</button><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteManualReferral('${item.id}')">Delete</button>`
+          : `${item.status !== 'Paid' ? `<button class="btn btn-green btn-sm" onclick="markReferralPaid('${item.id}')">💵 Mark ${amtStr} Paid</button>` : ''}<button class="btn btn-outline btn-sm edit-only-control" onclick="openClientModal('${item.id}')">View / Edit Client</button>`;
+        return `<tr class="mobile-card-row"><td class="m-header" data-label="Customer"><div><strong>${escapeHtml(item.customerName)}</strong><br><span style="font-size:11.5px; color:var(--m);">${escapeHtml(item.subLabel)}</span></div><div class="mobile-only-inline">${statusBadge}</div></td><td data-label="Partner"><strong>${escapeHtml(item.partnerDetails)}</strong>${item.notes ? `<div style="font-size:11px; color:var(--m);">📝 ${escapeHtml(item.notes)}</div>` : ''}</td><td data-label="Town">${escapeHtml(item.partnerTown)}</td><td data-label="Date">${formatDisplayDate(item.date)}</td><td class="desktop-only-cell" data-label="Status">${statusBadge}</td><td class="m-actions" data-label="Actions"><div style="display:flex; gap:6px; flex-wrap:wrap;">${actionsHtml || '<span style="font-size:11px; color:var(--m);">✓ Settled</span>'}</div></td></tr>`;
       }).join('');
     }
 
@@ -4956,7 +5060,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.markReferralPaid = async function(id) { const c = clients.find(x => x.id === id); if (!c) return; c.refStatus = 'Paid'; await saveClientDoc(c); showToast(`Marked referral payout PAID for ${c.refBy}!`); };
-    window.deleteClient = async function(id) { const c = clients.find(x => x.id === id); if (!c || !confirm(`Remove ${c.name} from your Cloud CRM?`)) return; await removeClientDoc(id); showToast(`Removed ${c.name}.`); };
+    window.deleteClient = async function(id) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to delete clients."); return; }
+      const c = clients.find(x => x.id === id);
+      if (!c || !confirm(`Remove ${c.name} from your Cloud CRM?`)) return;
+      await removeClientDoc(id);
+      showToast(`Removed ${c.name}.`);
+    };
     window.onClientStatusChanged = function() { const st = document.getElementById('fStatus').value, wrap = document.getElementById('canceledDateWrap'), inp = document.getElementById('fCanceledDate'); if (wrap) wrap.style.display = st === 'Canceled' ? 'flex' : 'none'; if (st === 'Canceled' && inp && !inp.value) inp.value = todayStr(0); };
     window.onHowHeardChanged = function() { const isPartner = document.getElementById('fHowHeard').value === 'Business Referral / Partner'; document.getElementById('partnerTownFieldWrap').classList.toggle('hidden', !isPartner); document.getElementById('partnerDetailsFieldWrap').classList.toggle('hidden', !isPartner); document.getElementById('partnerStatusFieldWrap').classList.toggle('hidden', !isPartner); document.getElementById('fRefBy').required = isPartner; if (!isPartner) document.getElementById('fRefStatus').value = 'N/A'; };
     window.onPartnerDetailsInput = function() { const isPartner = document.getElementById('fHowHeard').value === 'Business Referral / Partner', hasText = Boolean(document.getElementById('fRefBy').value.trim()), statusSel = document.getElementById('fRefStatus'); if (isPartner && hasText && statusSel.value === 'N/A') statusSel.value = 'Pending'; else if (!hasText) statusSel.value = 'N/A'; };
@@ -4976,6 +5086,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     function parseManualCoords(rawStr) { if (!rawStr) return null; const p = rawStr.split(',').map(s => parseFloat(s.trim())); return (p.length === 2 && !isNaN(p[0]) && !isNaN(p[1])) ? { lat: p[0], lng: p[1] } : null; }
 
     window.openClientModal = function(id = null) {
+      if (id && !isEditMode) { showToast("Turn on Edit Mode first to edit client profiles."); return; }
       document.getElementById('clientForm').reset(); document.getElementById('clientId').value = id || '';
       if (id) {
         const c = clients.find(x => x.id === id); if (!c) return;
