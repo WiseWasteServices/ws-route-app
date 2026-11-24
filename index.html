@@ -109,7 +109,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     --shadow-md: 0 6px 18px rgba(30, 44, 34, 0.12);
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { max-width: 100%; overflow-x: hidden; }
   body {
     margin: 0;
@@ -207,7 +207,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
     text-decoration: none; transition: transform 0.08s ease, background 0.15s ease;
   }
-  .btn:active:not(:disabled) { transform: scale(0.98); }
+  .btn:active:not(:disabled) { transform: scale(0.97); }
   .btn:disabled { opacity: 0.65; cursor: not-allowed; }
   .btn-sage { background: var(--gt); color: var(--g); }
   .btn-sage:hover:not(:disabled) { background: #ffffff; }
@@ -304,14 +304,38 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   /* NAVIGATION TABS & SEARCH */
   .nav-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; background: var(--w); padding: 6px; border-radius: 12px; border: 1.5px solid var(--b); }
-  .tab-btn { border: none; background: transparent; padding: 8px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 800; color: var(--m); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+  .tab-btn { border: none; background: transparent; padding: 8px 13px; border-radius: 8px; font-size: 12.5px; font-weight: 800; color: var(--m); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 5px; white-space: nowrap; }
   .tab-btn.active { background: var(--g); color: var(--w); }
-  .mobile-filter-toggle-btn { display: none; }
   .search-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .search-input, .filter-select { padding: 8px 12px; border: 1.5px solid var(--b); border-radius: 9px; font-size: 13px; background: var(--w); color: var(--ink); font-weight: 600; }
   .search-input { min-width: 210px; }
   .view-panel { display: none; }
   .view-panel.active { display: block; }
+
+  /* NATIVE MOBILE BOTTOM DOCK & MORE SHEET (DESKTOP HIDDEN) */
+  .mobile-bottom-dock { display: none; }
+  .mobile-sheet-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 24, 18, 0.55);
+    display: none; align-items: flex-end; justify-content: center; z-index: 1200;
+  }
+  .mobile-sheet-backdrop.open { display: flex; }
+  .mobile-sheet {
+    width: 100%; max-width: 540px; background: var(--w);
+    border-top: 3px solid var(--g); border-radius: 20px 20px 0 0;
+    padding: 14px 14px calc(22px + env(safe-area-inset-bottom));
+    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.28);
+    display: flex; flex-direction: column; gap: 10px;
+    animation: slideUpSheet 0.18s ease-out;
+  }
+  @keyframes slideUpSheet { from { transform: translateY(30px); opacity: 0.7; } to { transform: translateY(0); opacity: 1; } }
+  .mobile-sheet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mobile-sheet-item {
+    min-height: 48px; padding: 10px 12px; border-radius: 12px;
+    border: 1.5px solid var(--b); background: var(--cr); color: var(--g);
+    font-size: 13px; font-weight: 900; display: flex; align-items: center;
+    justify-content: center; gap: 6px; cursor: pointer; white-space: nowrap;
+  }
+  .mobile-sheet-item.active { background: var(--g); color: var(--w); border-color: var(--g); }
 
   .panel-card { background: var(--w); border: 1.5px solid var(--b); border-radius: 16px; overflow: hidden; box-shadow: 0 6px 20px rgba(38, 58, 45, 0.06); margin-bottom: 18px; }
   .panel-hd { background: var(--cr); border-bottom: 1.5px solid var(--b); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
@@ -326,7 +350,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   .addr-photo-inline { display: flex; align-items: center; gap: 9px; min-width: 0; }
   .addr-thumb-btn {
-    width: 48px; height: 48px; border-radius: 9px; border: 2px solid var(--gm);
+    width: 52px; height: 52px; border-radius: 10px; border: 2px solid var(--gm);
     padding: 0; overflow: hidden; cursor: zoom-in; flex-shrink: 0; background: var(--cr);
     position: relative; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
   }
@@ -370,12 +394,12 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
   /* FULLSCREEN PHOTO LIGHTBOX MODAL */
   .photo-lightbox {
-    position: fixed; inset: 0; background: rgba(14, 22, 17, 0.92);
+    position: fixed; inset: 0; background: rgba(14, 22, 17, 0.94);
     display: none; align-items: center; justify-content: center; flex-direction: column;
     padding: 18px; z-index: 4000;
   }
   .photo-lightbox.open { display: flex; }
-  .photo-lightbox-inner { max-width: 92vw; max-height: 84vh; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .photo-lightbox-inner { max-width: 94vw; max-height: 86vh; display: flex; flex-direction: column; align-items: center; gap: 10px; }
   .photo-lightbox-inner img {
     max-width: 100%; max-height: 74vh; border-radius: 14px; border: 3px solid var(--gt);
     box-shadow: 0 20px 60px rgba(0,0,0,0.6); object-fit: contain; background: #000;
@@ -471,14 +495,14 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     thead { display: none; }
     tr.mobile-card-row {
       background: var(--w); border: 1.5px solid var(--b); border-left: 5px solid var(--gm);
-      border-radius: 12px; padding: 11px 11px; margin-bottom: 10px;
-      box-shadow: 0 2px 6px rgba(38, 58, 45, 0.04);
+      border-radius: 14px; padding: 12px; margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(38, 58, 45, 0.05);
       display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 7px 8px;
     }
     tr.mobile-card-row.is-due { border-left-color: #D9534F; }
     tr.mobile-card-row td {
       padding: 6px 8px; border-bottom: none; background: var(--cr);
-      border-radius: 7px; font-size: 12px; line-height: 1.35;
+      border-radius: 8px; font-size: 12px; line-height: 1.35;
       min-width: 0; overflow-wrap: anywhere;
     }
     tr.mobile-card-row td::before {
@@ -497,7 +521,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     }
     tr.mobile-card-row td.m-actions::before { display: none; }
     tr.client-drawer-row { display: block; margin-top: -5px; margin-bottom: 10px; }
-    tr.client-drawer-row td { display: block; border-radius: 0 0 12px 12px; border: 1.5px solid var(--gm); border-top: none; }
+    tr.client-drawer-row td { display: block; border-radius: 0 0 14px 14px; border: 1.5px solid var(--gm); border-top: none; }
     tr.empty-table-row td { background: transparent; padding: 18px 8px; }
   }
 
@@ -510,17 +534,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .badge-blue { background: var(--badge-blue-bg); color: var(--badge-blue-text); border: 1px solid #B6D4F2; }
 
   .route-grid { padding: 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
-  .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 12px; padding: 12px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 8px; min-width: 0; }
+  .route-card { border: 1.5px solid var(--b); border-left: 6px solid var(--gm); border-radius: 14px; padding: 13px; background: var(--w); display: flex; flex-direction: column; justify-content: space-between; gap: 9px; min-width: 0; box-shadow: 0 2px 8px rgba(38, 58, 45, 0.05); }
   .route-card.due-today { border-left-color: #D9534F; background: linear-gradient(180deg, #FFF9F9 0%, #FFFFFF 100%); }
   .route-card.trial-card { border-left-color: #E6A83A; background: linear-gradient(180deg, #FFFDF5 0%, #FFFFFF 100%); }
   .route-card.scooped-done { border-left-color: #3B8754; background: #F6FBF7; }
   .rc-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; }
-  .rc-name { font-size: 15.5px; font-weight: 900; color: var(--g); }
+  .rc-name { font-size: 16px; font-weight: 900; color: var(--g); }
   .rc-addr { font-size: 12px; color: var(--m); font-weight: 600; margin-top: 2px; word-break: break-word; }
-  .rc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: var(--cr); padding: 7px 8px; border-radius: 8px; font-size: 11.5px; }
+  .rc-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: var(--cr); padding: 8px 9px; border-radius: 9px; font-size: 11.5px; }
   .rc-meta div strong { color: var(--g); }
   .rc-addons-bar { background: var(--gt); border: 1px solid var(--b); color: var(--g); padding: 6px 9px; border-radius: 8px; font-size: 11.5px; font-weight: 800; }
-  .rc-notes { font-size: 11.5px; background: #FFFDF7; border: 1px dashed #D8C79E; padding: 6px 9px; border-radius: 7px; color: #4D3E18; word-break: break-word; }
+  .rc-notes { font-size: 11.5px; background: #FFFDF7; border: 1px dashed #D8C79E; padding: 6px 9px; border-radius: 8px; color: #4D3E18; word-break: break-word; }
   .rc-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
   /* MODALS */
@@ -649,23 +673,24 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
   .db-item-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 0.6rem; }
   .empty-box { background-color: var(--ws-white); border: 1px dashed var(--ws-border); border-radius: var(--radius-md); padding: 2rem 1rem; text-align: center; color: var(--ws-muted); }
 
-  .toast { position: fixed; bottom: 16px; right: 16px; left: 16px; max-width: 420px; margin-left: auto; background: var(--g); color: var(--w); padding: 11px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22); opacity: 0; transform: translateY(10px); pointer-events: none; transition: all 0.2s ease; z-index: 2500; }
+  .toast { position: fixed; bottom: 84px; right: 16px; left: 16px; max-width: 420px; margin-left: auto; background: var(--g); color: var(--w); padding: 11px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22); opacity: 0; transform: translateY(10px); pointer-events: none; transition: all 0.2s ease; z-index: 2500; }
   .toast.show { opacity: 1; transform: translateY(0); }
-  .fb-toast { position: fixed; bottom: 16px; right: 16px; left: 16px; max-width: 420px; margin-left: auto; background-color: var(--ws-forest); color: var(--ws-white); padding: 0.8rem 1rem; border-radius: var(--radius-md); border-left: 5px solid var(--ws-sage); font-size: 0.88rem; font-weight: 600; z-index: 2600; }
+  .fb-toast { position: fixed; bottom: 84px; right: 16px; left: 16px; max-width: 420px; margin-left: auto; background-color: var(--ws-forest); color: var(--ws-white); padding: 0.8rem 1rem; border-radius: var(--radius-md); border-left: 5px solid var(--ws-sage); font-size: 0.88rem; font-weight: 600; z-index: 2600; }
   .fb-toast.error { background-color: #7F1D1D; border-left-color: #FCA5A5; }
 
   /* ==========================================================================
-     MOBILE FIELD MODE: BIGGER BUTTONS, ZERO CLUTTER, SCHEDULE / MAP / CLIENTS FIRST
+     NATIVE MOBILE APP SHELL (BOTTOM TAB DOCK + SLIDE-UP MORE DRAWER)
      ========================================================================== */
   @media (max-width: 768px) {
-    .topbar { padding: 8px 10px; gap: 7px; }
+    .topbar { padding: 8px 12px; gap: 7px; }
     .brand-left { width: 100%; justify-content: space-between; gap: 6px; flex-wrap: nowrap; }
-    .brand-logo-wrap img { height: 30px; }
+    .brand-logo-wrap { padding: 3px 6px; }
+    .brand-logo-wrap img { height: 28px; }
     .brand-title h1 { font-size: 15px; }
     .brand-title span { display: none; }
 
     .mobile-header-actions { display: inline-flex; }
-    .mobile-header-actions .btn { min-height: 36px; padding: 6px 10px; font-size: 12px; }
+    .mobile-header-actions .btn { min-height: 36px; padding: 6px 10px; font-size: 12px; border-radius: 9px; }
 
     .workspace-switcher, .backup-bar { display: none; width: 100%; }
     .topbar.mobile-menu-open .workspace-switcher { display: inline-flex; justify-content: center; }
@@ -674,76 +699,73 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     .backup-status { display: none; }
     .backup-bar .btn { padding: 9px 8px; font-size: 12px; flex: 1; min-height: 40px; }
 
-    /* Bottom-docked AI Quick Note Bar for thumb use */
+    /* Compact top-docked AI Quick Note Bar right under header */
     .ai-quickbar {
-      position: fixed; top: auto; bottom: 0; left: 0; right: 0;
-      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
-      border-top: 2px solid var(--gm); border-bottom: none;
-      box-shadow: 0 -4px 16px rgba(24, 36, 28, 0.16); z-index: 480;
+      position: sticky; top: 50px; z-index: 440;
+      padding: 6px 10px; border-bottom: 1.5px solid var(--gm);
+      box-shadow: 0 2px 8px rgba(24, 36, 28, 0.08);
     }
     .ai-qb-label { display: none; }
-    .ai-qb-input { min-width: 0; font-size: 14px; padding: 9px 11px; min-height: 42px; }
-    #btnAiQuickNoteSave { min-height: 42px; padding: 9px 14px; font-size: 13px; }
+    .ai-qb-input { min-width: 0; font-size: 13.5px; padding: 7px 10px; min-height: 38px; }
+    #btnAiQuickNoteSave { min-height: 38px; padding: 7px 12px; font-size: 12.5px; white-space: nowrap; }
 
-    .container { padding: 10px 8px 88px; width: 100%; max-width: 100vw; }
-    .panel-card, .perf-section-card, .weather-widget, .general-notes-aside { max-width: 100%; border-radius: 13px; }
-    .panel-hd, .perf-section-hd { padding: 10px 11px; }
-    .perf-section-body { padding: 10px; }
+    .container { padding: 10px 10px 94px; width: 100%; max-width: 100vw; }
+    .panel-card, .perf-section-card, .weather-widget, .general-notes-aside { max-width: 100%; border-radius: 14px; }
+    .panel-hd, .perf-section-hd { padding: 11px 12px; }
+    .perf-section-body { padding: 11px; }
 
-    /* Compact weather bar on mobile (hide hourly strip unless expanded) */
+    /* Sleek compact weather bar on mobile */
     .weather-widget { padding: 7px 10px; margin-bottom: 10px; }
     .weather-timeline-bar { display: none; }
 
-    /* Hide bulky KPI grid on mobile unless "📊 Stats" toggle is tapped */
-    .kpi-grid { display: none; grid-template-columns: 1fr 1fr; gap: 7px; margin-bottom: 10px; }
+    /* KPI grid hidden unless "📊 Stats" is toggled */
+    .kpi-grid { display: none; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     .kpi-grid.mobile-kpi-open { display: grid; }
-    .kpi-card { padding: 9px 10px; border-radius: 11px; min-width: 0; }
+    .kpi-card { padding: 10px 11px; border-radius: 12px; min-width: 0; }
     .kpi-val { font-size: 19px; }
 
-    /* Sleek, big-button mobile navigation with Schedule, Map & Clients at the top */
-    .nav-bar { gap: 8px; margin-bottom: 11px; }
-    .tabs {
-      width: 100%; display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 6px; padding: 6px; border-radius: 14px;
-    }
-    .tab-btn {
-      min-height: 48px; padding: 8px 6px; font-size: 12.5px; font-weight: 900;
-      border-radius: 10px; background: var(--cr); color: var(--g);
-      border: 1.5px solid var(--b); flex-direction: column; gap: 2px; line-height: 1.15;
-    }
-    .tab-btn.active {
-      background: var(--g); color: var(--w); border-color: var(--g);
-      box-shadow: 0 3px 8px rgba(38, 58, 45, 0.25);
-    }
+    /* Hide desktop top tabs on mobile — replaced by fixed native bottom dock */
+    .tabs { display: none !important; }
+    .nav-bar { margin-bottom: 8px; }
 
-    /* Field Priority Order on Mobile: Schedule (1), Map (2), Clients (3) first! */
-    .tab-btn[data-tab="schedule"] { order: 1; }
-    .tab-btn[data-tab="map"] { order: 2; }
-    .tab-btn[data-tab="clients"] { order: 3; }
-    .tab-btn[data-tab="leads"] { order: 4; }
-    .tab-btn[data-tab="billing"] { order: 5; }
-    .tab-btn[data-tab="performance"] { order: 6; }
-    .tab-btn[data-tab="referrals"] { order: 7; grid-column: span 2; flex-direction: row; }
-    .mobile-filter-toggle-btn {
-      display: inline-flex; order: 8; min-height: 48px; padding: 8px 6px;
-      font-size: 12px; font-weight: 900; border-radius: 10px;
-      background: var(--gt); color: var(--g); border: 1.5px solid var(--gm);
-    }
-
-    /* Hide search/filter bar on mobile unless "🔍 Filter" is tapped */
-    .search-controls { display: none; width: 100%; grid-template-columns: 1fr 1fr; gap: 7px; }
+    /* Search & filter bar slides open cleanly when toggled from bottom "More" sheet */
+    .search-controls { display: none; width: 100%; grid-template-columns: 1fr 1fr; gap: 7px; background: var(--w); padding: 10px; border-radius: 14px; border: 1.5px solid var(--gm); box-shadow: var(--shadow-sm); }
     .search-controls.mobile-search-open { display: grid; }
     .search-input { grid-column: 1 / -1; min-width: 0; width: 100%; min-height: 44px; font-size: 14px; }
     .filter-select { min-height: 44px; font-size: 13px; }
     .search-controls .btn { min-height: 44px; font-size: 13px; }
 
+    /* Fixed Native App Bottom Tab Bar (Schedule • Map • Clients • Leads • More) */
+    .mobile-bottom-dock {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 900;
+      background: var(--w); border-top: 2px solid var(--b);
+      padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+      box-shadow: 0 -4px 18px rgba(24, 36, 28, 0.14);
+    }
+    .dock-btn {
+      border: none; background: transparent; color: var(--m);
+      border-radius: 11px; padding: 6px 2px; min-height: 52px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 2px; cursor: pointer; position: relative; transition: all 0.12s ease;
+    }
+    .dock-btn .dock-ic { font-size: 19px; line-height: 1; }
+    .dock-btn .dock-lbl { font-size: 10.5px; font-weight: 900; white-space: nowrap; letter-spacing: -0.1px; }
+    .dock-btn.active { background: var(--g); color: var(--w); box-shadow: 0 2px 8px rgba(38, 58, 45, 0.25); }
+    .dock-badge {
+      position: absolute; top: 3px; right: 8px;
+      background: #D9534F; color: #fff; font-size: 9.5px; font-weight: 900;
+      min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+
     /* Bigger thumb-friendly action buttons inside Route Cards, Client Directory & Billing */
-    .leads-grid, .route-grid { grid-template-columns: 1fr; padding: 9px; gap: 10px; }
+    .leads-grid, .route-grid { grid-template-columns: 1fr; padding: 10px; gap: 11px; }
     .rc-actions, .lead-actions, .m-actions > div { display: grid !important; grid-template-columns: 1fr 1fr; gap: 7px !important; }
     .rc-actions .btn, .lead-actions .btn, .m-actions .btn {
-      min-height: 44px; padding: 9px 10px; font-size: 13px; border-radius: 9px; width: 100%;
+      min-height: 46px; padding: 9px 10px; font-size: 13px; border-radius: 10px; width: 100%; white-space: nowrap;
     }
-    .rc-actions .btn:first-child { grid-column: 1 / -1; font-size: 14px; min-height: 48px; }
+    .rc-actions .btn:first-child { grid-column: 1 / -1; font-size: 14.5px; min-height: 50px; }
     .rc-actions .undo-link { grid-column: 1 / -1; text-align: center; padding: 6px; font-size: 12.5px; }
 
     /* Make Schedule, Map & Billing filter controls big and easy to tap */
@@ -806,7 +828,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           📊 Stats ▾
         </button>
         <button type="button" class="btn btn-sage btn-sm" id="btnMobileMoreToggle" onclick="toggleMobileHeaderExtras()">
-          ☰ More
+          ☰ Menu
         </button>
       </div>
 
@@ -840,10 +862,10 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         type="text"
         id="aiQuickNoteInput"
         class="ai-qb-input"
-        placeholder='e.g. "Tiffany wants Yard Fresh next week" or "g notes buy extra enzyme spray"'
+        placeholder='e.g. "Tiffany wants Yard Fresh" or "g notes buy spray"'
         autocomplete="off"
       />
-      <button type="submit" class="btn btn-dark btn-sm" id="btnAiQuickNoteSave">✨ Save Note</button>
+      <button type="submit" class="btn btn-dark btn-sm" id="btnAiQuickNoteSave">✨ Save</button>
     </form>
     <div class="ai-qb-feedback" id="aiQuickNoteFeedback">
       <span id="aiQuickNoteFeedbackText"></span>
@@ -916,7 +938,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
           </div>
         </section>
 
-        <!-- TABS & SEARCH (REORDERED ON MOBILE SO SCHEDULE, MAP & CLIENTS ARE AT THE TOP) -->
+        <!-- DESKTOP TABS & SEARCH CONTROLS -->
         <div class="nav-bar">
           <div class="tabs">
             <button class="tab-btn active" data-tab="leads" onclick="switchTab('leads')">🚀 Leads (<span id="leadCountBadge">0</span>)</button>
@@ -926,7 +948,6 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
             <button class="tab-btn" data-tab="map" onclick="switchTab('map')">🗺️ Map</button>
             <button class="tab-btn" data-tab="clients" onclick="switchTab('clients')">🐾 Clients</button>
             <button class="tab-btn" data-tab="referrals" onclick="switchTab('referrals')">🤝 Referrals ($20)</button>
-            <button type="button" class="mobile-filter-toggle-btn" id="btnMobileFilterToggle" onclick="toggleMobileSearchBar()">🔍 Filter</button>
           </div>
 
           <div class="search-controls" id="mainSearchControls">
@@ -1269,6 +1290,48 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       </aside>
     </div>
   </main>
+
+  <!-- NATIVE MOBILE BOTTOM NAVIGATION BAR (SCHEDULE, MAP, CLIENTS, LEADS, MORE) -->
+  <nav class="mobile-bottom-dock" id="mobileBottomDock" aria-label="Mobile Field Navigation">
+    <button type="button" class="dock-btn active" data-dock-tab="schedule" onclick="switchTab('schedule')">
+      <span class="dock-ic">🗓️</span>
+      <span class="dock-lbl">Schedule</span>
+    </button>
+    <button type="button" class="dock-btn" data-dock-tab="map" onclick="switchTab('map')">
+      <span class="dock-ic">🗺️</span>
+      <span class="dock-lbl">Map</span>
+    </button>
+    <button type="button" class="dock-btn" data-dock-tab="clients" onclick="switchTab('clients')">
+      <span class="dock-ic">🐾</span>
+      <span class="dock-lbl">Clients</span>
+    </button>
+    <button type="button" class="dock-btn" data-dock-tab="leads" onclick="switchTab('leads')">
+      <span class="dock-ic">🚀</span>
+      <span class="dock-lbl">Leads</span>
+      <span class="dock-badge" id="mobileDockLeadBadge">0</span>
+    </button>
+    <button type="button" class="dock-btn" id="btnDockMore" onclick="toggleMobileMoreSheet()">
+      <span class="dock-ic">•••</span>
+      <span class="dock-lbl">More</span>
+    </button>
+  </nav>
+
+  <!-- MOBILE SLIDE-UP "MORE" SHEET -->
+  <div class="mobile-sheet-backdrop" id="mobileMoreSheetBackdrop" onclick="if(event.target===this) toggleMobileMoreSheet(false)">
+    <div class="mobile-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <strong style="font-size:15px; color:var(--g);">🐾 More CRM Sections &amp; Tools</strong>
+        <button type="button" class="btn btn-outline btn-sm" onclick="toggleMobileMoreSheet(false)">✕ Close</button>
+      </div>
+      <div class="mobile-sheet-grid">
+        <button type="button" class="mobile-sheet-item" data-sheet-tab="billing" onclick="switchTab('billing'); toggleMobileMoreSheet(false);">💳 Billing</button>
+        <button type="button" class="mobile-sheet-item" data-sheet-tab="performance" onclick="switchTab('performance'); toggleMobileMoreSheet(false);">📈 Money &amp; P&amp;L</button>
+        <button type="button" class="mobile-sheet-item" data-sheet-tab="referrals" onclick="switchTab('referrals'); toggleMobileMoreSheet(false);">🤝 Referrals ($20)</button>
+        <button type="button" class="mobile-sheet-item" onclick="toggleMobileSearchBar(); toggleMobileMoreSheet(false);">🔍 Search / Filter</button>
+        <button type="button" class="mobile-sheet-item" style="grid-column: 1 / -1; background:var(--g); color:var(--w);" onclick="openClientModal(); toggleMobileMoreSheet(false);">+ Add New Client</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ========================================================================
        WORKSPACE 2: FACEBOOK GROUP POSTING MANAGER & AD GENERATOR
@@ -2131,7 +2194,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       const btn = document.getElementById("btnMobileMoreToggle");
       if (!topbar) return;
       const isOpen = topbar.classList.toggle("mobile-menu-open");
-      if (btn) btn.textContent = isOpen ? "✕ Close" : "☰ More";
+      if (btn) btn.textContent = isOpen ? "✕ Close" : "☰ Menu";
     };
 
     window.toggleMobileStatsBar = function() {
@@ -2154,6 +2217,13 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       }
     };
 
+    window.toggleMobileMoreSheet = function(forceState = null) {
+      const backdrop = document.getElementById("mobileMoreSheetBackdrop");
+      if (!backdrop) return;
+      const shouldOpen = forceState !== null ? forceState : !backdrop.classList.contains("open");
+      backdrop.classList.toggle("open", shouldOpen);
+    };
+
     // ========================================================================
     // EXPANDABLE CLIENT DRAWER, ACTIVITY FEED & HOUSE/GATE PHOTO LIGHTBOX
     // ========================================================================
@@ -2174,6 +2244,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       img.src = imgSrc;
       cap.textContent = captionText || "Customer Property / Gate Photo";
       box.classList.add("open");
+    };
+
+    window.openClientPhotoByIndex = function(clientId, photoIdx, event) {
+      if (event) event.stopPropagation();
+      const c = clients.find(x => x.id === clientId);
+      const photos = Array.isArray(c?.propertyPhotos) ? c.propertyPhotos : [];
+      const photo = photos[Number(photoIdx) || 0] || photos[0];
+      if (!c || !photo) return;
+      const fullAddr = formatClientFullAddress(c);
+      const cap = `${c.name} — ${fullAddr} (${photo.label || "Photo"})${c.gateNotes ? ` • ${c.gateNotes}` : ""}`;
+      window.openPhotoLightbox(photo.url, cap, event);
     };
 
     window.closePhotoLightbox = function() {
@@ -3734,11 +3815,11 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
     };
 
     window.switchWorkspace = function(mode) {
-      const crmEl = document.getElementById('crmWorkspace'), fbEl = document.getElementById('fbWorkspace'), btnCrm = document.getElementById('btnModeCrm'), btnFb = document.getElementById('btnModeFb'), quickBar = document.getElementById('aiQuickNoteBar');
+      const crmEl = document.getElementById('crmWorkspace'), fbEl = document.getElementById('fbWorkspace'), btnCrm = document.getElementById('btnModeCrm'), btnFb = document.getElementById('btnModeFb'), quickBar = document.getElementById('aiQuickNoteBar'), dockEl = document.getElementById('mobileBottomDock');
       if (mode === 'fb') {
-        crmEl.classList.add('hidden'); if (quickBar) quickBar.classList.add('hidden'); fbEl.classList.remove('hidden'); btnCrm.classList.remove('active'); btnFb.classList.add('active');
+        crmEl.classList.add('hidden'); if (quickBar) quickBar.classList.add('hidden'); if (dockEl) dockEl.classList.add('hidden'); fbEl.classList.remove('hidden'); btnCrm.classList.remove('active'); btnFb.classList.add('active');
       } else {
-        fbEl.classList.add('hidden'); crmEl.classList.remove('hidden'); if (quickBar) quickBar.classList.remove('hidden'); btnFb.classList.remove('active'); btnCrm.classList.add('active');
+        fbEl.classList.add('hidden'); crmEl.classList.remove('hidden'); if (quickBar) quickBar.classList.remove('hidden'); if (dockEl) dockEl.classList.remove('hidden'); btnFb.classList.remove('active'); btnCrm.classList.add('active');
         if (document.getElementById('tab-map').classList.contains('active') && leafletMap) setTimeout(() => leafletMap.invalidateSize(), 60);
       }
     };
@@ -3827,7 +3908,17 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         });
 
         if (unsubscribeLeads) unsubscribeLeads();
-        unsubscribeLeads = onSnapshot(LEADS_COL, s => { leads = s.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('leadCountBadge').textContent = leads.length; syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`; renderAll(); });
+        unsubscribeLeads = onSnapshot(LEADS_COL, s => {
+          leads = s.docs.map(d => ({ id: d.id, ...d.data() }));
+          document.getElementById('leadCountBadge').textContent = leads.length;
+          const dockBadge = document.getElementById('mobileDockLeadBadge');
+          if (dockBadge) {
+            dockBadge.textContent = leads.length;
+            dockBadge.style.display = leads.length > 0 ? 'inline-flex' : 'none';
+          }
+          syncEl.textContent = `☁️ Cloud Synced (${clients.length} clients • ${leads.length} leads)`;
+          renderAll();
+        });
 
         if (unsubscribeGenNotes) unsubscribeGenNotes();
         unsubscribeGenNotes = onSnapshot(GEN_NOTES_COL, s => { generalNotes = s.docs.map(d => ({ id: d.id, ...d.data() })); renderGeneralNotes(); });
@@ -4239,12 +4330,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
 
     window.switchTab = function(tabName) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tabName));
+      document.querySelectorAll('.dock-btn').forEach(b => b.classList.toggle('active', b.dataset.dockTab === tabName));
+      document.querySelectorAll('.mobile-sheet-item[data-sheet-tab]').forEach(b => b.classList.toggle('active', b.dataset.sheetTab === tabName));
+      const moreBtn = document.getElementById('btnDockMore');
+      if (moreBtn) {
+        const isMoreTab = ['billing', 'performance', 'referrals'].includes(tabName);
+        moreBtn.classList.toggle('active', isMoreTab);
+      }
       document.querySelectorAll('.view-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tabName}`));
       if (tabName === 'map') setTimeout(() => { initMapIfNeeded(); leafletMap.invalidateSize(); renderCustomerMap(false); }, 60);
       else if (tabName === 'performance') renderPerformanceDashboard();
     };
 
-    // ON MOBILE, DEFAULT TO SCHEDULE TAB SO FIELD ROUTE IS FRONT AND CENTER
     if (window.innerWidth <= 768) {
       window.switchTab('schedule');
     }
@@ -4595,19 +4692,20 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       container.innerHTML = list.map(c => {
         const days = diffDaysFromToday(c.nextScoop), isDue = days <= 0, fullAddr = formatClientFullAddress(c);
         const mapsDirUrl = getPreferredSingleMapUrl((c.geo && c.geo.manual) ? `${c.geo.lat},${c.geo.lng}` : fullAddr);
+        const callHref = c.phone ? `tel:${escapeHtml(c.phone.replace(/[^+\d]/g, ''))}` : '';
 
         if (c.isPotentialTrial) {
-          return `<div class="route-card ${c.trialCompleted ? 'scooped-done' : 'trial-card'}"><div style="display:flex; flex-direction:column; gap:8px;"><div class="rc-top"><div><div class="rc-name">${escapeHtml(c.name)}</div><div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div></div><span class="badge ${c.trialCompleted ? 'badge-ok' : 'badge-soon'}">${c.trialCompleted ? '✓ Try Us Done' : `🎁 TRY US: ${formatWeekdayAndDate(c.nextScoop)}`}</span></div>${c.importantNote ? `<div class="important-note-box"><span>📌 ${escapeHtml(c.importantNote)}</span></div>` : ''}${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}</div><div class="rc-actions">${!c.trialCompleted ? `<button class="btn btn-dark btn-sm" onclick="completeTrialScoop('${c.id}')">✓ Complete Try Us</button>` : `<button class="btn btn-done btn-sm" disabled>✓ Done</button>`}<button class="btn btn-green btn-sm" onclick="convertLeadToClient('${c.id}')">✓ Convert</button><button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button><a href="${mapsDirUrl}" target="_blank" class="btn btn-outline btn-sm">${mapsLabel}</a></div></div>`;
+          return `<div class="route-card ${c.trialCompleted ? 'scooped-done' : 'trial-card'}"><div style="display:flex; flex-direction:column; gap:8px;"><div class="rc-top"><div><div class="rc-name">${escapeHtml(c.name)}</div><div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div></div><span class="badge ${c.trialCompleted ? 'badge-ok' : 'badge-soon'}">${c.trialCompleted ? '✓ Try Us Done' : `🎁 TRY US: ${formatWeekdayAndDate(c.nextScoop)}`}</span></div>${c.importantNote ? `<div class="important-note-box"><span>📌 ${escapeHtml(c.importantNote)}</span></div>` : ''}${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}</div><div class="rc-actions">${!c.trialCompleted ? `<button class="btn btn-dark btn-sm" onclick="completeTrialScoop('${c.id}')">✓ Complete Try Us</button>` : `<button class="btn btn-done btn-sm" disabled>✓ Done</button>`}<button class="btn btn-green btn-sm" onclick="convertLeadToClient('${c.id}')">✓ Convert</button><button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button><a href="${mapsDirUrl}" target="_blank" class="btn btn-outline btn-sm">${mapsLabel}</a>${callHref ? `<a href="${callHref}" class="btn btn-outline btn-sm">📞 Call</a>` : ''}</div></div>`;
         }
 
         const scoopedToday = c.scoopedActionDate === today;
         const statusBadge = scoopedToday ? `<span class="badge badge-ok">✓ Scooped • Next: ${formatDisplayDate(c.nextScoop)}</span>` : isDue ? `<span class="badge badge-due">Due (${formatDisplayDate(c.nextScoop)})</span>` : `<span class="badge badge-ok">Next: ${formatDisplayDate(c.nextScoop)}</span>`;
-        return `<div class="route-card ${scoopedToday ? 'scooped-done' : isDue ? 'due-today' : ''}"><div style="display:flex; flex-direction:column; gap:8px;"><div class="rc-top"><div><div class="rc-name">${escapeHtml(c.name)}</div><div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div></div>${statusBadge}</div><div class="rc-meta"><div><strong>Plan:</strong> ${escapeHtml(c.freq)}</div><div><strong>Start:</strong> ${formatDisplayDate(c.startDate)}</div><div><strong>Pets:</strong> ${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div><div><strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div></div>${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}${c.importantNote ? `<div class="important-note-box"><span>📌 <strong>Important:</strong> ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : ''}${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}</div><div class="rc-actions">${scoopedToday ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button><button class="undo-link" onclick="undoCompleteScoop('${c.id}')">Undo</button>` : `<button class="btn btn-dark btn-sm" onclick="completeScoop('${c.id}')">✓ Complete Scoop</button>`}<button class="btn btn-green btn-sm" onclick="openSquareModal('${c.id}')">${c.hasCardOnFile ? '⚡ Bill Add-On' : '📩 Invoice'}</button><button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button><a href="${mapsDirUrl}" target="_blank" class="btn btn-outline btn-sm">${mapsLabel}</a><button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button></div></div>`;
+        return `<div class="route-card ${scoopedToday ? 'scooped-done' : isDue ? 'due-today' : ''}"><div style="display:flex; flex-direction:column; gap:8px;"><div class="rc-top"><div><div class="rc-name">${escapeHtml(c.name)}</div><div class="rc-addr">${escapeHtml(fullAddr)} • ${escapeHtml(c.phone)}</div></div>${statusBadge}</div><div class="rc-meta"><div><strong>Plan:</strong> ${escapeHtml(c.freq)}</div><div><strong>Start:</strong> ${formatDisplayDate(c.startDate)}</div><div><strong>Pets:</strong> ${escapeHtml(c.dogNames || `${c.dogs} Dog(s)`)}${c.cats > 0 ? ` • ${c.cats} Litter` : ''}</div><div><strong>Treats:</strong> ${escapeHtml(c.treatLoc || 'Front Door')}</div></div>${c.addonsSummary ? `<div class="rc-addons-bar">Active Add-Ons: ${escapeHtml(c.addonsSummary)}</div>` : ''}${c.importantNote ? `<div class="important-note-box"><span>📌 <strong>Important:</strong> ${escapeHtml(c.importantNote)}</span><button type="button" class="undo-link" onclick="clearImportantNote('${c.id}')">Clear</button></div>` : ''}${c.gateNotes ? `<div class="rc-notes"><strong>Notes:</strong> ${escapeHtml(c.gateNotes)}</div>` : ''}</div><div class="rc-actions">${scoopedToday ? `<button class="btn btn-done btn-sm" disabled>✓ Scooped Today</button><button class="undo-link" onclick="undoCompleteScoop('${c.id}')">Undo</button>` : `<button class="btn btn-dark btn-sm" onclick="completeScoop('${c.id}')">✓ Complete Scoop</button>`}<button class="btn btn-sage btn-sm" onclick="copyOnMyWayText('${c.id}')">🚗 On My Way</button><a href="${mapsDirUrl}" target="_blank" class="btn btn-outline btn-sm">${mapsLabel}</a>${callHref ? `<a href="${callHref}" class="btn btn-outline btn-sm">📞 Call</a>` : ''}<button class="btn btn-green btn-sm" onclick="openSquareModal('${c.id}')">${c.hasCardOnFile ? '⚡ Bill Add-On' : '📩 Invoice'}</button><button class="btn btn-outline btn-sm" onclick="openClientModal('${c.id}')">Edit</button></div></div>`;
       }).join('');
     }
 
     // ========================================================================
-    // COMPLETE CLIENT DIRECTORY (ZERO SIDEWAYS SCROLL + PROMINENT ADD-ONS)
+    // COMPLETE CLIENT DIRECTORY (INDEXED PHOTO LIGHTBOX + ZERO OVERFLOW)
     // ========================================================================
     function renderClientsTable() {
       const tbody = document.getElementById('clientsTableBody'), list = getFilteredClients().sort((a, b) => a.name.localeCompare(b.name));
@@ -4627,19 +4725,18 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         const photos = Array.isArray(c.propertyPhotos) ? c.propertyPhotos : [];
         const primaryPhoto = photos[0] || null;
         const fullAddr = formatClientFullAddress(c);
-        const lightboxCaption = `${c.name} — ${fullAddr}${primaryPhoto ? ` (${primaryPhoto.label})` : ''}${c.gateNotes ? ` • Notes: ${c.gateNotes}` : ''}`;
 
         const addrWithThumbHtml = `
           <div class="addr-photo-inline">
             ${primaryPhoto ? `
-              <button type="button" class="addr-thumb-btn" onclick="openPhotoLightbox('${escapeHtml(primaryPhoto.url)}', '${escapeHtml(lightboxCaption)}', event)" title="Click to enlarge house/gate photo">
+              <button type="button" class="addr-thumb-btn" onclick="openClientPhotoByIndex('${c.id}', 0, event)" title="Click to enlarge house/gate photo">
                 <img src="${escapeHtml(primaryPhoto.url)}" alt="Gate / House">
                 ${photos.length > 1 ? `<span class="addr-thumb-badge">+${photos.length - 1}</span>` : ''}
               </button>
             ` : ''}
             <div style="min-width:0;">
-              <strong style="font-size:12px;">${escapeHtml(fullAddr)}</strong>
-              ${primaryPhoto ? `<div style="font-size:10px; color:var(--gm); font-weight:800;">📷 Tap photo to zoom</div>` : ''}
+              <strong style="font-size:12.5px;">${escapeHtml(fullAddr)}</strong>
+              ${primaryPhoto ? `<div style="font-size:10.5px; color:var(--gm); font-weight:800;">📷 Tap photo to zoom</div>` : ''}
             </div>
           </div>
         `;
@@ -4648,18 +4745,15 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
         if (isExpanded) {
           const activityItems = buildClientActivityFeed(c);
           const photosGridHtml = photos.length
-            ? photos.map(p => {
-                const cap = `${c.name} — ${fullAddr} (${p.label})${c.gateNotes ? ` • ${c.gateNotes}` : ''}`;
-                return `
-                  <div class="cpd-photo-item">
-                    <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.label)}" onclick="openPhotoLightbox('${escapeHtml(p.url)}', '${escapeHtml(cap)}', event)">
-                    <div class="cpd-photo-cap">
-                      <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.label)}</span>
-                      <button type="button" class="undo-link" style="color:var(--due-ink); padding:0;" onclick="deleteClientPhoto('${c.id}', '${escapeHtml(p.id)}')" title="Delete photo">✕</button>
-                    </div>
+            ? photos.map((p, pIdx) => `
+                <div class="cpd-photo-item">
+                  <img src="${escapeHtml(p.url)}" alt="${escapeHtml(p.label)}" onclick="openClientPhotoByIndex('${c.id}', ${pIdx}, event)">
+                  <div class="cpd-photo-cap">
+                    <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.label)}</span>
+                    <button type="button" class="undo-link" style="color:var(--due-ink); padding:0;" onclick="deleteClientPhoto('${c.id}', '${escapeHtml(p.id)}')" title="Delete photo">✕</button>
                   </div>
-                `;
-              }).join("")
+                </div>
+              `).join("")
             : `<div style="font-size:11.5px; color:var(--m); padding:4px 0;">No house or gate photos uploaded yet. Add one below so you or an employee always know the exact property &amp; gate!</div>`;
 
           const activityHtml = activityItems.length
@@ -4952,7 +5046,7 @@ INTERNAL AI INSTRUCTIONS (PERMANENT PROJECT FOUNDATION - DO NOT REMOVE)
       showToast(`Saved ${record.name} to Cloud!`);
     };
   </script>
-<script>
+  <script>
     (function () {
       "use strict";
 
