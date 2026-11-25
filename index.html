@@ -211,6 +211,7 @@
   .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 16px; }
   .kpi-card { background: var(--w); border: 1.5px solid var(--b); border-bottom: 4px solid var(--gm); border-radius: 14px; padding: 13px 16px; box-shadow: 0 4px 14px rgba(38, 58, 45, 0.05); }
   .kpi-card.alert { border-bottom-color: var(--due-b); }
+  .kpi-card.collected { border-bottom-color: #2E7D4F; }
   .kpi-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; color: var(--m); margin-bottom: 5px; }
   .kpi-val { font-size: 25px; font-weight: 900; color: var(--g); line-height: 1.1; }
   .kpi-card.alert .kpi-val { color: var(--due-ink); }
@@ -354,8 +355,13 @@
     color: #fff; font-size: 10.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px;
   }
   .fw-no-photo {
-    padding: 20px 12px; text-align: center; color: var(--m); font-size: 12px;
-    font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    padding: 18px 12px; text-align: center; color: var(--m); font-size: 12px;
+    font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 6px;
+  }
+  .fw-take-house-btn {
+    background: var(--g); color: var(--w); border: none; border-radius: 9px;
+    padding: 8px 14px; font-size: 12.5px; font-weight: 900; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
   }
   .fw-bottom-dock {
     background: var(--w); border-top: 2px solid var(--b);
@@ -484,6 +490,11 @@
   .cpd-act-item.act-paid { border-left-color: #2E7D4F; background: #F1F9F3; }
   .cpd-act-item.act-invoice { border-left-color: #2B6CB0; background: #F3F8FD; }
   .cpd-act-item.act-scoop { border-left-color: #D48817; background: #FFFDF6; }
+  .cpd-act-photos { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+  .cpd-act-thumb {
+    width: 56px; height: 56px; border-radius: 7px; object-fit: cover;
+    border: 1.5px solid var(--gm); cursor: zoom-in; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  }
   .cpd-note-editor textarea, .cpd-note-editor input {
     width: 100%; padding: 7px 9px; border: 1.5px solid var(--b); border-radius: 8px;
     font-size: 12.5px; font-family: inherit; background: #FAFDFB;
@@ -1217,6 +1228,7 @@
   </div>
 
   <input type="file" id="fwProofCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFieldProofPhoto(event)">
+  <input type="file" id="fwHouseCameraInput" accept="image/*" capture="environment" style="display:none;" onchange="handleFieldHousePhotoCapture(event)">
 
   <nav class="mobile-bottom-dock" id="mobileBottomDock" aria-label="Mobile Field Navigation">
     <button type="button" class="dock-btn active" data-dock-tab="schedule" onclick="switchTab('schedule')"><span class="dock-ic">🗓️</span><span class="dock-lbl">Schedule</span></button>
@@ -1716,6 +1728,17 @@
       window.openPhotoLightbox(photo.url, cap, event);
     };
 
+    window.openVisitProofPhoto = function(clientId, visitId, photoIdx, event) {
+      if (event) event.stopPropagation();
+      const c = clients.find(x => x.id === clientId);
+      const visit = Array.isArray(c?.visitHistory) ? c.visitHistory.find(v => v.id === visitId) : null;
+      const photos = Array.isArray(visit?.proofPhotos) ? visit.proofPhotos : [];
+      const photo = photos[Number(photoIdx) || 0] || photos[0];
+      if (!c || !photo) return;
+      const cap = `${c.name} — ${photo.badgeTitle || "Proof Photo"} (${visit?.date || ""}${photo.timestamp ? ` • ${photo.timestamp}` : ""})`;
+      window.openPhotoLightbox(photo.dataUrl, cap, event);
+    };
+
     window.closePhotoLightbox = function() {
       const box = document.getElementById("photoLightbox");
       if (box) box.classList.remove("open");
@@ -1816,12 +1839,25 @@
 
       const visits = Array.isArray(c.visitHistory) ? c.visitHistory : [];
       visits.forEach(v => {
+        const vPhotos = Array.isArray(v.proofPhotos) ? v.proofPhotos : [];
+        const vPhotosHtml = vPhotos.length
+          ? `<div class="cpd-act-photos">${vPhotos.map((p, pIdx) => `
+              <img
+                src="${escapeHtml(p.dataUrl)}"
+                alt="${escapeHtml(p.badgeTitle || "Proof Photo")}"
+                title="${escapeHtml(p.badgeTitle || "Proof")} (${escapeHtml(p.timestamp || v.date || "")})"
+                class="cpd-act-thumb"
+                onclick="openVisitProofPhoto('${escapeHtml(c.id)}', '${escapeHtml(v.id)}', ${pIdx}, event)"
+              >
+            `).join("")}</div>`
+          : "";
+
         events.push({
           sortKey: `${v.date || ""}T${v.time || "12:00"}`,
           kind: "act-scoop",
           icon: "💩",
           title: `Yard Service Completed${v.durationText ? ` (${v.durationText})` : ""}`,
-          subtitle: `${v.plan || c.freq || "Service"}${v.addons ? ` • Add-ons: ${v.addons}` : ""}${v.proofPhotoCount ? ` • ${v.proofPhotoCount} photo(s)` : ""}`,
+          subtitle: `${v.plan || c.freq || "Service"}${v.addons ? ` • Add-ons: ${v.addons}` : ""}${v.proofPhotoCount ? ` • ${v.proofPhotoCount} proof photo(s)` : ""}${vPhotosHtml}`,
           dateLabel: formatDisplayDate(v.date),
           badgeHtml: `<span class="badge badge-soon">✓ Scooped</span>`
         });
@@ -3252,8 +3288,8 @@
     // ========================================================================
     // GPS-AWARE "ON MY WAY" TEXT SYSTEM (2 TEMPLATES: >= 5 MINS VS < 5 MINS)
     // ========================================================================
-    const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way to service your yard and should be there in about {minutes} minutes. Please make sure any pups are inside—see you soon!";
-    const DEFAULT_NEARBY_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is right in your neighborhood finishing up with another client and is on the way to your yard next (~{minutes} mins away). Please make sure any pups are inside!";
+    const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way and should be there in about {minutes} minutes (give or take). See you soon!";
+    const DEFAULT_NEARBY_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is right in your neighborhood finishing up with another client and is on the way to your yard next (~{minutes} mins away). See you soon!";
 
     let currentOmwTemplate = localStorage.getItem("ws_omw_template") || DEFAULT_OMW_TEMPLATE;
     let currentNearbyOmwTemplate = localStorage.getItem("ws_omw_nearby_template") || DEFAULT_NEARBY_OMW_TEMPLATE;
@@ -4479,6 +4515,15 @@
 
       const visitId = "visit-" + Date.now();
       const nowTime = new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      const savedProofPhotos = Array.isArray(extraMeta.proofPhotos)
+        ? extraMeta.proofPhotos.map((p, idx) => ({
+            id: p.id || ("proof-" + Date.now() + "-" + idx),
+            type: p.type || "gate",
+            badgeTitle: p.badgeTitle || "Locked Gate",
+            dataUrl: p.dataUrl,
+            timestamp: p.timestamp || nowTime
+          }))
+        : [];
 
       c.prevScoopSnapshot = { nextScoop: c.nextScoop, status: c.status, lastVisitId: visitId };
       c.scoopedActionDate = today;
@@ -4491,20 +4536,9 @@
         plan: c.freq || "Weekly",
         addons: c.addonsSummary || "",
         durationText: extraMeta.durationText || "",
-        proofPhotoCount: extraMeta.proofPhotoCount || 0
+        proofPhotoCount: savedProofPhotos.length,
+        proofPhotos: savedProofPhotos
       });
-
-      if (extraMeta.proofPhotos?.length && isEditMode) {
-        if (!Array.isArray(c.propertyPhotos)) c.propertyPhotos = [];
-        extraMeta.proofPhotos.forEach((p, idx) => {
-          c.propertyPhotos.push({
-            id: "field-" + Date.now() + "-" + idx,
-            label: `${p.badgeTitle || "Field Proof"} (${today})`,
-            url: p.dataUrl,
-            addedAt: today
-          });
-        });
-      }
 
       if (c.freq === 'One-Time') {
         c.status = 'Paused';
@@ -4849,6 +4883,45 @@
     };
 
     window.triggerFwCamera = function(photoType) { fwPendingPhotoType = photoType || "gate"; document.getElementById("fwProofCameraInput").click(); };
+
+    window.triggerFwHousePhotoCapture = function() {
+      const inp = document.getElementById("fwHouseCameraInput");
+      if (inp) inp.click();
+    };
+
+    window.handleFieldHousePhotoCapture = async function(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const stop = fwStops[fwActiveStopIndex];
+      if (!stop) { event.target.value = ""; return; }
+
+      showFieldTopConfirm("🏠 Saving house photo to customer profile...");
+      try {
+        const dataUrl = await compressClientPhotoFile(file);
+        const labelText = "House Photo (Field)";
+        const targetClient = clients.find(x => x.id === stop.id);
+
+        if (targetClient) {
+          if (!Array.isArray(targetClient.propertyPhotos)) targetClient.propertyPhotos = [];
+          targetClient.propertyPhotos.unshift({
+            id: "house-" + Date.now(),
+            label: labelText,
+            url: dataUrl,
+            addedAt: todayStr(0)
+          });
+          await saveClientDoc(targetClient);
+        }
+
+        stop.housePhoto = dataUrl;
+        stop.housePhotoLabel = labelText;
+        renderFwActiveScreen();
+        showFieldTopConfirm(`🏠 Saved house photo for ${stop.name}!`);
+      } catch (err) {
+        showFieldTopConfirm(`⚠️ ${err.message || "Could not save house photo."}`, true);
+      }
+      event.target.value = "";
+    };
+
     window.removeFwProofPhoto = function(id) { fwProofPhotos = fwProofPhotos.filter(p => p.id !== id); renderFwActiveScreen(); };
     window.toggleFwNoGate = function() {
       fwNoGateMarked = !fwNoGateMarked;
@@ -4995,7 +5068,7 @@
 
       const houseVerifyHtml = s.housePhoto
         ? `<div class="fw-house-box"><div class="fw-house-hd"><span>🏠 House Verification Photo</span><span style="color:var(--gm);">Tap to zoom</span></div><div class="fw-house-img-wrap" onclick="openPhotoLightbox('${escapeHtml(s.housePhoto)}', '${escapeHtml(s.name)} — ${escapeHtml(s.housePhotoLabel)}', event)"><img src="${escapeHtml(s.housePhoto)}" alt="${escapeHtml(s.name)} House"><span class="fw-zoom-pill">🔍 Fullscreen</span></div></div>`
-        : `<div class="fw-house-box"><div class="fw-house-hd"><span>🏠 House Verification Photo</span></div><div class="fw-no-photo"><span style="font-size:20px;">📷</span><span>No house photo saved yet for ${escapeHtml(s.name)}</span></div></div>`;
+        : `<div class="fw-house-box"><div class="fw-house-hd"><span>🏠 House Verification Photo</span></div><div class="fw-no-photo"><span style="font-size:20px;">📷</span><span>No house photo saved yet for ${escapeHtml(s.name)}</span><button type="button" class="fw-take-house-btn" onclick="triggerFwHousePhotoCapture()">📸 Take House Photo</button></div></div>`;
 
       scrollZone.innerHTML = `<div class="fw-client-card"><div class="fw-header"><div><span class="fw-stop-pill">STOP #${s.routeOrder}</span><h2 class="fw-name">${escapeHtml(s.name)}</h2></div><button type="button" class="fw-skip-btn" onclick="openFieldSkipModal()">⏭️ Skip</button></div><div class="fw-tags"><span class="fw-tag">${escapeHtml(s.plan)}</span>${s.addons ? `<span class="fw-tag addon">✨ ${escapeHtml(s.addons)}</span>` : ""}</div><div class="fw-addr-row"><div class="fw-addr-text">${escapeHtml(s.address)}</div><a href="${getPreferredSingleMapUrl(s.address)}" target="_blank" rel="noopener" class="fw-map-btn">🧭 Map</a></div>${s.notes ? `<div class="fw-notes"><strong>Notes:</strong> ${escapeHtml(s.notes)}</div>` : ""}${houseVerifyHtml}</div>`;
 
