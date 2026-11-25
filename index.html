@@ -821,7 +821,7 @@
   </header>
 
   <div class="edit-mode-banner" id="editModeBanner" role="status">
-    <span>✏️ <strong>EDIT MODE IS ON</strong> — Editing, deleting, refunds &amp; map pin dragging are unlocked.</span>
+    <span>✏️ <strong>EDIT MODE IS ON</strong> — Editing, deleting, refunds, OMW templates &amp; map pin dragging are unlocked.</span>
     <button type="button" class="btn btn-dark btn-sm" onclick="toggleEditMode(false)">🔒 Done Editing</button>
   </div>
 
@@ -1052,22 +1052,29 @@
                   <option value="Twice Weekly">Twice Weekly Plans Only</option>
                   <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
                 </select>
-                <button type="button" class="btn btn-sage btn-sm" onclick="toggleOmwEditor()">✏️ Edit "On My Way" Text</button>
+                <button type="button" class="btn btn-sage btn-sm edit-only-control" onclick="toggleOmwEditor()">✏️ Edit "On My Way" Texts</button>
                 <button type="button" class="btn btn-dark btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route</button>
               </div>
             </div>
 
             <div class="omw-drawer" id="omwTemplateDrawer">
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                <strong style="font-size:12.5px; color:var(--g);">🚗 Customize Your "On My Way" Text Message</strong>
-                <span style="font-size:11px; color:var(--m); font-weight:700;">Use <code>{firstName}</code> to insert customer's first name</span>
+                <strong style="font-size:12.5px; color:var(--g);">🚗 1. Standard "On My Way" Text (&ge; 5 mins away via GPS)</strong>
+                <span style="font-size:11px; color:var(--m); font-weight:700;">Placeholders: <code>{firstName}</code>, <code>{minutes}</code>, <code>{eta}</code>, <code>{city}</code></span>
               </div>
               <textarea id="inputOmwTemplate" rows="2"></textarea>
+
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:4px; padding-top:8px; border-top:1px dashed var(--gm);">
+                <strong style="font-size:12.5px; color:var(--g);">🏘️ 2. In-Neighborhood "On My Way" Text (&lt; 5 mins away via GPS)</strong>
+                <span style="font-size:11px; color:var(--m); font-weight:700;">Placeholders: <code>{firstName}</code>, <code>{minutes}</code>, <code>{eta}</code>, <code>{city}</code></span>
+              </div>
+              <textarea id="inputNearbyOmwTemplate" rows="2"></textarea>
+
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset to Default</button>
+                <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset Both to Defaults</button>
                 <div style="display:flex; gap:8px;">
                   <button type="button" class="btn btn-outline btn-sm" onclick="toggleOmwEditor()">Cancel</button>
-                  <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Template</button>
+                  <button type="button" class="btn btn-dark btn-sm" onclick="saveOmwTemplate()">💾 Save Both Templates</button>
                 </div>
               </div>
             </div>
@@ -1583,6 +1590,7 @@
     const DISCOUNTS_COL = collection(db, "wise_scoopers_discounts");
     const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
     const OMW_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template");
+    const OMW_NEARBY_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template_nearby");
 
     let clients = [];
     let leads = [];
@@ -1600,6 +1608,7 @@
     let unsubscribeDiscounts = null;
     let unsubApps = null;
     let unsubOmw = null;
+    let unsubOmwNearby = null;
     let isAuthenticated = false;
     let hasRunInitialSquareSync = false;
     let expandedClientId = null;
@@ -1619,6 +1628,11 @@
       if (mobBtn) {
         mobBtn.textContent = isEditMode ? "✏️ Edit Mode: ON" : "🔒 Edit Mode: OFF";
         mobBtn.classList.toggle("active", isEditMode);
+      }
+
+      if (!isEditMode) {
+        const omwDrawer = document.getElementById("omwTemplateDrawer");
+        if (omwDrawer) omwDrawer.classList.remove("open");
       }
 
       const mapTip = document.querySelector("#tab-map .map-tip-bar span");
@@ -3235,24 +3249,134 @@
       finally { btn.disabled = false; btn.textContent = orig; }
     };
 
-    const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way to service your yard and should be there in about 15–30 minutes (or less). Please make sure any pups are inside—see you soon!";
-    let currentOmwTemplate = localStorage.getItem("ws_omw_template") || DEFAULT_OMW_TEMPLATE;
+    // ========================================================================
+    // GPS-AWARE "ON MY WAY" TEXT SYSTEM (2 TEMPLATES: >= 5 MINS VS < 5 MINS)
+    // ========================================================================
+    const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way to service your yard and should be there in about {minutes} minutes. Please make sure any pups are inside—see you soon!";
+    const DEFAULT_NEARBY_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is right in your neighborhood finishing up with another client and is on the way to your yard next (~{minutes} mins away). Please make sure any pups are inside!";
 
-    window.toggleOmwEditor = function() { const d = document.getElementById('omwTemplateDrawer'); if (d.classList.toggle('open')) { const i = document.getElementById('inputOmwTemplate'); i.value = currentOmwTemplate; i.focus(); } };
-    window.saveOmwTemplate = async function() {
-      const val = document.getElementById('inputOmwTemplate').value.trim();
-      if (!val) { showToast("Message template cannot be empty."); return; }
-      currentOmwTemplate = val; localStorage.setItem("ws_omw_template", currentOmwTemplate);
-      if (isAuthenticated) await setDoc(OMW_DOC_REF, { template: currentOmwTemplate }, { merge: true });
-      document.getElementById('omwTemplateDrawer').classList.remove('open');
-      showToast('Saved "On My Way" text template to Cloud!');
+    let currentOmwTemplate = localStorage.getItem("ws_omw_template") || DEFAULT_OMW_TEMPLATE;
+    let currentNearbyOmwTemplate = localStorage.getItem("ws_omw_nearby_template") || DEFAULT_NEARBY_OMW_TEMPLATE;
+
+    function getStopCoords(stop) {
+      if (!stop) return null;
+      if (stop.geo && typeof stop.geo.lat === "number" && typeof stop.geo.lng === "number" && !isNaN(stop.geo.lat) && !isNaN(stop.geo.lng)) {
+        return { lat: Number(stop.geo.lat), lng: Number(stop.geo.lng) };
+      }
+      if (typeof stop.lat === "number" && typeof stop.lng === "number" && !isNaN(stop.lat) && !isNaN(stop.lng)) {
+        return { lat: Number(stop.lat), lng: Number(stop.lng) };
+      }
+      const fallbackCity = stop.city || extractCityFromAddress(stop.address, "");
+      if (fallbackCity && CITY_COORDS[fallbackCity]) {
+        return { lat: CITY_COORDS[fallbackCity][0], lng: CITY_COORDS[fallbackCity][1] };
+      }
+      return null;
+    }
+
+    function computeGpsDistanceAndEta(stop) {
+      const origin = fwLiveCoords || lastUserCoords || null;
+      const dest = getStopCoords(stop);
+
+      if (origin && dest) {
+        const straightMiles = haversineMiles(origin.lat, origin.lng, dest.lat, dest.lng);
+        const roadMiles = Number((straightMiles * 1.28).toFixed(1));
+        const minutes = Math.max(2, Math.round((roadMiles / (roadMiles > 8 ? 50 : 35)) * 60));
+        const isNearby = minutes < 5;
+
+        return {
+          hasGps: true,
+          isNearby,
+          miles: roadMiles,
+          minutes,
+          etaText: `${minutes} mins`
+        };
+      }
+
+      return {
+        hasGps: false,
+        isNearby: false,
+        miles: null,
+        minutes: 20,
+        etaText: "20 mins"
+      };
+    }
+
+    function applyOmwPlaceholders(templateStr, stop, gpsInfo = null) {
+      const fullName = String(stop?.name || "there").trim();
+      const firstName = fullName.split(/\s+/)[0] || "there";
+      const fullAddress = String(stop?.address || "").trim();
+      const city = String(stop?.city || extractCityFromAddress(fullAddress, "") || "your neighborhood").trim();
+      const info = gpsInfo || computeGpsDistanceAndEta(stop);
+      const milesStr = typeof info.miles === "number" ? `${info.miles.toFixed(1)} mi` : "nearby";
+
+      return String(templateStr || "")
+        .replace(/\{firstName\}/gi, firstName)
+        .replace(/\{name\}/gi, fullName)
+        .replace(/\{eta\}/gi, info.etaText)
+        .replace(/\{minutes\}/gi, String(info.minutes))
+        .replace(/\{distance\}/gi, milesStr)
+        .replace(/\{city\}/gi, city)
+        .replace(/\{address\}/gi, fullAddress);
+    }
+
+    window.toggleOmwEditor = function() {
+      if (!isEditMode) {
+        showToast("Turn on Edit Mode first to edit 'On My Way' text templates.");
+        return;
+      }
+      const d = document.getElementById('omwTemplateDrawer');
+      if (d.classList.toggle('open')) {
+        const stdInp = document.getElementById('inputOmwTemplate');
+        const nearInp = document.getElementById('inputNearbyOmwTemplate');
+        if (stdInp) stdInp.value = currentOmwTemplate;
+        if (nearInp) nearInp.value = currentNearbyOmwTemplate;
+        if (stdInp) stdInp.focus();
+      }
     };
-    window.resetOmwTemplate = function() { document.getElementById('inputOmwTemplate').value = DEFAULT_OMW_TEMPLATE; };
+
+    window.saveOmwTemplate = async function() {
+      if (!isEditMode) {
+        showToast("Turn on Edit Mode first to save 'On My Way' text templates.");
+        return;
+      }
+      const stdVal = document.getElementById('inputOmwTemplate').value.trim();
+      const nearVal = document.getElementById('inputNearbyOmwTemplate').value.trim();
+      if (!stdVal || !nearVal) { showToast("Both message templates cannot be empty."); return; }
+
+      currentOmwTemplate = stdVal;
+      currentNearbyOmwTemplate = nearVal;
+      localStorage.setItem("ws_omw_template", currentOmwTemplate);
+      localStorage.setItem("ws_omw_nearby_template", currentNearbyOmwTemplate);
+
+      if (isAuthenticated) {
+        await setDoc(OMW_DOC_REF, { template: currentOmwTemplate }, { merge: true });
+        await setDoc(OMW_NEARBY_DOC_REF, { template: currentNearbyOmwTemplate }, { merge: true });
+      }
+      document.getElementById('omwTemplateDrawer').classList.remove('open');
+      updateFwLiveOmwBtn();
+      showToast('Saved both "On My Way" text templates to Cloud!');
+    };
+
+    window.resetOmwTemplate = function() {
+      if (!isEditMode) { showToast("Turn on Edit Mode first."); return; }
+      document.getElementById('inputOmwTemplate').value = DEFAULT_OMW_TEMPLATE;
+      document.getElementById('inputNearbyOmwTemplate').value = DEFAULT_NEARBY_OMW_TEMPLATE;
+    };
+
     window.copyOnMyWayText = function(id) {
       let person = clients.find(x => x.id === id) || leads.find(x => x.id === id);
       if (!person) return;
-      const msg = currentOmwTemplate.replace(/\{firstName\}/gi, (person.name || "there").trim().split(' ')[0]);
-      navigator.clipboard.writeText(msg).then(() => showToast(`Copied "On My Way" text for ${person.name}!`)).catch(() => prompt('Copy this "On My Way" text:', msg));
+      if (navigator.geolocation && !lastUserCoords && !fwLiveCoords) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          lastUserCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        }, () => {}, { enableHighAccuracy: true, timeout: 2500, maximumAge: 30000 });
+      }
+      const gpsInfo = computeGpsDistanceAndEta(person);
+      const tpl = gpsInfo.isNearby ? currentNearbyOmwTemplate : currentOmwTemplate;
+      const msg = applyOmwPlaceholders(tpl, person, gpsInfo);
+      navigator.clipboard.writeText(msg)
+        .then(() => showToast(`Copied ${gpsInfo.isNearby ? "in-neighborhood (<5 min)" : `~${gpsInfo.minutes} min`} text for ${person.name}!`))
+        .catch(() => prompt('Copy this "On My Way" text:', msg));
     };
 
     // BUSINESS APPS LAUNCHER
@@ -3315,7 +3439,7 @@
     };
 
     window.handleLogout = async function() {
-      [unsubscribeClients, unsubscribeLeads, unsubscribeGenNotes, unsubscribeManualRefs, unsubscribeManualPayments, unsubscribeExpenses, unsubscribeDiscounts, unsubApps, unsubOmw].forEach(u => u && u());
+      [unsubscribeClients, unsubscribeLeads, unsubscribeGenNotes, unsubscribeManualRefs, unsubscribeManualPayments, unsubscribeExpenses, unsubscribeDiscounts, unsubApps, unsubOmw, unsubOmwNearby].forEach(u => u && u());
       await signOut(auth);
     };
 
@@ -3368,7 +3492,22 @@
         unsubApps = onSnapshot(APPS_DOC_REF, d => { businessApps = (d.exists() && Array.isArray(d.data().items)) ? d.data().items : [...DEFAULT_BUSINESS_APPS]; if (document.getElementById('appLauncherBackdrop').classList.contains('open') && !isEditingApps) renderAppLauncherGrids(); });
 
         if (unsubOmw) unsubOmw();
-        unsubOmw = onSnapshot(OMW_DOC_REF, d => { if (d.exists() && d.data().template) { currentOmwTemplate = d.data().template; localStorage.setItem("ws_omw_template", currentOmwTemplate); } });
+        unsubOmw = onSnapshot(OMW_DOC_REF, d => {
+          if (d.exists() && d.data().template) {
+            currentOmwTemplate = d.data().template;
+            localStorage.setItem("ws_omw_template", currentOmwTemplate);
+            updateFwLiveOmwBtn();
+          }
+        });
+
+        if (unsubOmwNearby) unsubOmwNearby();
+        unsubOmwNearby = onSnapshot(OMW_NEARBY_DOC_REF, d => {
+          if (d.exists() && d.data().template) {
+            currentNearbyOmwTemplate = d.data().template;
+            localStorage.setItem("ws_omw_nearby_template", currentNearbyOmwTemplate);
+            updateFwLiveOmwBtn();
+          }
+        });
       } else {
         isAuthenticated = false; hasRunInitialSquareSync = false; gate.classList.remove('hidden'); syncEl.textContent = '🔒 Locked';
       }
@@ -4581,6 +4720,8 @@
             name: c.name,
             phone: c.phone || "",
             address: formatClientFullAddress(c),
+            city: c.city || extractCityFromAddress(c.address, ""),
+            geo: c.geo || null,
             lat: c.geo?.lat ?? null,
             lng: c.geo?.lng ?? null,
             freq: c.freq || "Weekly",
@@ -4618,36 +4759,34 @@
       if (!("geolocation" in navigator) || fwGpsWatchId !== null) return;
       fwGpsWatchId = navigator.geolocation.watchPosition(pos => {
         fwLiveCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        lastUserCoords = fwLiveCoords;
         updateFwLiveOmwBtn();
       }, () => {}, { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 });
     }
 
     function buildFwOmwPayload(stop) {
-      const firstName = (stop.name || "there").trim().split(/\s+/)[0];
-      const tpl = (currentOmwTemplate || DEFAULT_OMW_TEMPLATE).trim();
-      if (fwLiveCoords && typeof stop.lat === "number" && typeof stop.lng === "number") {
-        const roadMiles = haversineMiles(fwLiveCoords.lat, fwLiveCoords.lng, stop.lat, stop.lng) * 1.28;
-        if (roadMiles <= 0.6) {
-          return {
-            isSameNeighborhood: true,
-            pillLabel: "~2–3 mins",
-            subLabel: "Around the corner • Opens Messages",
-            message: `Hi ${firstName}! Austin with Wise Scoopers just wrapped up a neighbor's yard right around the corner and is heading to your place next (about 2–3 mins away).`
-          };
-        }
-        const mins = Math.max(4, Math.round((roadMiles / (roadMiles > 8 ? 50 : 35)) * 60));
-        return {
-          isSameNeighborhood: false,
-          pillLabel: `~${mins} mins`,
-          subLabel: "Send 'On My Way' ETA • Opens Messages",
-          message: tpl.replace(/\{firstName\}/gi, firstName) + ` (ETA ~${mins} mins)`
-        };
-      }
+      const gpsInfo = computeGpsDistanceAndEta(stop);
+      const isNearby = gpsInfo.isNearby;
+      const chosenTemplate = isNearby ? (currentNearbyOmwTemplate || DEFAULT_NEARBY_OMW_TEMPLATE) : (currentOmwTemplate || DEFAULT_OMW_TEMPLATE);
+      const message = applyOmwPlaceholders(chosenTemplate, stop, gpsInfo);
+
+      const pillLabel = isNearby
+        ? `In Neighborhood (~${gpsInfo.minutes} mins)`
+        : gpsInfo.hasGps
+          ? `~${gpsInfo.minutes} mins`
+          : "On My Way";
+
+      const subLabel = isNearby
+        ? `< 5 mins away (${gpsInfo.miles.toFixed(1)} mi) • Opens Messages`
+        : gpsInfo.hasGps
+          ? `GPS ETA ~${gpsInfo.minutes} mins (${gpsInfo.miles.toFixed(1)} mi) • Opens Messages`
+          : "Send 'On My Way' text • Opens Messages";
+
       return {
-        isSameNeighborhood: false,
-        pillLabel: "On My Way",
-        subLabel: "Send 'On My Way' text • Opens Messages",
-        message: tpl.replace(/\{firstName\}/gi, firstName)
+        isSameNeighborhood: isNearby,
+        pillLabel,
+        subLabel,
+        message
       };
     }
 
