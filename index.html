@@ -134,7 +134,7 @@
     background: #E8EFE5; color: var(--forest);
     box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12); font-weight: 800;
   }
-  .nav-icon { width: 18px; text-align: center; font-size: 15px; opacity: 0.95; flex: none; }
+  .nav-icon { width: 18px; text-align: center; font-size: 15px; opacity: 0.95; flex: none; display: inline-flex; align-items: center; justify-content: center; }
   .nav-count {
     margin-left: auto; background: rgba(255, 255, 255, 0.14); color: #E5EEE5;
     padding: 2px 7px; border-radius: 20px; font-size: 10px; font-weight: 800;
@@ -360,7 +360,7 @@
   .stop-name { font-size: 12.5px; font-weight: 800; color: #2D4032; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .stop-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-  /* OVERVIEW WEATHER CARD (LIVE OPEN-METEO IN PREVIEW STYLE) */
+  /* OVERVIEW WEATHER CARD */
   .weather-widget {
     background: linear-gradient(125deg, #263A2D 0%, #42654A 100%); color: #fff;
     border: 0; border-radius: var(--radius); padding: 17px 18px; box-shadow: var(--shadow);
@@ -395,9 +395,8 @@
   .weather-day-card.active-day { background: rgba(255, 255, 255, 0.24); border-color: #fff; }
   .wd-name { font-size: 9.5px; font-weight: 800; color: #D5E2D5; }
   .wd-temps { font-size: 10.5px; font-weight: 800; }
-  .wd-meta { font-size: 9px; opacity: 0.9; }
 
-  /* BUSINESS NOTES (OVERVIEW RIGHT COLUMN) */
+  /* BUSINESS NOTES */
   .gn-add-drawer { background: #F7FAF6; border-bottom: 1px solid var(--line); padding: 11px 14px; display: flex; flex-direction: column; gap: 7px; }
   .gn-add-drawer textarea {
     width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px;
@@ -487,7 +486,7 @@
     width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 8px; font-size: 12px; background: #FAFDFB;
   }
 
-  /* LEADS & ROUTE CARDS */
+  /* LEADS, 90-DAY HOLD, QUOTE STACK & ROUTE CARDS */
   .leads-grid, .route-grid { padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
   .lead-card {
     background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 15px;
@@ -495,6 +494,22 @@
   }
   .lead-card:hover { border-color: #BFD0BC; box-shadow: 0 5px 16px rgba(38, 58, 45, 0.06); }
   .lead-card.potential-card { border-left: 4px solid var(--gold); background: linear-gradient(180deg, #FFFDF9 0%, #FFFFFF 100%); }
+  .lead-card.undecided-card { border-left: 4px solid #718074; background: #FAFBF9; }
+  .returning-lead-banner {
+    background: var(--badge-blue-bg); border: 1px solid #B6D4F2; border-left: 4px solid var(--badge-blue-text);
+    border-radius: 9px; padding: 7px 10px; font-size: 11.5px; color: var(--badge-blue-text); line-height: 1.35;
+  }
+  .lead-stack-box { background: #F4F7F4; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+  .lead-stack-toggle {
+    width: 100%; border: 0; background: #EAF0E6; color: var(--forest); padding: 7px 10px;
+    font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: space-between;
+  }
+  .lead-stack-list { display: none; padding: 8px 10px; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); }
+  .lead-stack-list.open { display: flex; }
+  .lead-stack-item {
+    background: #fff; border: 1px solid #E5ECE3; border-radius: 7px; padding: 6px 8px;
+    font-size: 11px; color: var(--ink); display: flex; justify-content: space-between; gap: 8px;
+  }
   .lead-hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; border-bottom: 1px solid #EEF2EC; padding-bottom: 8px; }
   .lead-name { font-size: 14.5px; font-weight: 800; color: var(--forest); }
   .lead-contact-line { font-size: 11.5px; color: var(--muted); font-weight: 600; margin-top: 2px; word-break: break-word; }
@@ -704,7 +719,6 @@
 
   .mobile-only-inline { display: none; }
 
-  /* RESPONSIVE: COMPACT DESKTOP & TABLET (ICON-ONLY RAIL) */
   @media (max-width: 1180px) {
     .sidebar { width: 220px; }
     .main-shell { margin-left: 220px; }
@@ -729,7 +743,6 @@
     #customerMap { height: 360px; }
   }
 
-  /* RESPONSIVE: MOBILE PHONE (<= 768px — PRESERVES FIELD OPERATIONS) */
   @media (max-width: 768px) {
     .sidebar { display: none; }
     .main-shell { margin-left: 0; }
@@ -876,7 +889,13 @@
       <div class="nav-label">Customer Management</div>
       <nav class="nav-list">
         <button type="button" class="nav-item" data-tab="clients" onclick="switchTab('clients')" title="Clients">
-          <span class="nav-icon">🐾</span><span class="nav-text">Clients</span>
+          <span class="nav-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </span>
+          <span class="nav-text">Clients</span>
         </button>
         <button type="button" class="nav-item" data-tab="billing" onclick="switchTab('billing')" title="Billing">
           <span class="nav-icon">▤</span><span class="nav-text">Billing</span><span class="nav-count" id="billingCountBadge">0</span>
@@ -1122,13 +1141,13 @@
           </div>
         </section>
 
-        <!-- 2. LEADS & TRIALS -->
+        <!-- 2. LEADS, POTENTIAL TRIALS & 90-DAY HOLD -->
         <section id="tab-leads" class="view-panel">
           <div class="page-head">
             <div>
               <div class="eyebrow">GROW YOUR CUSTOMER BASE</div>
               <h1>Leads &amp; free trials</h1>
-              <p>Review website quote requests, schedule "Try Us" free scoops, and convert to active clients.</p>
+              <p>Review website quote requests, schedule "Try Us" free scoops, and track undecided leads for 90 days.</p>
             </div>
             <div class="head-actions">
               <button type="button" class="btn btn-primary" onclick="openPotentialModal()">＋ Add Potential Client</button>
@@ -1150,10 +1169,20 @@
             <div class="panel-hd">
               <div>
                 <h2>🚀 New Website Quote Leads Inbox (<span id="newLeadsSubBadge">0</span>)</h2>
-                <p class="card-sub">Move to "Potential Client / Try Us" to nurture or "Convert to Client" when ready</p>
+                <p class="card-sub">Multiple quotes from the same person stack automatically; returning 90-day holds are flagged</p>
               </div>
             </div>
             <div class="leads-grid" id="leadsCardsContainer"></div>
+          </div>
+
+          <div class="panel-card" style="border-color: #CBD5CC;">
+            <div class="panel-hd" style="background: #F6F8F6;">
+              <div>
+                <h2>⏳ No Response / Undecided — 90-Day Hold (<span id="undecidedCountBadge">0</span>)</h2>
+                <p class="card-sub">Kept for 90 days; if they submit a new quote, the CRM will flag their prior history</p>
+              </div>
+            </div>
+            <div class="leads-grid" id="undecidedLeadsContainer"></div>
           </div>
         </section>
 
@@ -2034,21 +2063,24 @@
           : `<tr><td colspan="4" style="text-align:center; padding:18px; color:var(--muted);">No recent customer activity logged yet.</td></tr>`;
       }
 
-      const newLeads = leads.filter(l => l.stage !== "potential").sort((a, b) => (b.submittedAt || "").localeCompare(a.submittedAt || ""));
+      const newLeadsGrouped = groupDuplicateLeads(leads.filter(l => l.stage !== "potential" && l.stage !== "undecided"));
       const ovBadge = document.getElementById("ovNewLeadsBadge");
       const ovList = document.getElementById("ovNewLeadsList");
-      if (ovBadge) ovBadge.textContent = `${newLeads.length} new`;
+      if (ovBadge) ovBadge.textContent = `${newLeadsGrouped.length} new`;
       if (ovList) {
-        ovList.innerHTML = newLeads.length
-          ? newLeads.slice(0, 3).map(l => `
-              <div class="ov-lead-item">
-                <div class="ov-lead-ico">✉</div>
-                <div style="min-width:0;">
-                  <div style="font-size:12px; color:var(--ink);"><strong>${escapeHtml(l.name)}</strong> — ${escapeHtml(l.freq || "Weekly")} ($${Number(l.netPrice || 0).toFixed(2)}/mo)</div>
-                  <div style="font-size:10.5px; color:var(--muted); margin-top:2px;">${escapeHtml(l.city || extractCityFromAddress(l.address, "Wise County"))} · ${formatDisplayDate(l.submittedAt)}</div>
+        ovList.innerHTML = newLeadsGrouped.length
+          ? newLeadsGrouped.slice(0, 3).map(grp => {
+              const l = grp.latest;
+              return `
+                <div class="ov-lead-item">
+                  <div class="ov-lead-ico">✉</div>
+                  <div style="min-width:0;">
+                    <div style="font-size:12px; color:var(--ink);"><strong>${escapeHtml(l.name)}</strong>${grp.items.length > 1 ? ` <span class="badge badge-sage">${grp.items.length} quotes</span>` : ""} — ${escapeHtml(l.freq || "Weekly")} ($${Number(l.netPrice || 0).toFixed(2)}/mo)</div>
+                    <div style="font-size:10.5px; color:var(--muted); margin-top:2px;">${escapeHtml(l.city || extractCityFromAddress(l.address, "Wise County"))} · ${formatDisplayDate(l.submittedAt)}</div>
+                  </div>
                 </div>
-              </div>
-            `).join("")
+              `;
+            }).join("")
           : `<div style="font-size:12px; color:var(--muted);">No unreviewed quote leads right now.</div>`;
       }
     }
@@ -3110,10 +3142,11 @@
         if (unsubscribeLeads) unsubscribeLeads();
         unsubscribeLeads = onSnapshot(LEADS_COL, s => {
           leads = s.docs.map(d => ({ id: d.id, ...d.data() }));
+          const activeLeadCount = leads.filter(l => l.stage !== "undecided").length;
           const lb = document.getElementById("leadCountBadge");
-          if (lb) { lb.textContent = leads.length; lb.classList.toggle("zero", leads.length === 0); }
+          if (lb) { lb.textContent = activeLeadCount; lb.classList.toggle("zero", activeLeadCount === 0); }
           const dockBadge = document.getElementById("mobileDockLeadBadge");
-          if (dockBadge) { dockBadge.textContent = leads.length; dockBadge.style.display = leads.length > 0 ? "inline-flex" : "none"; }
+          if (dockBadge) { dockBadge.textContent = activeLeadCount; dockBadge.style.display = activeLeadCount > 0 ? "inline-flex" : "none"; }
           syncEl.textContent = `${clients.length} clients · ${leads.length} leads`;
           renderAll();
         });
@@ -3190,7 +3223,7 @@
     window.markManualReferralPaid = async function(id) { const mr = manualReferrals.find(x => x.id === id); if (!mr) return; mr.status = "Paid"; await saveManualReferralDoc(mr); showToast("Marked referral PAID!"); };
     window.deleteManualReferral = async function(id) { if (!isEditMode) { showToast("Turn on Edit Mode first."); return; } if (!confirm("Remove this partner referral?")) return; await removeManualReferralDoc(id); showToast("Removed referral."); };
 
-    // LEADS & POTENTIAL TRIALS
+    // LEADS, POTENTIAL TRIALS, 90-DAY HOLD & DUPLICATE STACKING
     function parseLeadDetails(lead) {
       const rawNotes = String(lead.notes || ""); let cleanUserNote = rawNotes, extractedYardSign = lead.yardSign || "", extractedTreats = lead.petTreats || "", extractedReferralSource = lead.referralSource || "", extractedReferralDetails = lead.referralDetails || "", extractedAddons = [];
       if (lead.yardFresh === "Yes") extractedAddons.push(`Yard Fresh (${lead.yfSections || 1} sec)`);
@@ -3236,6 +3269,66 @@
       await saveClientDoc(clientRecord); await removeLeadDoc(leadId); showToast(`Converted ${lead.name} to Regular Active Client!`); switchTab("billing");
     };
     window.deleteLead = async function(leadId) { if (!isEditMode) { showToast("Turn on Edit Mode first to remove leads."); return; } if (!confirm("Dismiss and remove this entry?")) return; await removeLeadDoc(leadId); showToast("Removed entry."); };
+
+    function normalizeLooseName(str) {
+      return String(str || "").trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ");
+    }
+    function normalizeLooseStreet(addr) {
+      return String(addr || "").split(",")[0].trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ");
+    }
+    function isLooseLeadMatch(a, b) {
+      const pA = normalizePhone10(a.phone), pB = normalizePhone10(b.phone);
+      if (pA.length === 10 && pA === pB) return true;
+      const nA = normalizeLooseName(a.name), nB = normalizeLooseName(b.name);
+      const sA = normalizeLooseStreet(a.address), sB = normalizeLooseStreet(b.address);
+      if (sA.length >= 6 && sA === sB) return true;
+      if (nA.length >= 4 && nA === nB) return true;
+      return false;
+    }
+    function groupDuplicateLeads(leadList) {
+      const sorted = [...leadList].sort((a, b) => {
+        const dCmp = (b.submittedAt || "").localeCompare(a.submittedAt || "");
+        return dCmp !== 0 ? dCmp : (b.id || "").localeCompare(a.id || "");
+      });
+      const groups = [];
+      sorted.forEach(item => {
+        const existingGroup = groups.find(g => isLooseLeadMatch(g.latest, item));
+        if (existingGroup) existingGroup.items.push(item);
+        else groups.push({ latest: item, items: [item] });
+      });
+      return groups;
+    }
+    window.toggleLeadStack = function(stackId) {
+      const el = document.getElementById(stackId);
+      if (el) el.classList.toggle("open");
+    };
+    window.moveLeadGroupToUndecided = async function(latestId, allIdsCsv) {
+      const ids = String(allIdsCsv || latestId).split(",").filter(Boolean);
+      const lead = leads.find(l => l.id === latestId);
+      if (!lead) return;
+      lead.stage = "undecided";
+      lead.undecidedAt = todayStr(0);
+      await saveLeadDoc(lead);
+      for (const id of ids) { if (id !== latestId) await removeLeadDoc(id); }
+      showToast(`Moved ${lead.name} to 90-Day Hold.`);
+    };
+    window.moveLeadGroupToPotential = async function(latestId, allIdsCsv) {
+      const ids = String(allIdsCsv || latestId).split(",").filter(Boolean);
+      for (const id of ids) { if (id !== latestId) await removeLeadDoc(id); }
+      await window.moveLeadToPotential(latestId);
+    };
+    window.convertLeadGroupToClient = async function(latestId, allIdsCsv) {
+      const ids = String(allIdsCsv || latestId).split(",").filter(Boolean);
+      for (const id of ids) { if (id !== latestId) await removeLeadDoc(id); }
+      await window.convertLeadToClient(latestId);
+    };
+    window.deleteLeadGroup = async function(allIdsCsv) {
+      if (!isEditMode) { showToast("Turn on Edit Mode first to remove leads."); return; }
+      const ids = String(allIdsCsv || "").split(",").filter(Boolean);
+      if (!ids.length || !confirm(`Dismiss and remove ${ids.length > 1 ? `all ${ids.length} stacked quotes` : "this lead"}?`)) return;
+      for (const id of ids) await removeLeadDoc(id);
+      showToast("Removed lead entry.");
+    };
 
     // DATE, BACKUP (FULL RESTORE) & MAP UTILITIES
     const CITY_COORDS = { "Decatur": [33.2343, -97.5861], "Alvord": [33.3587, -97.6939], "Bridgeport": [33.2101, -97.7548], "Bowie": [33.5582, -97.8495], "Sunset": [33.4526, -97.7675], "Rhome": [33.0535, -97.4720], "Newark": [32.9998, -97.4842], "Boyd": [33.0793, -97.5653], "Chico": [33.2954, -97.7984], "Aurora": [33.0593, -97.5036], "New Fairview": [33.0998, -97.4481], "Paradise": [33.1501, -97.6867], "Runaway Bay": [33.1737, -97.8756], "Lake Bridgeport": [33.2040, -97.8400] };
@@ -3355,24 +3448,128 @@
     }
 
     function renderLeadsAndPotentialCards() {
-      const potContainer = document.getElementById("potentialLeadsContainer"), newContainer = document.getElementById("leadsCardsContainer");
-      const q = (document.getElementById("searchInput")?.value || "").trim().toLowerCase(), city = document.getElementById("cityFilter")?.value || "";
-      const filterFn = l => { const fullAddr = formatClientFullAddress(l); return (!city || fullAddr.toLowerCase().includes(city.toLowerCase())) && (!q || `${l.name} ${fullAddr} ${l.phone} ${l.notes || ""}`.toLowerCase().includes(q)); };
+      const potContainer = document.getElementById("potentialLeadsContainer");
+      const newContainer = document.getElementById("leadsCardsContainer");
+      const undContainer = document.getElementById("undecidedLeadsContainer");
+      const q = (document.getElementById("searchInput")?.value || "").trim().toLowerCase();
+      const city = document.getElementById("cityFilter")?.value || "";
+
+      // Auto-expire undecided leads older than 90 days
+      const activeUndecidedAll = [];
+      leads.filter(l => l.stage === "undecided").forEach(l => {
+        const ageDays = Math.abs(diffDaysFromToday(l.undecidedAt || l.submittedAt || todayStr(0)));
+        if (ageDays > 90) { removeLeadDoc(l.id).catch(() => {}); }
+        else { activeUndecidedAll.push({ ...l, _daysLeft: Math.max(0, 90 - ageDays) }); }
+      });
+
+      const filterFn = l => {
+        const fullAddr = formatClientFullAddress(l);
+        return (!city || fullAddr.toLowerCase().includes(city.toLowerCase())) &&
+               (!q || `${l.name} ${fullAddr} ${l.phone} ${l.notes || ""}`.toLowerCase().includes(q));
+      };
+
       const potentialList = leads.filter(l => l.stage === "potential").filter(filterFn).sort((a, b) => (a.trialScoopDate || "9999").localeCompare(b.trialScoopDate || "9999"));
-      const newLeadsList = leads.filter(l => l.stage !== "potential").filter(filterFn).sort((a, b) => (b.submittedAt || "").localeCompare(a.submittedAt || ""));
+      const newLeadsRaw = leads.filter(l => l.stage !== "potential" && l.stage !== "undecided").filter(filterFn);
+      const newLeadGroups = groupDuplicateLeads(newLeadsRaw);
+      const undecidedList = activeUndecidedAll.filter(filterFn).sort((a, b) => a._daysLeft - b._daysLeft);
+
       document.getElementById("potentialCountBadge").textContent = potentialList.length;
-      document.getElementById("newLeadsSubBadge").textContent = newLeadsList.length;
+      document.getElementById("newLeadsSubBadge").textContent = newLeadGroups.length;
+      const undBadge = document.getElementById("undecidedCountBadge");
+      if (undBadge) undBadge.textContent = undecidedList.length;
       const mapBtnLabel = getPreferredMapLabel();
 
-      potContainer.innerHTML = !potentialList.length ? `<div style="padding:20px; text-align:center; color:var(--muted); grid-column:1/-1;">No Potential Clients yet.</div>` : potentialList.map(l => {
-        const parsed = parseLeadDetails(l), fullAddr = formatClientFullAddress(l), trialBadge = l.trialScoopDate ? (l.trialCompleted ? `<span class="badge badge-ok">✓ Trial Done</span>` : `<span class="badge badge-soon">🎁 Try Us: ${formatWeekdayAndDate(l.trialScoopDate)}</span>`) : `<span class="badge badge-sage">No Trial Date</span>`;
-        return `<div class="lead-card potential-card"><div class="lead-hd"><div><div style="margin-bottom:4px;">${trialBadge}</div><div class="lead-name">${escapeHtml(l.name)}</div><div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div></div><div class="lead-price-box"><div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div><div class="lead-price-sub">${escapeHtml(l.planSummary || l.freq || "Weekly")}</div></div></div><div class="lead-info-grid"><div class="lead-box"><div class="lead-box-lbl">Service Address</div><strong>${escapeHtml(fullAddr)}</strong></div><div class="lead-box"><div class="lead-box-lbl">Pets &amp; Plan</div><strong>${Number(l.dogs || 0)} Dog(s)</strong>${Number(l.cats || 0) > 0 ? ` • ${l.cats} Litter` : ""}</div></div>${l.importantNote ? `<div class="important-note-box"><span>📌 ${escapeHtml(l.importantNote)}</span></div>` : ""}${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}<div class="lead-actions"><button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us</button><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert</button><a href="${getPreferredSingleMapUrl(fullAddr)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Remove</button></div></div>`;
-      }).join("");
+      // 1. POTENTIAL / TRY US
+      potContainer.innerHTML = !potentialList.length
+        ? `<div style="padding:20px; text-align:center; color:var(--muted); grid-column:1/-1;">No Potential Clients yet.</div>`
+        : potentialList.map(l => {
+            const parsed = parseLeadDetails(l), fullAddr = formatClientFullAddress(l);
+            const trialBadge = l.trialScoopDate ? (l.trialCompleted ? `<span class="badge badge-ok">✓ Trial Done</span>` : `<span class="badge badge-soon">🎁 Try Us: ${formatWeekdayAndDate(l.trialScoopDate)}</span>`) : `<span class="badge badge-sage">No Trial Date</span>`;
+            return `<div class="lead-card potential-card"><div class="lead-hd"><div><div style="margin-bottom:4px;">${trialBadge}</div><div class="lead-name">${escapeHtml(l.name)}</div><div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div></div><div class="lead-price-box"><div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div><div class="lead-price-sub">${escapeHtml(l.planSummary || l.freq || "Weekly")}</div></div></div><div class="lead-info-grid"><div class="lead-box"><div class="lead-box-lbl">Service Address</div><strong>${escapeHtml(fullAddr)}</strong></div><div class="lead-box"><div class="lead-box-lbl">Pets &amp; Plan</div><strong>${Number(l.dogs || 0)} Dog(s)</strong>${Number(l.cats || 0) > 0 ? ` • ${l.cats} Litter` : ""}</div></div>${l.importantNote ? `<div class="important-note-box"><span>📌 ${escapeHtml(l.importantNote)}</span></div>` : ""}${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}<div class="lead-actions"><button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us</button><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert</button><button class="btn btn-outline btn-sm" onclick="moveLeadGroupToUndecided('${l.id}', '${l.id}')">⏳ 90-Day Hold</button><a href="${getPreferredSingleMapUrl(fullAddr)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Remove</button></div></div>`;
+          }).join("");
 
-      newContainer.innerHTML = !newLeadsList.length ? `<div style="padding:24px; text-align:center; color:var(--muted); grid-column:1/-1;">No new website leads right now.</div>` : newLeadsList.map(l => {
-        const parsed = parseLeadDetails(l), fullAddr = formatClientFullAddress(l);
-        return `<div class="lead-card"><div class="lead-hd"><div><div class="lead-name">${escapeHtml(l.name)}</div><div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div></div><div class="lead-price-box"><div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div><div class="lead-price-sub">${formatDisplayDate(l.submittedAt)}</div></div></div><div class="lead-info-grid"><div class="lead-box"><div class="lead-box-lbl">Address</div><strong>${escapeHtml(fullAddr)}</strong></div><div class="lead-box"><div class="lead-box-lbl">Plan</div><strong>${escapeHtml(l.freq || "Weekly")}</strong> (${Number(l.dogs || 0)} dogs)</div></div>${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}<div class="lead-actions"><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert</button><button class="btn btn-amber btn-sm" onclick="moveLeadToPotential('${l.id}')">🎁 Try Us</button><a href="${getPreferredSingleMapUrl(fullAddr)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Dismiss</button></div></div>`;
-      }).join("");
+      // 2. NEW WEBSITE QUOTE LEADS (STACKED + RETURNING 90-DAY HOLD MATCH)
+      newContainer.innerHTML = !newLeadGroups.length
+        ? `<div style="padding:24px; text-align:center; color:var(--muted); grid-column:1/-1;">No new website leads right now.</div>`
+        : newLeadGroups.map((grp, gIdx) => {
+            const l = grp.latest, parsed = parseLeadDetails(l), fullAddr = formatClientFullAddress(l);
+            const allIdsCsv = grp.items.map(x => x.id).join(",");
+            const olderQuotes = grp.items.slice(1);
+            const stackId = `leadStack-${gIdx}`;
+            const priorHoldMatch = activeUndecidedAll.find(u => isLooseLeadMatch(u, l));
+            const returningBannerHtml = priorHoldMatch
+              ? `<div class="returning-lead-banner"><strong>🔁 Returning Lead (Found in 90-Day Hold):</strong> Previously quoted on <strong>${formatDisplayDate(priorHoldMatch.submittedAt || priorHoldMatch.undecidedAt)}</strong> — ${escapeHtml(priorHoldMatch.freq || "Weekly")} ($${Number(priorHoldMatch.netPrice || 0).toFixed(2)}/mo)${priorHoldMatch.notes ? ` · <em>"${escapeHtml(parseLeadDetails(priorHoldMatch).cleanNote.slice(0, 90))}"</em>` : ""}</div>`
+              : "";
+            const stackHtml = olderQuotes.length
+              ? `<div class="lead-stack-box">
+                   <button type="button" class="lead-stack-toggle" onclick="toggleLeadStack('${stackId}')">
+                     <span>📚 ${grp.items.length} Quotes Submitted (Showing Latest)</span>
+                     <span>View ${olderQuotes.length} Earlier ▾</span>
+                   </button>
+                   <div class="lead-stack-list" id="${stackId}">
+                     ${olderQuotes.map(old => `<div class="lead-stack-item"><div><strong>${escapeHtml(old.freq || "Weekly")}</strong> · ${Number(old.dogs || 0)} dog(s)${Number(old.cats || 0) > 0 ? ` · ${old.cats} litter` : ""}<div style="color:var(--muted); font-size:10px;">${formatDisplayDate(old.submittedAt)}</div></div><strong>$${Number(old.netPrice || 0).toFixed(2)}/mo</strong></div>`).join("")}
+                   </div>
+                 </div>`
+              : "";
+            return `<div class="lead-card">
+              ${returningBannerHtml}
+              <div class="lead-hd">
+                <div>
+                  <div class="lead-name">${escapeHtml(l.name)}</div>
+                  <div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div>
+                </div>
+                <div class="lead-price-box">
+                  <div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div>
+                  <div class="lead-price-sub">${formatDisplayDate(l.submittedAt)}</div>
+                </div>
+              </div>
+              <div class="lead-info-grid">
+                <div class="lead-box"><div class="lead-box-lbl">Address</div><strong>${escapeHtml(fullAddr)}</strong></div>
+                <div class="lead-box"><div class="lead-box-lbl">Plan</div><strong>${escapeHtml(l.freq || "Weekly")}</strong> (${Number(l.dogs || 0)} dogs${Number(l.cats || 0) > 0 ? `, ${l.cats} litter` : ""})</div>
+              </div>
+              ${stackHtml}
+              ${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}
+              <div class="lead-actions">
+                <button class="btn btn-green btn-sm" onclick="convertLeadGroupToClient('${l.id}', '${allIdsCsv}')">✓ Convert</button>
+                <button class="btn btn-amber btn-sm" onclick="moveLeadGroupToPotential('${l.id}', '${allIdsCsv}')">🎁 Try Us</button>
+                <button class="btn btn-outline btn-sm" onclick="moveLeadGroupToUndecided('${l.id}', '${allIdsCsv}')">⏳ 90-Day Hold</button>
+                <a href="${getPreferredSingleMapUrl(fullAddr)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a>
+                <button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLeadGroup('${allIdsCsv}')">Dismiss</button>
+              </div>
+            </div>`;
+          }).join("");
+
+      // 3. NO RESPONSE / UNDECIDED (90-DAY HOLD)
+      if (undContainer) {
+        undContainer.innerHTML = !undecidedList.length
+          ? `<div style="padding:20px; text-align:center; color:var(--muted); grid-column:1/-1;">No leads in 90-Day Hold. Move unresponsive leads here to keep their info for 90 days.</div>`
+          : undecidedList.map(l => {
+              const parsed = parseLeadDetails(l), fullAddr = formatClientFullAddress(l);
+              return `<div class="lead-card undecided-card">
+                <div class="lead-hd">
+                  <div>
+                    <div style="margin-bottom:4px;"><span class="badge badge-sage">⏳ ${l._daysLeft} days left in hold</span></div>
+                    <div class="lead-name">${escapeHtml(l.name)}</div>
+                    <div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div>
+                  </div>
+                  <div class="lead-price-box">
+                    <div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div>
+                    <div class="lead-price-sub">Held ${formatDisplayDate(l.undecidedAt || l.submittedAt)}</div>
+                  </div>
+                </div>
+                <div class="lead-info-grid">
+                  <div class="lead-box"><div class="lead-box-lbl">Address</div><strong>${escapeHtml(fullAddr)}</strong></div>
+                  <div class="lead-box"><div class="lead-box-lbl">Quoted Plan</div><strong>${escapeHtml(l.freq || "Weekly")}</strong> (${Number(l.dogs || 0)} dogs)</div>
+                </div>
+                ${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}
+                <div class="lead-actions">
+                  <button class="btn btn-amber btn-sm" onclick="moveLeadToPotential('${l.id}')">🎁 Move to Try Us</button>
+                  <button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert</button>
+                  <button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Remove</button>
+                </div>
+              </div>`;
+            }).join("");
+      }
     }
 
     // MAP & ROUTE SHEET
@@ -3537,7 +3734,7 @@
       tbody.innerHTML = combined.map(item => `<tr class="mobile-card-row"><td class="m-header" data-label="Customer"><strong>${escapeHtml(item.customerName)}</strong></td><td data-label="Partner"><strong>${escapeHtml(item.partnerDetails)}</strong></td><td data-label="Town">${escapeHtml(item.partnerTown || "—")}</td><td data-label="Date">${formatDisplayDate(item.date)}</td><td data-label="Status"><span class="badge ${item.status === "Paid" ? "badge-ok" : "badge-soon"}">${escapeHtml(item.status)} ($${Number(item.rewardAmount || 20).toFixed(2)})</span></td><td class="m-actions" data-label="Actions">${item.status !== "Paid" ? `<button class="btn btn-green btn-sm" onclick="${item.sourceType === "manual" ? "markManualReferralPaid" : "markReferralPaid"}('${item.id}')">💵 Mark Paid</button>` : ""} ${item.sourceType === "manual" ? `<button class="btn btn-outline btn-sm edit-only-control" onclick="openReferralModal('${item.id}')">Edit</button> <button class="btn btn-danger btn-sm edit-only-control" onclick="deleteManualReferral('${item.id}')">Delete</button>` : `<button class="btn btn-outline btn-sm edit-only-control" onclick="openClientModal('${item.id}')">Edit Client</button>`}</td></tr>`).join("");
     }
 
-    // SCOOP COMPLETION & FULL CLIENT MODAL (100% FIELD PARITY)
+    // SCOOP COMPLETION & FULL CLIENT MODAL
     async function applyCompleteScoopToRecord(id, extraMeta = {}) {
       const today = todayStr(0), trialLead = leads.find(l => l.id === id && l.stage === "potential");
       if (trialLead) { trialLead.trialCompleted = true; trialLead.trialCompletedDate = today; await saveLeadDoc(trialLead); return { name: trialLead.name, nextScoopLabel: "Try Us Complete" }; }
@@ -3641,7 +3838,7 @@
       await saveClientDoc(record); closeClientModal(); showToast(`Saved ${record.name} to Cloud!`);
     };
 
-    // FULL MOBILE-ONLY FIELD ROUTE MODE (AUTO-FIT PHOTO STAMPING + ROUTE SUMMARY STATS)
+    // FULL MOBILE-ONLY FIELD ROUTE MODE
     let fwStops = [], fwRouteStarted = false, fwRouteElapsedSec = 0, fwRouteTimerInterval = null, fwActiveStopIndex = 0, fwIsScooping = false, fwCurrentYardSec = 0, fwYardTimerInterval = null, fwProofPhotos = [], fwPendingPhotoType = "gate", fwNoGateMarked = false, fwLiveCoords = null, fwGpsWatchId = null, fwConfirmTimer = null;
     function formatFwHHMMSS(s) { return `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
     function formatFwMMSS(s) { return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
@@ -3801,4 +3998,3 @@
   </script>
 </body>
 </html>
-  
