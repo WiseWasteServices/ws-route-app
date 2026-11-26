@@ -3134,7 +3134,7 @@
         if (unsubscribeClients) unsubscribeClients();
         unsubscribeClients = onSnapshot(CLIENTS_COL, s => {
           clients = s.docs.map(d => ({ id: d.id, ...d.data() }));
-          syncEl.textContent = `${clients.length} clients · ${leads.length} leads`;
+          syncEl.textContent = `${clients.length} clients · ${getActiveUniqueLeadCount()} leads`;
           renderAll();
           if (!hasRunInitialSquareSync && clients.length > 0) { hasRunInitialSquareSync = true; syncSquareBillingStatuses(true); }
         });
@@ -3142,12 +3142,12 @@
         if (unsubscribeLeads) unsubscribeLeads();
         unsubscribeLeads = onSnapshot(LEADS_COL, s => {
           leads = s.docs.map(d => ({ id: d.id, ...d.data() }));
-          const activeLeadCount = leads.filter(l => l.stage !== "undecided").length;
+          const activeLeadCount = getActiveUniqueLeadCount();
           const lb = document.getElementById("leadCountBadge");
           if (lb) { lb.textContent = activeLeadCount; lb.classList.toggle("zero", activeLeadCount === 0); }
           const dockBadge = document.getElementById("mobileDockLeadBadge");
           if (dockBadge) { dockBadge.textContent = activeLeadCount; dockBadge.style.display = activeLeadCount > 0 ? "inline-flex" : "none"; }
-          syncEl.textContent = `${clients.length} clients · ${leads.length} leads`;
+          syncEl.textContent = `${clients.length} clients · ${activeLeadCount} leads`;
           renderAll();
         });
 
@@ -3247,7 +3247,7 @@
         const l = leads.find(x => x.id === leadId); if (!l) return;
         document.getElementById("potModalTitle").textContent = `🎁 Potential Client — ${l.name}`;
         document.getElementById("pName").value = l.name || ""; document.getElementById("pPhone").value = l.phone || ""; document.getElementById("pEmail").value = l.email || "";
-        document.getElementById("pPlanSummary").value = l.planSummary || `${l.freq || "Weekly"} • $${Number(l.netPrice || 78).toFixed(2)}/mo`;
+        document.getElementById("pPlanSummary").value = l.planSummary || `${l.freq || "Weekly"} • $${parseQuotePrice(l.netPrice || 78).toFixed(2)}/mo`;
         document.getElementById("pAddress").value = formatClientFullAddress(l); document.getElementById("pDogs").value = Number(l.dogs ?? 1); document.getElementById("pCats").value = Number(l.cats ?? 0);
         document.getElementById("pTrialDate").value = l.trialScoopDate || ""; document.getElementById("pNotes").value = parseLeadDetails(l).cleanNote || "";
       } else { document.getElementById("potModalTitle").textContent = `🎁 Add Potential Client ("Try Us")`; document.getElementById("pPlanSummary").value = "Weekly • $78.00/mo"; }
@@ -3265,11 +3265,25 @@
       const lead = leads.find(l => l.id === leadId); if (!lead) return;
       const parsed = parseLeadDetails(lead), today = todayStr(0), fullAddr = formatClientFullAddress(lead), detectedCity = extractCityFromAddress(fullAddr, lead.city || "");
       const isBiz = /business|partner/i.test(parsed.referralSource || "");
-      const clientRecord = { id: "ws-" + Date.now(), name: lead.name || "Converted Client", phone: lead.phone || "", email: lead.email || "", city: detectedCity, address: fullAddr, status: "Active", canceledDate: "", dogs: Number(lead.dogs || 1), cats: Number(lead.cats || 0), treatLoc: String(parsed.petTreats).toLowerCase().startsWith("y") ? "Front Door" : "No Treats", dogNames: "", gateNotes: parsed.cleanNote || "", importantNote: lead.importantNote || "", startDate: today, freq: lead.freq || "Weekly", serviceType: lead.serviceType || "Dog Waste Removal", nextScoop: today, nextCharge: addOneAnniversaryMonth(today, parseISODate(today).getDate()), lastPaid: "", netPrice: Number(lead.netPrice || 78), recurringDiscount: 0, payMethod: "Invoice Link", addons: { yardFresh: lead.yardFresh === "Yes", yfSections: Number(lead.yfSections) || 1, haulAway: lead.haulAway === "Yes", litterSupply: lead.litterSupply === "Yes", litterSupplyBoxes: Number(lead.cats) || 1, deepClean: lead.deepClean === "Yes", deepCleanBoxes: Number(lead.deepBoxes) || 1, extraTime: false, extraTimeBlocks: 1 }, addonsSummary: parsed.addonsList.join(" + "), howHeard: isBiz ? "Business Referral / Partner" : (parsed.referralSource || "Google Search / Website"), refBy: isBiz ? (parsed.referralDetails || "").trim() : "", refLoc: detectedCity, refStatus: isBiz && Boolean((parsed.referralDetails || "").trim()) ? "Pending" : "N/A", geo: lead.geo || null };
+      const clientRecord = { id: "ws-" + Date.now(), name: lead.name || "Converted Client", phone: lead.phone || "", email: lead.email || "", city: detectedCity, address: fullAddr, status: "Active", canceledDate: "", dogs: Number(lead.dogs || 1), cats: Number(lead.cats || 0), treatLoc: String(parsed.petTreats).toLowerCase().startsWith("y") ? "Front Door" : "No Treats", dogNames: "", gateNotes: parsed.cleanNote || "", importantNote: lead.importantNote || "", startDate: today, freq: lead.freq || "Weekly", serviceType: lead.serviceType || "Dog Waste Removal", nextScoop: today, nextCharge: addOneAnniversaryMonth(today, parseISODate(today).getDate()), lastPaid: "", netPrice: parseQuotePrice(lead.netPrice || 78), recurringDiscount: 0, payMethod: "Invoice Link", addons: { yardFresh: lead.yardFresh === "Yes", yfSections: Number(lead.yfSections) || 1, haulAway: lead.haulAway === "Yes", litterSupply: lead.litterSupply === "Yes", litterSupplyBoxes: Number(lead.cats) || 1, deepClean: lead.deepClean === "Yes", deepCleanBoxes: Number(lead.deepBoxes) || 1, extraTime: false, extraTimeBlocks: 1 }, addonsSummary: parsed.addonsList.join(" + "), howHeard: isBiz ? "Business Referral / Partner" : (parsed.referralSource || "Google Search / Website"), refBy: isBiz ? (parsed.referralDetails || "").trim() : "", refLoc: detectedCity, refStatus: isBiz && Boolean((parsed.referralDetails || "").trim()) ? "Pending" : "N/A", geo: lead.geo || null };
       await saveClientDoc(clientRecord); await removeLeadDoc(leadId); showToast(`Converted ${lead.name} to Regular Active Client!`); switchTab("billing");
     };
     window.deleteLead = async function(leadId) { if (!isEditMode) { showToast("Turn on Edit Mode first to remove leads."); return; } if (!confirm("Dismiss and remove this entry?")) return; await removeLeadDoc(leadId); showToast("Removed entry."); };
 
+    function parseQuotePrice(val) {
+      if (typeof val === "number" && !isNaN(val)) return val;
+      const cleaned = String(val || "").replace(/[^0-9.-]/g, "");
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    }
+    function getLeadSortTime(l) {
+      if (l.createdAt) { const t = Date.parse(l.createdAt); if (!isNaN(t)) return t; }
+      if (l.timestamp) { const t = Number(l.timestamp) || Date.parse(l.timestamp); if (!isNaN(t)) return t; }
+      const idNum = String(l.id || "").match(/\d{10,13}/);
+      if (idNum) return Number(idNum[0]);
+      if (l.submittedAt) { const t = Date.parse(l.submittedAt); if (!isNaN(t)) return t; }
+      return 0;
+    }
     function normalizeLooseName(str) {
       return String(str || "").trim().toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, " ");
     }
@@ -3287,6 +3301,8 @@
     }
     function groupDuplicateLeads(leadList) {
       const sorted = [...leadList].sort((a, b) => {
+        const tDiff = getLeadSortTime(b) - getLeadSortTime(a);
+        if (tDiff !== 0) return tDiff;
         const dCmp = (b.submittedAt || "").localeCompare(a.submittedAt || "");
         return dCmp !== 0 ? dCmp : (b.id || "").localeCompare(a.id || "");
       });
@@ -3297,6 +3313,11 @@
         else groups.push({ latest: item, items: [item] });
       });
       return groups;
+    }
+    function getActiveUniqueLeadCount() {
+      const potCount = leads.filter(l => l.stage === "potential").length;
+      const newGroupedCount = groupDuplicateLeads(leads.filter(l => l.stage !== "potential" && l.stage !== "undecided")).length;
+      return potCount + newGroupedCount;
     }
     window.toggleLeadStack = function(stackId) {
       const el = document.getElementById(stackId);
@@ -3454,7 +3475,6 @@
       const q = (document.getElementById("searchInput")?.value || "").trim().toLowerCase();
       const city = document.getElementById("cityFilter")?.value || "";
 
-      // Auto-expire undecided leads older than 90 days
       const activeUndecidedAll = [];
       leads.filter(l => l.stage === "undecided").forEach(l => {
         const ageDays = Math.abs(diffDaysFromToday(l.undecidedAt || l.submittedAt || todayStr(0)));
@@ -3485,7 +3505,7 @@
         : potentialList.map(l => {
             const parsed = parseLeadDetails(l), fullAddr = formatClientFullAddress(l);
             const trialBadge = l.trialScoopDate ? (l.trialCompleted ? `<span class="badge badge-ok">✓ Trial Done</span>` : `<span class="badge badge-soon">🎁 Try Us: ${formatWeekdayAndDate(l.trialScoopDate)}</span>`) : `<span class="badge badge-sage">No Trial Date</span>`;
-            return `<div class="lead-card potential-card"><div class="lead-hd"><div><div style="margin-bottom:4px;">${trialBadge}</div><div class="lead-name">${escapeHtml(l.name)}</div><div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div></div><div class="lead-price-box"><div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div><div class="lead-price-sub">${escapeHtml(l.planSummary || l.freq || "Weekly")}</div></div></div><div class="lead-info-grid"><div class="lead-box"><div class="lead-box-lbl">Service Address</div><strong>${escapeHtml(fullAddr)}</strong></div><div class="lead-box"><div class="lead-box-lbl">Pets &amp; Plan</div><strong>${Number(l.dogs || 0)} Dog(s)</strong>${Number(l.cats || 0) > 0 ? ` • ${l.cats} Litter` : ""}</div></div>${l.importantNote ? `<div class="important-note-box"><span>📌 ${escapeHtml(l.importantNote)}</span></div>` : ""}${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}<div class="lead-actions"><button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us</button><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert</button><button class="btn btn-outline btn-sm" onclick="moveLeadGroupToUndecided('${l.id}', '${l.id}')">⏳ 90-Day Hold</button><a href="${getPreferredSingleMapUrl(fullAddr)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Remove</button></div></div>`;
+            return `<div class="lead-card potential-card"><div class="lead-hd"><div><div style="margin-bottom:4px;">${trialBadge}</div><div class="lead-name">${escapeHtml(l.name)}</div><div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div></div><div class="lead-price-box"><div class="lead-price-main">$${parseQuotePrice(l.netPrice).toFixed(2)}/mo</div><div class="lead-price-sub">${escapeHtml(l.planSummary || l.freq || "Weekly")}</div></div></div><div class="lead-info-grid"><div class="lead-box"><div class="lead-box-lbl">Service Address</div><strong>${escapeHtml(fullAddr)}</strong></div><div class="lead-box"><div class="lead-box-lbl">Pets &amp; Plan</div><strong>${Number(l.dogs || 0)} Dog(s)</strong>${Number(l.cats || 0) > 0 ? ` • ${l.cats} Litter` : ""}</div></div>${l.importantNote ? `<div class="important-note-box"><span>📌 ${escapeHtml(l.importantNote)}</span></div>` : ""}${parsed.cleanNote ? `<div class="lead-notes-box">${escapeHtml(parsed.cleanNote)}</div>` : ""}<div class="lead-actions"><button class="btn btn-amber btn-sm" onclick="openPotentialModal('${l.id}')">✏️ Notes / Try Us</button><button class="btn btn-green btn-sm" onclick="convertLeadToClient('${l.id}')">✓ Convert</button><button class="btn btn-outline btn-sm" onclick="moveLeadGroupToUndecided('${l.id}', '${l.id}')">⏳ 90-Day Hold</button><a href="${getPreferredSingleMapUrl(fullAddr)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">${mapBtnLabel}</a><button class="btn btn-danger btn-sm edit-only-control" onclick="deleteLead('${l.id}')">Remove</button></div></div>`;
           }).join("");
 
       // 2. NEW WEBSITE QUOTE LEADS (STACKED + RETURNING 90-DAY HOLD MATCH)
@@ -3498,7 +3518,7 @@
             const stackId = `leadStack-${gIdx}`;
             const priorHoldMatch = activeUndecidedAll.find(u => isLooseLeadMatch(u, l));
             const returningBannerHtml = priorHoldMatch
-              ? `<div class="returning-lead-banner"><strong>🔁 Returning Lead (Found in 90-Day Hold):</strong> Previously quoted on <strong>${formatDisplayDate(priorHoldMatch.submittedAt || priorHoldMatch.undecidedAt)}</strong> — ${escapeHtml(priorHoldMatch.freq || "Weekly")} ($${Number(priorHoldMatch.netPrice || 0).toFixed(2)}/mo)${priorHoldMatch.notes ? ` · <em>"${escapeHtml(parseLeadDetails(priorHoldMatch).cleanNote.slice(0, 90))}"</em>` : ""}</div>`
+              ? `<div class="returning-lead-banner"><strong>🔁 Returning Lead (Found in 90-Day Hold):</strong> Previously quoted on <strong>${formatDisplayDate(priorHoldMatch.submittedAt || priorHoldMatch.undecidedAt)}</strong> — ${escapeHtml(priorHoldMatch.freq || "Weekly")} ($${parseQuotePrice(priorHoldMatch.netPrice).toFixed(2)}/mo)${priorHoldMatch.notes ? ` · <em>"${escapeHtml(parseLeadDetails(priorHoldMatch).cleanNote.slice(0, 90))}"</em>` : ""}</div>`
               : "";
             const stackHtml = olderQuotes.length
               ? `<div class="lead-stack-box">
@@ -3507,7 +3527,7 @@
                      <span>View ${olderQuotes.length} Earlier ▾</span>
                    </button>
                    <div class="lead-stack-list" id="${stackId}">
-                     ${olderQuotes.map(old => `<div class="lead-stack-item"><div><strong>${escapeHtml(old.freq || "Weekly")}</strong> · ${Number(old.dogs || 0)} dog(s)${Number(old.cats || 0) > 0 ? ` · ${old.cats} litter` : ""}<div style="color:var(--muted); font-size:10px;">${formatDisplayDate(old.submittedAt)}</div></div><strong>$${Number(old.netPrice || 0).toFixed(2)}/mo</strong></div>`).join("")}
+                     ${olderQuotes.map(old => `<div class="lead-stack-item"><div><strong>${escapeHtml(old.freq || "Weekly")}</strong> · ${Number(old.dogs || 0)} dog(s)${Number(old.cats || 0) > 0 ? ` · ${old.cats} litter` : ""}<div style="color:var(--muted); font-size:10px;">${formatDisplayDate(old.submittedAt)}</div></div><strong>$${parseQuotePrice(old.netPrice).toFixed(2)}/mo</strong></div>`).join("")}
                    </div>
                  </div>`
               : "";
@@ -3519,7 +3539,7 @@
                   <div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div>
                 </div>
                 <div class="lead-price-box">
-                  <div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div>
+                  <div class="lead-price-main">$${parseQuotePrice(l.netPrice).toFixed(2)}/mo</div>
                   <div class="lead-price-sub">${formatDisplayDate(l.submittedAt)}</div>
                 </div>
               </div>
@@ -3553,7 +3573,7 @@
                     <div class="lead-contact-line"><a href="tel:${escapeHtml(l.phone)}">📞 ${escapeHtml(l.phone)}</a>${l.email ? ` • ${escapeHtml(l.email)}` : ""}</div>
                   </div>
                   <div class="lead-price-box">
-                    <div class="lead-price-main">$${Number(l.netPrice || 0).toFixed(2)}/mo</div>
+                    <div class="lead-price-main">$${parseQuotePrice(l.netPrice).toFixed(2)}/mo</div>
                     <div class="lead-price-sub">Held ${formatDisplayDate(l.undecidedAt || l.submittedAt)}</div>
                   </div>
                 </div>
