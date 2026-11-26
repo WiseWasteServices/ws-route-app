@@ -262,7 +262,6 @@
   }
   .mobile-sheet-item.active { background: var(--g); color: var(--w); border-color: var(--g); }
 
-  /* MOBILE-ONLY FIELD ROUTE LAUNCHER & FULLSCREEN OVERLAYS */
   .mobile-field-launcher { display: none; }
   .field-work-overlay {
     position: fixed; inset: 0; background: var(--cr); z-index: 1500;
@@ -835,7 +834,6 @@
     <span>✏️ <strong>EDIT MODE IS ON</strong> — Editing, deleting, refunds, OMW templates &amp; map pin dragging are unlocked.</span>
     <button type="button" class="btn btn-dark btn-sm" onclick="toggleEditMode(false)">🔒 Done Editing</button>
   </div>
-
   <div class="ai-quickbar" id="aiQuickNoteBar">
     <form class="ai-quickbar-inner" onsubmit="handleAiQuickNoteSubmit(event)">
       <span class="ai-qb-label">✨ AI Quick Note:</span>
@@ -1695,9 +1693,6 @@
       backdrop.classList.toggle("open", shouldOpen);
     };
 
-    // ========================================================================
-    // EXPANDABLE CLIENT DRAWER, ACTIVITY FEED & HOUSE/GATE PHOTO LIGHTBOX
-    // ========================================================================
     window.toggleClientDrawer = function(clientId, event) {
       if (event && event.target && event.target.closest("button, a, input, textarea, select, label, .addr-thumb-btn")) {
         return;
@@ -1940,9 +1935,6 @@
       return events.sort((a, b) => (b.sortKey || "").localeCompare(a.sortKey || ""));
     }
 
-    // ========================================================================
-    // SIMPLE MONEY IN / MONEY OUT & P&L ENGINE
-    // ========================================================================
     function getMonthKey(dateStr) {
       if (!dateStr || dateStr.length < 7) return "";
       return dateStr.slice(0, 7);
@@ -2152,7 +2144,6 @@
       }
     };
 
-    // MANUAL PAYMENT, EXPENSE & DISCOUNT CRUD
     window.openManualPaymentModal = function(paymentId = null) {
       if (paymentId && !isEditMode) { showToast("Turn on Edit Mode first to edit records."); return; }
       const form = document.getElementById("manualPaymentForm");
@@ -2327,9 +2318,6 @@
       showToast("Deleted discount record.");
     };
 
-    // ========================================================================
-    // GENERAL NOTES & AI QUICK-NOTE PARSER
-    // ========================================================================
     function formatNowTimestamp() {
       const now = new Date();
       return now.toLocaleString("en-US", {
@@ -2658,9 +2646,6 @@
       showToast(`Cleared reminder for ${c.name}.`);
     };
 
-    // ========================================================================
-    // WEATHER WIDGET
-    // ========================================================================
     let cachedRegionalForecast = null;
     let selectedWeatherDayIndex = 0;
 
@@ -2814,9 +2799,6 @@
       } finally { clearTimeout(timeoutId); }
     };
 
-    // ========================================================================
-    // FULL ADDRESS & CITY EXTRACTION HELPERS
-    // ========================================================================
     const KNOWN_TOWNS = ["Decatur", "Alvord", "Bridgeport", "Bowie", "Sunset", "Rhome", "Newark", "Boyd", "Chico", "Aurora", "New Fairview", "Paradise", "Runaway Bay", "Lake Bridgeport"];
 
     function extractCityFromAddress(fullAddress, fallbackCity = "") {
@@ -2836,13 +2818,16 @@
       return city ? `${addr}, ${city}, TX` : addr;
     }
 
-    // ========================================================================
-    // SQUARE WHOLE-ACCOUNT PAYMENT SYNC
-    // ========================================================================
     async function callSquareApi(payloadObj) {
+      if (!auth.currentUser) {
+        throw new Error("You must be signed in to run Square actions.");
+      }
+      const idToken = await auth.currentUser.getIdToken();
       const res = await fetch(SQUARE_ENDPOINT, {
         method: "POST",
-        body: new URLSearchParams({ payload: JSON.stringify(payloadObj) })
+        body: new URLSearchParams({
+          payload: JSON.stringify({ ...payloadObj, idToken })
+        })
       });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || "Square request failed.");
@@ -3285,9 +3270,6 @@
       finally { btn.disabled = false; btn.textContent = orig; }
     };
 
-    // ========================================================================
-    // GPS-AWARE "ON MY WAY" TEXT SYSTEM (2 TEMPLATES: >= 5 MINS VS < 5 MINS)
-    // ========================================================================
     const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way and should be there in about {minutes} minutes (give or take). See you soon!";
     const DEFAULT_NEARBY_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is right in your neighborhood finishing up with another client and is on the way to your yard next (~{minutes} mins away). See you soon!";
 
@@ -3415,7 +3397,6 @@
         .catch(() => prompt('Copy this "On My Way" text:', msg));
     };
 
-    // BUSINESS APPS LAUNCHER
     const ICON_CHOICES = ["📞", "💳", "🌐", "🧮", "💩", "🐕", "🐈", "📍", "📧", "📱", "⚙️", "🔥", "💻", "📊", "🛠️"];
     const DEFAULT_BUSINESS_APPS = [
       { id: "app-voice", name: "Google Voice Phone", desc: "Business calls & text messages", icon: "📞", url: "https://voice.google.com/u/0/messages", section: "core" },
@@ -4685,9 +4666,6 @@
       showToast(`Saved ${record.name} to Cloud!`);
     };
 
-    // ========================================================================
-    // MOBILE-ONLY FIELD ROUTE MODE CONTROLLER (NO FAKE STOPS)
-    // ========================================================================
     let fwStops = [];
     let fwRouteStarted = false;
     let fwRouteElapsedSec = 0;
