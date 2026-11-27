@@ -539,7 +539,7 @@
   .rc-notes { font-size: 11.5px; background: #FFFDF7; border: 1px dashed #DFCFA8; padding: 6px 9px; border-radius: 8px; color: #5C4618; }
   .rc-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 
-  /* OMW DRAWER */
+  /* OMW & FINISHED TEXT DRAWER */
   .omw-drawer { background: #F4F8F2; border-bottom: 1px solid var(--line); padding: 14px 18px; display: none; flex-direction: column; gap: 8px; }
   .omw-drawer.open { display: flex; }
   .omw-drawer textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; font-size: 12.5px; background: #fff; color: var(--ink); resize: vertical; }
@@ -971,7 +971,7 @@
       </header>
 
       <div class="edit-mode-banner" id="editModeBanner" role="status">
-        <span>✏️ <strong>EDIT MODE IS ON</strong> — Editing, deleting, refunds, OMW templates &amp; map pin dragging are unlocked.</span>
+        <span>✏️ <strong>EDIT MODE IS ON</strong> — Editing, deleting, refunds, SMS templates &amp; map pin dragging are unlocked.</span>
         <button type="button" class="btn btn-dark btn-sm" onclick="toggleEditMode(false)">🔒 Done Editing</button>
       </div>
 
@@ -1216,7 +1216,7 @@
                 <option value="Twice Weekly">Twice Weekly Plans Only</option>
                 <option value="Bi-Weekly">Bi-Weekly Plans Only</option>
               </select>
-              <button type="button" class="btn btn-soft btn-sm edit-only-control" onclick="toggleOmwEditor()">✏️ Edit OMW Texts</button>
+              <button type="button" class="btn btn-soft btn-sm edit-only-control" onclick="toggleOmwEditor()">✏️ Edit SMS Texts</button>
               <button type="button" class="btn btn-primary btn-sm" onclick="printRouteSheet('schedule')">🖨️ Print Route</button>
             </div>
           </div>
@@ -1235,11 +1235,17 @@
               </div>
               <textarea id="inputNearbyOmwTemplate" rows="2"></textarea>
 
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-top:4px; padding-top:8px; border-top:1px dashed var(--gm);">
+                <strong style="font-size:12px; color:var(--forest);">✅ 3. Finished / Proof Text (Sent with Gate &amp; Service Photos)</strong>
+                <span style="font-size:11px; color:var(--muted);">Placeholders: <code>{firstName}</code>, <code>{name}</code>, <code>{serviceSummary}</code>, <code>{city}</code></span>
+              </div>
+              <textarea id="inputFinishedTemplate" rows="2"></textarea>
+
               <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset Both to Defaults</button>
+                <button type="button" class="undo-link" onclick="resetOmwTemplate()">Reset All 3 to Defaults</button>
                 <div style="display:flex; gap:8px;">
                   <button type="button" class="btn btn-outline btn-sm" onclick="toggleOmwEditor()">Cancel</button>
-                  <button type="button" class="btn btn-primary btn-sm" onclick="saveOmwTemplate()">💾 Save Both Templates</button>
+                  <button type="button" class="btn btn-primary btn-sm" onclick="saveOmwTemplate()">💾 Save All 3 Templates</button>
                 </div>
               </div>
             </div>
@@ -1452,6 +1458,7 @@
       </main>
     </div>
   </div>
+
   <!-- MOBILE-ONLY FIELD ROUTE OVERLAY -->
   <section class="field-work-overlay" id="fieldWorkOverlay" aria-label="Mobile Field Route Mode">
     <div class="fw-topbar">
@@ -1841,6 +1848,7 @@
   </div>
 
   <div class="toast" id="toast"></div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
@@ -1870,6 +1878,7 @@
     const APPS_DOC_REF = doc(db, "wise_scoopers_settings", "business_apps");
     const OMW_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template");
     const OMW_NEARBY_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template_nearby");
+    const OMW_FINISHED_DOC_REF = doc(db, "wise_scoopers_settings", "sms_template_finished");
 
     const PAGE_META = {
       overview: ["Overview", "Business overview"],
@@ -1899,6 +1908,7 @@
     let unsubApps = null;
     let unsubOmw = null;
     let unsubOmwNearby = null;
+    let unsubOmwFinished = null;
     let isAuthenticated = false;
     let hasRunInitialSquareSync = false;
     let expandedClientId = null;
@@ -2536,7 +2546,7 @@
       if (!listEl) return;
       const sorted = [...generalNotes].sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
       if (countEl) countEl.textContent = sorted.length;
-      if (!sorted.length) { listEl.innerHTML = `<div style="padding:14px; text-align:center; font-size:12px; color:var(--muted);">No business notes yet. Click <strong>＋ Add</strong> or type <em>"g notes ..."</em> above.</div>`; return; }
+      if (!sorted.length) { listEl.innerHTML = `<div style="padding:14px; text-align:center; font-size:12px; color:var(--muted);">No general notes yet. Click <strong>＋ Add</strong> or type <em>"g notes ..."</em> above.</div>`; return; }
       listEl.innerHTML = sorted.map(n => `
         <div class="gn-item">
           <div style="font-weight:500; white-space:pre-line;">${escapeHtml(n.text)}</div>
@@ -2748,6 +2758,7 @@
         if (rainEl) rainEl.textContent = "Forecast offline — tap ↻ to retry";
       } finally { clearTimeout(timeoutId); }
     };
+
     // ADDRESS & AUTHENTICATED SQUARE API
     const KNOWN_TOWNS = ["Decatur", "Alvord", "Bridgeport", "Bowie", "Sunset", "Rhome", "Newark", "Boyd", "Chico", "Aurora", "New Fairview", "Paradise", "Runaway Bay", "Lake Bridgeport"];
 
@@ -3029,11 +3040,14 @@
       finally { btn.disabled = false; btn.textContent = orig; }
     };
 
-    // GPS-AWARE "ON MY WAY" TEXT SYSTEM (2 TEMPLATES: >= 5 MINS VS < 5 MINS)
+    // GPS-AWARE "ON MY WAY" & FINISHED TEXT SYSTEM (3 CLOUD-SYNCED TEMPLATES)
     const DEFAULT_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is on the way and should be there in about {minutes} minutes (give or take). See you soon!";
     const DEFAULT_NEARBY_OMW_TEMPLATE = "Hi {firstName}! Austin with Wise Scoopers is right in your neighborhood finishing up with another client and is on the way to your yard next (~{minutes} mins away). See you soon!";
+    const DEFAULT_FINISHED_TEMPLATE = "Hi {firstName}! Your {serviceSummary} is all scooped and clean, and your gate is closed and latched! Here is your timestamped check photo from Wise Scoopers. Have a great day!";
+
     let currentOmwTemplate = localStorage.getItem("ws_omw_template") || DEFAULT_OMW_TEMPLATE;
     let currentNearbyOmwTemplate = localStorage.getItem("ws_omw_nearby_template") || DEFAULT_NEARBY_OMW_TEMPLATE;
+    let currentFinishedTemplate = localStorage.getItem("ws_finished_template") || DEFAULT_FINISHED_TEMPLATE;
 
     function getStopCoords(stop) {
       if (!stop) return null;
@@ -3055,21 +3069,60 @@
       const fullName = String(stop?.name || "there").trim(), firstName = fullName.split(/\s+/)[0] || "there", fullAddress = String(stop?.address || "").trim(), city = String(stop?.city || extractCityFromAddress(fullAddress, "") || "your neighborhood").trim(), info = gpsInfo || computeGpsDistanceAndEta(stop);
       return String(templateStr || "").replace(/\{firstName\}/gi, firstName).replace(/\{name\}/gi, fullName).replace(/\{eta\}/gi, info.etaText).replace(/\{minutes\}/gi, String(info.minutes)).replace(/\{distance\}/gi, typeof info.miles === "number" ? `${info.miles.toFixed(1)} mi` : "nearby").replace(/\{city\}/gi, city).replace(/\{address\}/gi, fullAddress);
     }
+    function applyFinishedPlaceholders(templateStr, stop, proofPhotos = []) {
+      const fullName = String(stop?.name || "there").trim();
+      const firstName = fullName.split(/\s+/)[0] || "there";
+      const fullAddress = String(stop?.address || "").trim();
+      const city = String(stop?.city || extractCityFromAddress(fullAddress, "") || "your neighborhood").trim();
+      const hasLitter = proofPhotos.some(p => p.type === "litter");
+      const hasGate = proofPhotos.some(p => p.type === "gate");
+      let serviceSummary = "yard";
+      if (hasGate && hasLitter) serviceSummary = "yard and cat litter box";
+      else if (hasLitter && !hasGate) serviceSummary = "cat litter box";
+      return String(templateStr || DEFAULT_FINISHED_TEMPLATE)
+        .replace(/\{firstName\}/gi, firstName)
+        .replace(/\{name\}/gi, fullName)
+        .replace(/\{serviceSummary\}/gi, serviceSummary)
+        .replace(/\{city\}/gi, city)
+        .replace(/\{address\}/gi, fullAddress);
+    }
     window.toggleOmwEditor = function() {
-      if (!isEditMode) { showToast("Turn on Edit Mode first to edit 'On My Way' text templates."); return; }
+      if (!isEditMode) { showToast("Turn on Edit Mode first to edit SMS text templates."); return; }
       const d = document.getElementById("omwTemplateDrawer");
-      if (d.classList.toggle("open")) { document.getElementById("inputOmwTemplate").value = currentOmwTemplate; document.getElementById("inputNearbyOmwTemplate").value = currentNearbyOmwTemplate; document.getElementById("inputOmwTemplate").focus(); }
+      if (d.classList.toggle("open")) {
+        document.getElementById("inputOmwTemplate").value = currentOmwTemplate;
+        document.getElementById("inputNearbyOmwTemplate").value = currentNearbyOmwTemplate;
+        document.getElementById("inputFinishedTemplate").value = currentFinishedTemplate;
+        document.getElementById("inputOmwTemplate").focus();
+      }
     };
     window.saveOmwTemplate = async function() {
-      if (!isEditMode) { showToast("Turn on Edit Mode first to save 'On My Way' text templates."); return; }
-      const stdVal = document.getElementById("inputOmwTemplate").value.trim(), nearVal = document.getElementById("inputNearbyOmwTemplate").value.trim();
-      if (!stdVal || !nearVal) { showToast("Both message templates cannot be empty."); return; }
-      currentOmwTemplate = stdVal; currentNearbyOmwTemplate = nearVal;
-      localStorage.setItem("ws_omw_template", stdVal); localStorage.setItem("ws_omw_nearby_template", nearVal);
-      if (isAuthenticated) { await setDoc(OMW_DOC_REF, { template: stdVal }, { merge: true }); await setDoc(OMW_NEARBY_DOC_REF, { template: nearVal }, { merge: true }); }
-      document.getElementById("omwTemplateDrawer").classList.remove("open"); updateFwLiveOmwBtn(); showToast('Saved both "On My Way" text templates to Cloud!');
+      if (!isEditMode) { showToast("Turn on Edit Mode first to save SMS text templates."); return; }
+      const stdVal = document.getElementById("inputOmwTemplate").value.trim();
+      const nearVal = document.getElementById("inputNearbyOmwTemplate").value.trim();
+      const finVal = document.getElementById("inputFinishedTemplate").value.trim();
+      if (!stdVal || !nearVal || !finVal) { showToast("All 3 message templates cannot be empty."); return; }
+      currentOmwTemplate = stdVal;
+      currentNearbyOmwTemplate = nearVal;
+      currentFinishedTemplate = finVal;
+      localStorage.setItem("ws_omw_template", stdVal);
+      localStorage.setItem("ws_omw_nearby_template", nearVal);
+      localStorage.setItem("ws_finished_template", finVal);
+      if (isAuthenticated) {
+        await setDoc(OMW_DOC_REF, { template: stdVal }, { merge: true });
+        await setDoc(OMW_NEARBY_DOC_REF, { template: nearVal }, { merge: true });
+        await setDoc(OMW_FINISHED_DOC_REF, { template: finVal }, { merge: true });
+      }
+      document.getElementById("omwTemplateDrawer").classList.remove("open");
+      updateFwLiveOmwBtn();
+      showToast("Saved all 3 SMS text templates to Cloud!");
     };
-    window.resetOmwTemplate = function() { if (!isEditMode) return; document.getElementById("inputOmwTemplate").value = DEFAULT_OMW_TEMPLATE; document.getElementById("inputNearbyOmwTemplate").value = DEFAULT_NEARBY_OMW_TEMPLATE; };
+    window.resetOmwTemplate = function() {
+      if (!isEditMode) return;
+      document.getElementById("inputOmwTemplate").value = DEFAULT_OMW_TEMPLATE;
+      document.getElementById("inputNearbyOmwTemplate").value = DEFAULT_NEARBY_OMW_TEMPLATE;
+      document.getElementById("inputFinishedTemplate").value = DEFAULT_FINISHED_TEMPLATE;
+    };
     window.copyOnMyWayText = function(id) {
       const person = clients.find(x => x.id === id) || leads.find(x => x.id === id); if (!person) return;
       if (navigator.geolocation && !lastUserCoords && !fwLiveCoords) navigator.geolocation.getCurrentPosition(pos => { lastUserCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude }; }, () => {}, { enableHighAccuracy: true, timeout: 2500, maximumAge: 30000 });
@@ -3121,7 +3174,7 @@
       catch (err) { errBox.textContent = err.message || "Login failed."; errBox.style.display = "block"; }
     };
     window.handleLogout = async function() {
-      [unsubscribeClients, unsubscribeLeads, unsubscribeGenNotes, unsubscribeManualRefs, unsubscribeManualPayments, unsubscribeExpenses, unsubscribeDiscounts, unsubApps, unsubOmw, unsubOmwNearby].forEach(u => u && u());
+      [unsubscribeClients, unsubscribeLeads, unsubscribeGenNotes, unsubscribeManualRefs, unsubscribeManualPayments, unsubscribeExpenses, unsubscribeDiscounts, unsubApps, unsubOmw, unsubOmwNearby, unsubOmwFinished].forEach(u => u && u());
       await signOut(auth);
     };
 
@@ -3167,6 +3220,8 @@
         unsubOmw = onSnapshot(OMW_DOC_REF, d => { if (d.exists() && d.data().template) { currentOmwTemplate = d.data().template; localStorage.setItem("ws_omw_template", currentOmwTemplate); updateFwLiveOmwBtn(); } });
         if (unsubOmwNearby) unsubOmwNearby();
         unsubOmwNearby = onSnapshot(OMW_NEARBY_DOC_REF, d => { if (d.exists() && d.data().template) { currentNearbyOmwTemplate = d.data().template; localStorage.setItem("ws_omw_nearby_template", currentNearbyOmwTemplate); updateFwLiveOmwBtn(); } });
+        if (unsubOmwFinished) unsubOmwFinished();
+        unsubOmwFinished = onSnapshot(OMW_FINISHED_DOC_REF, d => { if (d.exists() && d.data().template) { currentFinishedTemplate = d.data().template; localStorage.setItem("ws_finished_template", currentFinishedTemplate); } });
       } else {
         isAuthenticated = false; hasRunInitialSquareSync = false; gate.classList.remove("hidden"); syncEl.textContent = "Locked";
       }
@@ -3858,15 +3913,77 @@
       await saveClientDoc(record); closeClientModal(); showToast(`Saved ${record.name} to Cloud!`);
     };
 
-    // FULL MOBILE-ONLY FIELD ROUTE MODE
-    let fwStops = [], fwRouteStarted = false, fwRouteElapsedSec = 0, fwRouteTimerInterval = null, fwActiveStopIndex = 0, fwIsScooping = false, fwCurrentYardSec = 0, fwYardTimerInterval = null, fwProofPhotos = [], fwPendingPhotoType = "gate", fwNoGateMarked = false, fwLiveCoords = null, fwGpsWatchId = null, fwConfirmTimer = null;
-    function formatFwHHMMSS(s) { return `${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor((s % 3600) / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
-    function formatFwMMSS(s) { return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; }
+    // FULL MOBILE-ONLY FIELD ROUTE MODE (TIMESTAMP-ACCURATE ACROSS LOCKS & APP SWITCHES)
+    const FW_TIMER_STORAGE_KEY = "ws_field_timer_state_v1";
+    let fwStops = [], fwRouteStarted = false, fwRouteStartEpoch = null, fwRouteFrozenSec = null, fwRouteTimerInterval = null, fwActiveStopIndex = 0;
+    let fwIsScooping = false, fwYardStartEpoch = null, fwYardStopId = null, fwYardTimerInterval = null;
+    let fwProofPhotos = [], fwPendingPhotoType = "gate", fwNoGateMarked = false, fwLiveCoords = null, fwGpsWatchId = null, fwConfirmTimer = null;
+
+    function getFwRouteElapsedSec() {
+      if (typeof fwRouteFrozenSec === "number") return fwRouteFrozenSec;
+      if (fwRouteStarted && fwRouteStartEpoch) return Math.max(0, Math.floor((Date.now() - fwRouteStartEpoch) / 1000));
+      return 0;
+    }
+    function getFwYardElapsedSec() {
+      if (fwIsScooping && fwYardStartEpoch) return Math.max(0, Math.floor((Date.now() - fwYardStartEpoch) / 1000));
+      return 0;
+    }
+    function persistFwTimerState() {
+      try {
+        const today = todayStr(0);
+        if (!fwRouteStarted && !fwIsScooping) {
+          localStorage.removeItem(FW_TIMER_STORAGE_KEY);
+          return;
+        }
+        localStorage.setItem(FW_TIMER_STORAGE_KEY, JSON.stringify({
+          date: today,
+          routeStarted: fwRouteStarted,
+          routeStartEpoch: fwRouteStartEpoch,
+          routeFrozenSec: fwRouteFrozenSec,
+          isScooping: fwIsScooping,
+          yardStartEpoch: fwYardStartEpoch,
+          yardStopId: fwYardStopId
+        }));
+      } catch (e) {}
+    }
+    function restoreFwTimerState() {
+      try {
+        const raw = localStorage.getItem(FW_TIMER_STORAGE_KEY);
+        if (!raw) return;
+        const saved = JSON.parse(raw);
+        if (!saved || saved.date !== todayStr(0)) {
+          localStorage.removeItem(FW_TIMER_STORAGE_KEY);
+          return;
+        }
+        fwRouteStarted = Boolean(saved.routeStarted);
+        fwRouteStartEpoch = typeof saved.routeStartEpoch === "number" ? saved.routeStartEpoch : null;
+        fwRouteFrozenSec = typeof saved.routeFrozenSec === "number" ? saved.routeFrozenSec : null;
+        fwIsScooping = Boolean(saved.isScooping);
+        fwYardStartEpoch = typeof saved.yardStartEpoch === "number" ? saved.yardStartEpoch : null;
+        fwYardStopId = saved.yardStopId || null;
+      } catch (e) {}
+    }
+    restoreFwTimerState();
+
+    function refreshFwClocksNow() {
+      const routeDisp = document.getElementById("fwRouteTimerDisplay");
+      if (routeDisp) routeDisp.textContent = formatFwHHMMSS(getFwRouteElapsedSec());
+      const yardClock = document.getElementById("fwYardTimerClock");
+      if (yardClock && fwIsScooping) yardClock.textContent = formatFwMMSS(getFwYardElapsedSec());
+      updateMobileFieldLauncher();
+    }
+
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshFwClocksNow(); });
+    window.addEventListener("pageshow", refreshFwClocksNow);
+    window.addEventListener("focus", refreshFwClocksNow);
+
+    function formatFwHHMMSS(s) { const sec = Math.max(0, Math.floor(s || 0)); return `${String(Math.floor(sec / 3600)).padStart(2, "0")}:${String(Math.floor((sec % 3600) / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; }
+    function formatFwMMSS(s) { const sec = Math.max(0, Math.floor(s || 0)); return `${String(Math.floor(sec / 60)).padStart(2, "0")}:${String(sec % 60).padStart(2, "0")}`; }
     function formatFwE164(phone) { const d = String(phone || "").replace(/\D/g, ""); return d.length === 10 ? `+1${d}` : `+${d}`; }
     function dataUrlToFwFile(dataUrl, filename) { const arr = dataUrl.split(","), mime = arr[0].match(/:(.*?);/)[1], bstr = atob(arr[1]); let n = bstr.length; const u8 = new Uint8Array(n); while (n--) u8[n] = bstr.charCodeAt(n); return new File([u8], filename, { type: mime }); }
     window.hideFieldTopConfirm = function() { document.getElementById("fwConfirmBanner")?.classList.remove("show"); };
     function showFieldTopConfirm(msg, isWarn = false) { const b = document.getElementById("fwConfirmBanner"), t = document.getElementById("fwConfirmText"); if (!b || !t) return; t.textContent = msg; b.className = `fw-confirm-banner show ${isWarn ? "warn" : ""}`; clearTimeout(fwConfirmTimer); fwConfirmTimer = setTimeout(() => b.classList.remove("show"), 3600); }
-    function syncFwTopYardTimer() { const b = document.getElementById("fwYardTimerBanner"), c = document.getElementById("fwYardTimerClock"); if (b) b.classList.toggle("active", fwIsScooping); if (c) c.textContent = formatFwMMSS(fwCurrentYardSec); }
+    function syncFwTopYardTimer() { const b = document.getElementById("fwYardTimerBanner"), c = document.getElementById("fwYardTimerClock"); if (b) b.classList.toggle("active", fwIsScooping); if (c) c.textContent = formatFwMMSS(getFwYardElapsedSec()); }
     function buildFwQueueFromCrm() {
       const today = todayStr(0);
       return getScheduledStopsList().filter(c => diffDaysFromToday(c.nextScoop) <= 0 || c.scoopedActionDate === today || c.trialCompleted).sort((a, b) => (a.nextScoop || "9999").localeCompare(b.nextScoop || "9999")).map((c, idx) => {
@@ -3876,9 +3993,9 @@
     }
     function updateMobileFieldLauncher() {
       const t = document.getElementById("mobileFieldBannerTitle"), s = document.getElementById("mobileFieldBannerSub"), b = document.getElementById("btnMobileStartWork"); if (!t || !s || !b) return;
-      const q = buildFwQueueFromCrm(), rem = q.filter(x => x.status === "pending").length;
+      const q = buildFwQueueFromCrm(), rem = q.filter(x => x.status === "pending").length, elapsed = getFwRouteElapsedSec();
       if (!q.length) { t.textContent = "Field Route Mode"; s.textContent = "Add due clients in CRM to launch yard-by-yard field mode"; b.textContent = "🚀 Start Route / Start Work"; }
-      else if (fwRouteStarted && rem > 0) { t.textContent = "Field Route In Progress"; s.textContent = `${rem} stop(s) left • Route clock ${formatFwHHMMSS(fwRouteElapsedSec)}`; b.textContent = `▶️ Resume Active Route (${formatFwHHMMSS(fwRouteElapsedSec)})`; }
+      else if (fwRouteStarted && rem > 0) { t.textContent = "Field Route In Progress"; s.textContent = `${rem} stop(s) left • Route clock ${formatFwHHMMSS(elapsed)}`; b.textContent = `▶️ Resume Active Route (${formatFwHHMMSS(elapsed)})`; }
       else { t.textContent = "Field Route Mode"; s.textContent = `${rem} stop(s) due today • Tap to start`; b.textContent = "🚀 Start Route / Start Work"; }
     }
     function buildFwOmwPayload(stop) {
@@ -3886,20 +4003,70 @@
       return { isSameNeighborhood: isNearby, pillLabel: isNearby ? `In Neighborhood (~${gpsInfo.minutes} mins)` : gpsInfo.hasGps ? `~${gpsInfo.minutes} mins` : "On My Way", subLabel: isNearby ? `< 5 mins away (${gpsInfo.miles.toFixed(1)} mi) • Opens Messages` : gpsInfo.hasGps ? `GPS ETA ~${gpsInfo.minutes} mins (${gpsInfo.miles.toFixed(1)} mi) • Opens Messages` : "Send 'On My Way' text • Opens Messages", message: applyOmwPlaceholders(chosen, stop, gpsInfo) };
     }
     function updateFwLiveOmwBtn() { const ov = document.getElementById("fieldWorkOverlay"); if (!ov?.classList.contains("open")) return; const s = fwStops[fwActiveStopIndex], btn = document.getElementById("fwLiveOmwBtn"); if (!s || !btn) return; const p = buildFwOmwPayload(s); btn.className = `fw-omw-btn ${p.isSameNeighborhood ? "near" : ""}`; btn.innerHTML = `<div><div class="fw-omw-main">💬 Text ${escapeHtml(s.name.split(" ")[0])} — On My Way</div><div class="fw-omw-sub">${escapeHtml(p.subLabel)}</div></div><span class="fw-omw-pill">${p.isSameNeighborhood ? "🏘️ " : "📍 "}${escapeHtml(p.pillLabel)}</span>`; }
+
+    function ensureFwIntervalsRunning(hasPendingStops) {
+      if (hasPendingStops && fwRouteStarted && !fwRouteTimerInterval) {
+        fwRouteTimerInterval = setInterval(() => {
+          document.getElementById("fwRouteTimerDisplay").textContent = formatFwHHMMSS(getFwRouteElapsedSec());
+        }, 1000);
+      }
+      if (fwIsScooping && !fwYardTimerInterval) {
+        fwYardTimerInterval = setInterval(() => {
+          document.getElementById("fwYardTimerClock").textContent = formatFwMMSS(getFwYardElapsedSec());
+        }, 1000);
+      }
+    }
+
     window.openMobileFieldMode = function() {
       if (window.innerWidth > 768) { showToast("Mobile Field Route Mode is available on mobile screens."); return; }
       const q = buildFwQueueFromCrm(); if (!q.length) { showToast("No stops due today in Schedule to start Field Route Mode."); return; }
-      if (!fwRouteStarted || !fwStops.length) { fwStops = q; fwRouteStarted = true; fwRouteElapsedSec = 0; }
-      else { const doneMap = new Map(fwStops.map(x => [x.id, x])); fwStops = q.map((item, i) => doneMap.has(item.id) ? { ...item, status: doneMap.get(item.id).status, routeOrder: i + 1 } : { ...item, routeOrder: i + 1 }); }
+      if (!fwRouteStarted || !fwRouteStartEpoch) {
+        fwStops = q;
+        fwRouteStarted = true;
+        fwRouteStartEpoch = Date.now();
+        fwRouteFrozenSec = null;
+        persistFwTimerState();
+      } else {
+        const doneMap = new Map(fwStops.map(x => [x.id, x]));
+        fwStops = q.map((item, i) => doneMap.has(item.id) ? { ...item, status: doneMap.get(item.id).status, routeOrder: i + 1 } : { ...item, routeOrder: i + 1 });
+      }
       if ("geolocation" in navigator && fwGpsWatchId === null) fwGpsWatchId = navigator.geolocation.watchPosition(pos => { fwLiveCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude }; lastUserCoords = fwLiveCoords; updateFwLiveOmwBtn(); }, () => {}, { enableHighAccuracy: true, maximumAge: 10000, timeout: 10000 });
-      const fp = fwStops.findIndex(s => s.status === "pending"); fwActiveStopIndex = fp !== -1 ? fp : 0;
-      if (!fwRouteTimerInterval && fp !== -1) fwRouteTimerInterval = setInterval(() => { fwRouteElapsedSec++; document.getElementById("fwRouteTimerDisplay").textContent = formatFwHHMMSS(fwRouteElapsedSec); }, 1000);
-      document.getElementById("fwRouteTimerDisplay").textContent = formatFwHHMMSS(fwRouteElapsedSec);
-      document.getElementById("fieldWorkOverlay").classList.add("open"); renderFwActiveScreen();
+      let targetIdx = -1;
+      if (fwIsScooping && fwYardStopId) {
+        targetIdx = fwStops.findIndex(s => s.id === fwYardStopId && s.status === "pending");
+      }
+      if (targetIdx === -1) {
+        targetIdx = fwStops.findIndex(s => s.status === "pending");
+        if (fwIsScooping) {
+          fwIsScooping = false;
+          fwYardStartEpoch = null;
+          fwYardStopId = null;
+          persistFwTimerState();
+        }
+      }
+      fwActiveStopIndex = targetIdx !== -1 ? targetIdx : 0;
+      ensureFwIntervalsRunning(targetIdx !== -1);
+      document.getElementById("fwRouteTimerDisplay").textContent = formatFwHHMMSS(getFwRouteElapsedSec());
+      document.getElementById("fieldWorkOverlay").classList.add("open");
+      renderFwActiveScreen();
     };
-    window.pauseOrExitFieldMode = function() { document.getElementById("fieldWorkOverlay").classList.remove("open"); updateMobileFieldLauncher(); };
+    window.pauseOrExitFieldMode = function() { persistFwTimerState(); document.getElementById("fieldWorkOverlay").classList.remove("open"); updateMobileFieldLauncher(); };
     window.sendFwOnMyWaySms = function(idx) { const s = fwStops[idx]; if (!s) return; const p = buildFwOmwPayload(s); navigator.clipboard?.writeText(p.message).catch(() => {}); showFieldTopConfirm(`💬 Opening Messages for ${s.name.split(" ")[0]}...`); window.location.href = `sms:${formatFwE164(s.phone)}${/iPad|iPhone|iPod/.test(navigator.userAgent) ? "&" : "?"}body=${encodeURIComponent(p.message)}`; };
-    window.startFwScoopingYard = function() { fwIsScooping = true; fwCurrentYardSec = 0; fwProofPhotos = []; fwNoGateMarked = false; clearInterval(fwYardTimerInterval); fwYardTimerInterval = setInterval(() => { fwCurrentYardSec++; document.getElementById("fwYardTimerClock").textContent = formatFwMMSS(fwCurrentYardSec); }, 1000); showFieldTopConfirm("⏱️ Yard scoop timer started!"); renderFwActiveScreen(); };
+    window.startFwScoopingYard = function() {
+      const stop = fwStops[fwActiveStopIndex];
+      fwIsScooping = true;
+      fwYardStartEpoch = Date.now();
+      fwYardStopId = stop ? stop.id : null;
+      fwProofPhotos = [];
+      fwNoGateMarked = false;
+      persistFwTimerState();
+      clearInterval(fwYardTimerInterval);
+      fwYardTimerInterval = setInterval(() => {
+        document.getElementById("fwYardTimerClock").textContent = formatFwMMSS(getFwYardElapsedSec());
+      }, 1000);
+      showFieldTopConfirm("⏱️ Yard scoop timer started!");
+      renderFwActiveScreen();
+    };
     window.triggerFwCamera = function(t) { fwPendingPhotoType = t || "gate"; document.getElementById("fwProofCameraInput").click(); };
     window.triggerFwHousePhotoCapture = function() { document.getElementById("fwHouseCameraInput").click(); };
     window.handleFieldHousePhotoCapture = async function(e) {
@@ -3950,10 +4117,8 @@
 
     window.sendFwPhotosAndComplete = async function() {
       const s = fwStops[fwActiveStopIndex]; if (!s || !fwProofPhotos.length) return;
-      const firstName = s.name.trim().split(/\s+/)[0], hasLitter = fwProofPhotos.some(p => p.type === "litter"), hasGate = fwProofPhotos.some(p => p.type === "gate");
-      let msg = `Hi ${firstName}! Your yard is all scooped and clean, and your gate is closed and latched! Here is your timestamped check photo from Wise Scoopers. Have a great day!`;
-      if (hasGate && hasLitter) msg = `Hi ${firstName}! Your yard and cat litter box are all cleaned up, and your gate is closed and latched! Here are your timestamped photos from Wise Scoopers. Have a great day!`;
-      else if (hasLitter && !hasGate) msg = `Hi ${firstName}! Your cat litter box is all scooped and refreshed! Here is your timestamped photo from Wise Scoopers. Have a great day!`;
+      const firstName = s.name.trim().split(/\s+/)[0];
+      const msg = applyFinishedPlaceholders(currentFinishedTemplate, s, fwProofPhotos);
       const files = fwProofPhotos.map((p, idx) => dataUrlToFwFile(p.dataUrl, `wise-scoopers-${firstName.toLowerCase()}-${p.type}-${idx + 1}.jpg`));
       navigator.clipboard?.writeText(msg).catch(() => {});
       await finalizeFwCurrentStop();
@@ -3964,14 +4129,22 @@
     window.finalizeFwCurrentStop = async function() {
       const stop = fwStops[fwActiveStopIndex]; if (!stop) return;
       if (!(fwNoGateMarked || fwProofPhotos.length > 0)) { showFieldTopConfirm("🔒 Attach a gate/proof photo or select 'No Gate' before finishing.", true); return; }
+      const durationStr = formatFwMMSS(getFwYardElapsedSec()), photosCopy = [...fwProofPhotos];
       clearInterval(fwYardTimerInterval); fwYardTimerInterval = null;
-      const durationStr = formatFwMMSS(fwCurrentYardSec), photosCopy = [...fwProofPhotos];
       stop.status = "done";
       const crmRes = await applyCompleteScoopToRecord(stop.id, { durationText: durationStr, proofPhotoCount: photosCopy.length, proofPhotos: photosCopy });
-      fwIsScooping = false; fwCurrentYardSec = 0; fwProofPhotos = []; fwNoGateMarked = false;
+      fwIsScooping = false; fwYardStartEpoch = null; fwYardStopId = null; fwProofPhotos = []; fwNoGateMarked = false;
       const nextP = fwStops.findIndex(s => s.status === "pending");
-      if (nextP !== -1) { fwActiveStopIndex = nextP; showFieldTopConfirm(`✓ Completed ${stop.name} (${durationStr}) — next: ${crmRes ? crmRes.nextScoopLabel : ""}`); }
-      else { clearInterval(fwRouteTimerInterval); fwRouteTimerInterval = null; showFieldTopConfirm("🎉 All stops for today are complete!"); }
+      if (nextP !== -1) {
+        fwActiveStopIndex = nextP;
+        persistFwTimerState();
+        showFieldTopConfirm(`✓ Completed ${stop.name} (${durationStr}) — next: ${crmRes ? crmRes.nextScoopLabel : ""}`);
+      } else {
+        fwRouteFrozenSec = getFwRouteElapsedSec();
+        clearInterval(fwRouteTimerInterval); fwRouteTimerInterval = null;
+        persistFwTimerState();
+        showFieldTopConfirm("🎉 All stops for today are complete!");
+      }
       renderFwActiveScreen(); updateMobileFieldLauncher();
     };
 
@@ -3987,13 +4160,31 @@
       const stop = fwStops[fwActiveStopIndex]; if (!stop) return;
       closeFieldSkipModal(); clearInterval(fwYardTimerInterval); fwYardTimerInterval = null;
       const skipRes = await applySkipScoopToRecord(stop.id), nextAppt = skipRes ? skipRes.nextAppt : computeNextScoopFromDate(stop.nextScoopDate || todayStr(0), stop.freq);
-      stop.status = "skipped"; stop.nextScoopDate = nextAppt; fwIsScooping = false; fwCurrentYardSec = 0; fwProofPhotos = []; fwNoGateMarked = false;
+      stop.status = "skipped"; stop.nextScoopDate = nextAppt;
+      fwIsScooping = false; fwYardStartEpoch = null; fwYardStopId = null; fwProofPhotos = []; fwNoGateMarked = false;
       const nextP = fwStops.findIndex(s => s.status === "pending");
-      if (nextP !== -1) fwActiveStopIndex = nextP; else { clearInterval(fwRouteTimerInterval); fwRouteTimerInterval = null; }
+      if (nextP !== -1) {
+        fwActiveStopIndex = nextP;
+      } else {
+        fwRouteFrozenSec = getFwRouteElapsedSec();
+        clearInterval(fwRouteTimerInterval); fwRouteTimerInterval = null;
+      }
+      persistFwTimerState();
       renderFwActiveScreen(); updateMobileFieldLauncher();
       showFieldTopConfirm(`⏭️ Skipped ${stop.name} — next scoop moved to ${formatDisplayDate(nextAppt)}.`, true);
     };
-    window.resetFwSession = function() { fwRouteStarted = false; fwRouteElapsedSec = 0; clearInterval(fwRouteTimerInterval); fwRouteTimerInterval = null; clearInterval(fwYardTimerInterval); fwYardTimerInterval = null; fwIsScooping = false; fwCurrentYardSec = 0; fwProofPhotos = []; fwNoGateMarked = false; document.getElementById("fwRouteTimerDisplay").textContent = "00:00:00"; hideFieldTopConfirm(); document.getElementById("fieldWorkOverlay").classList.remove("open"); updateMobileFieldLauncher(); };
+    window.resetFwSession = function() {
+      fwRouteStarted = false; fwRouteStartEpoch = null; fwRouteFrozenSec = null;
+      clearInterval(fwRouteTimerInterval); fwRouteTimerInterval = null;
+      clearInterval(fwYardTimerInterval); fwYardTimerInterval = null;
+      fwIsScooping = false; fwYardStartEpoch = null; fwYardStopId = null;
+      fwProofPhotos = []; fwNoGateMarked = false;
+      persistFwTimerState();
+      document.getElementById("fwRouteTimerDisplay").textContent = "00:00:00";
+      hideFieldTopConfirm();
+      document.getElementById("fieldWorkOverlay").classList.remove("open");
+      updateMobileFieldLauncher();
+    };
 
     function renderFwActiveScreen() {
       const scrollZone = document.getElementById("fwScrollZone"), bottomDock = document.getElementById("fwBottomDock"), pending = fwStops.filter(s => s.status === "pending"), doneCount = fwStops.filter(s => s.status === "done").length;
@@ -4001,7 +4192,7 @@
       document.getElementById("fwStopCounterBadge").textContent = pending.length ? `Stop ${doneCount + 1} of ${fwStops.length}` : "All Done!";
       if (!pending.length) {
         bottomDock.style.display = "none";
-        scrollZone.innerHTML = `<div class="fw-done-card"><div style="font-size:38px;">🎉</div><h2 style="margin:0; font-size:20px; font-weight:800; color:var(--forest);">Route Complete!</h2><div class="fw-stat-grid"><div class="fw-stat-box"><div class="fw-stat-num">${formatFwHHMMSS(fwRouteElapsedSec)}</div><div class="fw-stat-lbl">Total Time</div></div><div class="fw-stat-box"><div class="fw-stat-num">${doneCount}/${fwStops.length}</div><div class="fw-stat-lbl">Scooped</div></div><div class="fw-stat-box"><div class="fw-stat-num">${fwStops.filter(x => x.status === "skipped").length}</div><div class="fw-stat-lbl">Skipped</div></div></div><button type="button" class="btn btn-primary" style="padding:13px;" onclick="pauseOrExitFieldMode()">← Back to Schedule</button><button type="button" class="btn btn-outline" onclick="resetFwSession()">↻ Clear Field Timer</button></div>`;
+        scrollZone.innerHTML = `<div class="fw-done-card"><div style="font-size:38px;">🎉</div><h2 style="margin:0; font-size:20px; font-weight:800; color:var(--forest);">Route Complete!</h2><div class="fw-stat-grid"><div class="fw-stat-box"><div class="fw-stat-num">${formatFwHHMMSS(getFwRouteElapsedSec())}</div><div class="fw-stat-lbl">Total Time</div></div><div class="fw-stat-box"><div class="fw-stat-num">${doneCount}/${fwStops.length}</div><div class="fw-stat-lbl">Scooped</div></div><div class="fw-stat-box"><div class="fw-stat-num">${fwStops.filter(x => x.status === "skipped").length}</div><div class="fw-stat-lbl">Skipped</div></div></div><button type="button" class="btn btn-primary" style="padding:13px;" onclick="pauseOrExitFieldMode()">← Back to Schedule</button><button type="button" class="btn btn-outline" onclick="resetFwSession()">↻ Clear Field Timer</button></div>`;
         return;
       }
       bottomDock.style.display = "flex";
